@@ -23,6 +23,23 @@ public class Position {
 
     /**
      *
+     * @param coordinates the string representation of a chess tile ie: "g3" or "F7"
+     *                    Only the first two characters are checked
+     * @return the corresponding index in the 1d representation of the board. Passing in "A8" returns 0
+     * @throws IllegalArgumentException if an invalid coordinate is entered.
+     */
+    public static int getIndexFromNamedTile(String coordinates){
+        coordinates = coordinates.toLowerCase();
+        int letter = coordinates.charAt(0) - 'a';
+        int number = Integer.parseInt(coordinates.substring(1));
+        if(number < 1 || number > 8 || letter < 0 || letter > 7){
+            throw new IllegalArgumentException("Invalid input: " + coordinates);
+        }
+        return letter + 8 * (8 - number);
+    }
+
+    /**
+     *
      * @param FEN Fen string representing the board state
      *        FEN strings are in the format of the following, each separated by a single space
      *            1. Board state, with characters representing pieces, and numbers that many empty squares,
@@ -127,6 +144,28 @@ public class Position {
         }
         throw new IllegalArgumentException("Invalid piece representation: " + piece);
     }
+
+    /**
+     *
+     * Prints the board state to the console, along with all the other information contained within a fen string
+     */
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < 64; i++){
+            if(i != 0 && i % 8 == 0){
+                builder.append("\n");
+            }
+            if(board[i] == 0){
+                builder.append("_ ");
+            }
+            else{
+                builder.append(convertIntegerPiece(board[i]));
+                builder.append(" ");
+            }
+        }
+        builder.append("\n");
+        return builder.toString();
+    }
     public static void main(String[] args){
         Position pos = createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         for(int i = 0; i < 64; i++){
@@ -139,7 +178,6 @@ public class Position {
             else{
                 System.out.print(convertIntegerPiece(pos.board[i]) + " ");
             }
-
         }
     }
 }
