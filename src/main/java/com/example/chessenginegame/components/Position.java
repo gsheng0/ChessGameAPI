@@ -14,6 +14,9 @@ public class Position {
     public Position(){
         board = new int[64];
     }
+    public Position(int[] board){
+        this.board = board;
+    }
     public void getMoves(int index){
 
     }
@@ -21,12 +24,38 @@ public class Position {
     /**
      *
      * @param FEN Fen string representing the board state
+     *        FEN strings are in the format of the following, each separated by a single space
+     *            1. Board state, with characters representing pieces, and numbers that many empty squares,
+     *               starting from the top left corner of the board, from white's perspective
+     *            2. The side whose turn it is
+     *            3. The availability of castling for each side, K representing king side castling, and q for queen side castling
+     *            4. Available en passant squares
+     *            5. Half move counter
+     *            6. Full move counter
      * @return A position object containing that corresponding board state
      * @throws IllegalArgumentException if invalid character is encountered
      */
     public static Position createFromFEN(String FEN){
-        Position position = new Position();
 
+        String[] split = FEN.split(" ");
+        String boardString = split[0];
+        int[] board = new int[64];
+        int index = 0;
+        for(int i = 0; i < boardString.length(); i++){
+            char current = boardString.charAt(i);
+            if(current == '/'){
+                continue;
+            }
+            if(current > '0' && current < '9'){
+                int num = current - '0';
+                index += num;
+            }
+            else{
+                board[index] = convertCharPiece(current);
+                index++;
+            }
+        }
+        Position position = new Position(board);
         return position;
     }
     /**
@@ -99,13 +128,17 @@ public class Position {
         throw new IllegalArgumentException("Invalid piece representation: " + piece);
     }
     public static void main(String[] args){
-        System.out.println(convertIntegerPiece(BLACK | KNIGHT));
-        Position pos = createFromFEN("");
+        Position pos = createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         for(int i = 0; i < 64; i++){
             if(i % 8 == 0){
                 System.out.println();
             }
-            System.out.print(pos.board[i] + " ");
+            if(pos.board[i] == 0){
+                System.out.print("_ ");
+            }
+            else{
+                System.out.print(convertIntegerPiece(pos.board[i]) + " ");
+            }
 
         }
     }
