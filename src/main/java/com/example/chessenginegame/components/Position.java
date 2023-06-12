@@ -11,6 +11,11 @@ public class Position {
     public static final int WHITE = 16;
     public static final int BLACK = 8;
     private int[] board;
+    private int turn = WHITE;
+    private boolean whiteKingSideCastle = true;
+    private boolean whiteQueenSideCastle = true;
+    private boolean blackKingSideCastle = true;
+    private boolean blackQueenSideCastle = true;
     public Position(){
         board = new int[64];
     }
