@@ -22,6 +22,18 @@ public class Position {
     public Position(int[] board){
         this.board = board;
     }
+    public void setWhiteKingSideCastle(boolean whiteKingSideCastle){
+        this.whiteKingSideCastle = whiteKingSideCastle;
+    }
+    public void setWhiteQueenSideCastle(boolean whiteQueenSideCastle){
+        this.whiteQueenSideCastle = whiteQueenSideCastle;
+    }
+    public void setBlackKingSideCastle(boolean blackKingSideCastle){
+        this.blackKingSideCastle = blackKingSideCastle;
+    }
+    public void setBlackQueenSideCastle(boolean blackQueenSideCastle){
+        this.blackQueenSideCastle = blackQueenSideCastle;
+    }
     public void getMoves(int index){
 
     }
