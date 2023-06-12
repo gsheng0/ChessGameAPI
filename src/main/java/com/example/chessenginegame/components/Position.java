@@ -10,17 +10,20 @@ public class Position {
     public static final int KING = 6;
     public static final int WHITE = 16;
     public static final int BLACK = 8;
-    private int[] board;
+    private int[] board = new int[64];
     private int turn = WHITE;
     private boolean whiteKingSideCastle = true;
     private boolean whiteQueenSideCastle = true;
     private boolean blackKingSideCastle = true;
     private boolean blackQueenSideCastle = true;
-    public Position(){
-        board = new int[64];
-    }
-    public Position(int[] board){
+
+    private Position(int[] board, int turn, boolean whiteKingSideCastle, boolean whiteQueenSideCastle, boolean blackKingSideCastle, boolean blackQueenSideCastle){
         this.board = board;
+        this.turn = turn;
+        this.whiteKingSideCastle = whiteKingSideCastle;
+        this.whiteQueenSideCastle = whiteQueenSideCastle;
+        this.blackKingSideCastle = blackKingSideCastle;
+        this.blackQueenSideCastle = blackQueenSideCastle;
     }
     public void setWhiteKingSideCastle(boolean whiteKingSideCastle){
         this.whiteKingSideCastle = whiteKingSideCastle;
@@ -70,9 +73,29 @@ public class Position {
      * @throws IllegalArgumentException if invalid character is encountered
      */
     public static Position createFromFEN(String FEN){
-
         String[] split = FEN.split(" ");
         String boardString = split[0];
+        String turnString = split[1];
+        String castleString = split[2];
+
+        int[] board = createBoardFromString(boardString);
+        int turn = getTurnFromString(turnString);
+        boolean whiteKingSideCastle = castleString.contains("K");
+        boolean whiteQueenSideCastle = castleString.contains("Q");
+        boolean blackKingSideCastle = castleString.contains("k");
+        boolean blackQueenSideCastle = castleString.contains("q");
+
+
+        Position position = new Position(board, turn, whiteKingSideCastle, whiteQueenSideCastle, blackKingSideCastle, blackQueenSideCastle);
+        return position;
+    }
+
+    /**
+     *
+     * @param boardString the board portion of a FEN string
+     * @return the integer representation of the position specified by the input
+     */
+    private static int[] createBoardFromString(String boardString){
         int[] board = new int[64];
         int index = 0;
         for(int i = 0; i < boardString.length(); i++){
@@ -89,8 +112,28 @@ public class Position {
                 index++;
             }
         }
-        Position position = new Position(board);
-        return position;
+        return board;
+    }
+
+    /**
+     *
+     * @param turnString the portion of the FEN string that indicates which side's turn it is
+     * @return the integer representation of the side whose turn it is
+     * @throws IllegalArgumentException if the turnString's first character is not either a 'w' or a 'b'
+     */
+    private static int getTurnFromString(String turnString){
+        int turn = 0;
+        turnString = turnString.toLowerCase();
+        if(turnString.charAt(0) == 'w'){
+            turn = WHITE;
+        }
+        else if(turnString.charAt(0) == 'b'){
+            turn = BLACK;
+        }
+        else{
+            throw new IllegalArgumentException("Invalid turn string: " + turnString);
+        }
+        return turn;
     }
     /**
      @param piece Integer representation of a piece
