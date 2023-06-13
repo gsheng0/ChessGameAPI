@@ -10,7 +10,7 @@ public class Position {
     public static final int KING = 6;
     public static final int WHITE = 16;
     public static final int BLACK = 8;
-    private int[] board = new int[64];
+    private int[] board;
     private int turn = WHITE;
     private boolean whiteKingSideCastle = true;
     private boolean whiteQueenSideCastle = true;
@@ -25,6 +25,10 @@ public class Position {
         this.blackKingSideCastle = blackKingSideCastle;
         this.blackQueenSideCastle = blackQueenSideCastle;
     }
+    public boolean canWhiteKingSideCastle() { return whiteKingSideCastle; }
+    public boolean canWhiteQueenSideCastle() { return whiteQueenSideCastle; }
+    public boolean canBlackKingSideCastle() { return blackKingSideCastle; }
+    public boolean canBlackQueenSideCastle() { return blackQueenSideCastle; }
     public void setWhiteKingSideCastle(boolean whiteKingSideCastle){
         this.whiteKingSideCastle = whiteKingSideCastle;
     }
