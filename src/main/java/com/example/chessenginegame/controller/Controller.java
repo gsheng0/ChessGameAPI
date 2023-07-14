@@ -1,4 +1,4 @@
-package com.example.chessenginegame;
+package com.example.chessenginegame.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

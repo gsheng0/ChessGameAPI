@@ -1,6 +1,6 @@
-package com.example.chessenginegame.components;
+package com.example.chessenginegame.util;
 
-public class Piece {
+public class PieceUtil {
     public static final int EMPTY = 0;
     public static final int PAWN = 1;
     public static final int KNIGHT = 2;
@@ -17,7 +17,7 @@ public class Piece {
      K for king, Q for queen, R for rook, B for bishop, N for Knight, and P for pawn
      @throws IllegalArgumentException if the piece parameter is not a valid piece
      */
-    public static char convertIntegerPiece(int piece) {
+    public static char convertIntegerPieceToCharacterPiece(int piece) {
         if(piece == (BLACK | PAWN)){
             return 'p';
         } else if(piece == (BLACK | KNIGHT)){
@@ -52,7 +52,7 @@ public class Piece {
      * @return The integer representation of the piece
      * @throws IllegalArgumentException if the piece parameter is not a valid piece
      */
-    public static int convertCharPiece(char piece){
+    public static int convertCharPieceToIntegerPiece(char piece){
         if(piece == 'p'){
             return BLACK | PAWN;
         } else if(piece == 'n'){
@@ -80,4 +80,5 @@ public class Piece {
         }
         throw new IllegalArgumentException("Invalid piece representation: " + piece);
     }
+
 }

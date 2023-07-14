@@ -1,10 +1,10 @@
-package com.example.chessenginegame.components;
+package com.example.chessenginegame.util;
 
 import java.util.ArrayList;
 
-import static com.example.chessenginegame.components.Piece.*;
+import static com.example.chessenginegame.util.PieceUtil.*;
 
-public class Position {
+public class PositionUtil {
 
     private int[] board;
     private int turn = WHITE;
@@ -13,7 +13,7 @@ public class Position {
     private boolean blackKingSideCastle;
     private boolean blackQueenSideCastle;
 
-    private Position(int[] board, int turn, boolean whiteKingSideCastle, boolean whiteQueenSideCastle, boolean blackKingSideCastle, boolean blackQueenSideCastle){
+    private PositionUtil(int[] board, int turn, boolean whiteKingSideCastle, boolean whiteQueenSideCastle, boolean blackKingSideCastle, boolean blackQueenSideCastle){
         this.board = board;
         this.turn = turn;
         this.whiteKingSideCastle = whiteKingSideCastle;
@@ -80,13 +80,13 @@ public class Position {
      * @return A position object containing that corresponding board state
      * @throws IllegalArgumentException if invalid character is encountered
      */
-    public static Position createFromFEN(String FEN){
+    public static PositionUtil createFromFEN(String FEN){
         String[] split = FEN.split(" ");
         String boardString = split[0];
         String turnString = split[1];
         String castleString = split[2];
 
-        int[] board = createBoardFromString(boardString);
+        int[] board = createBoardFromFENString(boardString);
         int turn = getTurnFromString(turnString);
         boolean whiteKingSideCastle = castleString.contains("K");
         boolean whiteQueenSideCastle = castleString.contains("Q");
@@ -94,7 +94,7 @@ public class Position {
         boolean blackQueenSideCastle = castleString.contains("q");
 
 
-        Position position = new Position(board, turn, whiteKingSideCastle, whiteQueenSideCastle, blackKingSideCastle, blackQueenSideCastle);
+        PositionUtil position = new PositionUtil(board, turn, whiteKingSideCastle, whiteQueenSideCastle, blackKingSideCastle, blackQueenSideCastle);
         return position;
     }
 
@@ -103,7 +103,7 @@ public class Position {
      * @param boardString the board portion of a FEN string
      * @return the integer representation of the position specified by the input
      */
-    private static int[] createBoardFromString(String boardString){
+    private static int[] createBoardFromFENString(String boardString){
         int[] board = new int[64];
         int index = 0;
         for(int i = 0; i < boardString.length(); i++){
@@ -116,7 +116,7 @@ public class Position {
                 index += num;
             }
             else{
-                board[index] = convertCharPiece(current);
+                board[index] = convertCharPieceToIntegerPiece(current);
                 index++;
             }
         }
@@ -158,7 +158,7 @@ public class Position {
                 builder.append("_ ");
             }
             else{
-                builder.append(convertIntegerPiece(board[i]));
+                builder.append(convertIntegerPieceToCharacterPiece(board[i]));
                 builder.append(" ");
             }
         }
@@ -166,7 +166,7 @@ public class Position {
         return builder.toString();
     }
     public static void main(String[] args){
-        Position pos = createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        PositionUtil pos = createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         for(int i = 0; i < 64; i++){
             if(i % 8 == 0){
                 System.out.println();
@@ -175,7 +175,7 @@ public class Position {
                 System.out.print("_ ");
             }
             else{
-                System.out.print(convertIntegerPiece(pos.board[i]) + " ");
+                System.out.print(convertIntegerPieceToCharacterPiece(pos.board[i]) + " ");
             }
         }
     }
