@@ -10,7 +10,6 @@ public class Board {
         this.board = board;
     }
     public Optional<Board> apply(Move move){
-        //TODO: Move logic into a validate move method
         if(!board.containsKey(move.getStart())){
             return Optional.empty();
         }
@@ -18,6 +17,12 @@ public class Board {
             return Optional.empty();
         }
         return Optional.empty();
+    }
+    public Optional<Piece> getPieceAt(int tile){
+        if(!board.containsKey(tile)){
+            return Optional.empty();
+        }
+        return Optional.of(board.get(tile));
     }
 
 
