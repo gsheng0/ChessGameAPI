@@ -16,6 +16,11 @@ public class MoveValidatorImpl implements MoveValidator {
         }
         Piece piece = board.getPieceAt(move.getStart()).get();
         if(piece instanceof King){
+            //need to check for castling moves
+            if(tileIsProtectedByOtherColor(board, move.getEnd())){
+                return false;
+            }
+            return true;
 
         } else if(piece instanceof Pawn){
 
@@ -77,7 +82,41 @@ public class MoveValidatorImpl implements MoveValidator {
         }
         return true;
     }
+
+    /**
+     *
+     * @param board The current board state
+     * @param tile The tile to be checked
+     * @return true if the tile is covered by any piece of the opposing side
+     */
     public boolean tileIsProtectedByOtherColor(Board board, int tile){
+        return true;
+    }
+
+    /**
+     *
+     * @param move The move supplying the path to be checked
+     * @param board The current board state
+     * @return true if there exists a piece of any color in between the starting and end tiles
+     * @throws IllegalArgumentException if move is not possible by the piece, ignoring all other pieces
+     */
+    public boolean isPathBlocked(Move move, Board board){
+        Piece piece = move.getPiece();
+        if(piece instanceof Pawn || piece instanceof Knight || piece instanceof King){
+            return false;
+        }
+        int tileDifference = move.getStart() - move.getEnd();
+        int moveShift = -1;
+        for(int shift : piece.getMoveShifts()){
+            int numTiles = tileDifference / shift;
+            if(numTiles > 0 && (tileDifference % shift) == 0){
+                moveShift = shift;
+                break;
+            }
+        }
+        if(moveShift == -1){
+            throw new IllegalArgumentException("move is not possible");
+        }
         return true;
     }
 }
