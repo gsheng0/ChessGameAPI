@@ -1,6 +1,7 @@
 package com.example.chessenginegame.components;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Knight extends Piece{
     public Knight(String color, int tile) {
@@ -8,7 +9,7 @@ public class Knight extends Piece{
     }
 
     @Override
-    public ArrayList<Integer> getMoveShifts() {
-        return null;
+    public List<Integer> getMoveShifts() {
+        return Arrays.asList(-17, -15, -10, -6, 6, 10, 15, 17);
     }
 }

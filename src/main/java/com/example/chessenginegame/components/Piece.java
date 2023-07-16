@@ -3,6 +3,7 @@ package com.example.chessenginegame.components;
 import com.example.chessenginegame.util.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Piece{
     private int tile;
@@ -18,7 +19,7 @@ public abstract class Piece{
     public String getColor() { return color; }
     public int getId() { return id; }
     public boolean hasMoved() { return hasMoved; }
-    public abstract ArrayList<Integer> getMoveShifts();
+    public abstract List<Integer> getMoveShifts();
     public ArrayList<Move> getCurrentMoves(){
          ArrayList<Move> currentMoves = new ArrayList<>();
          for(int moveShift : getMoveShifts()){
