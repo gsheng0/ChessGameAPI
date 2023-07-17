@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece{
+    private static int counter = 0;
     private int tile;
     private String color;
     private int id;
@@ -13,6 +14,8 @@ public abstract class Piece{
     public Piece(String color, int tile){
         this.color = color;
         this.tile = tile;
+        this.id = counter;
+        counter++;
     }
     private Piece(){}
     public int getTile() { return tile;}
@@ -20,16 +23,6 @@ public abstract class Piece{
     public int getId() { return id; }
     public boolean hasMoved() { return hasMoved; }
     public abstract List<Integer> getMoveShifts();
-    public ArrayList<Move> getCurrentMoves(){
-         ArrayList<Move> currentMoves = new ArrayList<>();
-         for(int moveShift : getMoveShifts()){
-             int resultantTile = moveShift + tile;
-             //TODO: Validate moves
-             currentMoves.add(new Move(this, resultantTile));
-         }
-         return currentMoves;
-    }
-
     public static class PieceBuilder{
         private String color;
         private int tile;
