@@ -1,4 +1,6 @@
-package com.example.chessenginegame.components;
+package com.example.chessenginegame.util;
+
+import com.example.chessenginegame.components.*;
 
 import java.util.Optional;
 
