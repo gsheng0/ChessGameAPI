@@ -29,9 +29,13 @@ public class Window extends JPanel {
                 else{
                     g.setColor(Color.decode("#b58862"));
                 }
+
                 g.fillRect(x * UNIT_WIDTH, y * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
                 g.setColor(Color.BLACK);
+                g.setFont(new Font("Lucida", Font.PLAIN, 13));
                 g.drawString(x + y * 8 + "", x * UNIT_WIDTH, y * UNIT_HEIGHT + 20);
+                g.setFont(new Font("Times New Roman", Font.PLAIN, 60));
+                g.drawString("KN", x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
             }
         }
     }

@@ -47,15 +47,16 @@ public class MoveGenerator {
     }
     public List<Move> generatePawnMoves(Piece piece, Board board){
         List<Move> moves = new ArrayList<>();
-        List<Integer> tilesToCheck = piece.getMoveShifts().stream().map(
-                moveShift -> moveShift + piece.getTile())
-                .toList();
-        
+
+
 
         return Collections.emptyList();
     }
     public List<Move> generateKnightMoves(Piece piece, Board board){
-        return Collections.emptyList();
+        return piece.getMoveShifts().stream().map(
+                moveShift -> moveShift + piece.getTile()).
+                filter(tile -> board.getPieceAt(tile).isEmpty()).
+                map(tile -> new Move(piece, tile)).toList();
     }
     public List<Move> generateBishopMoves(Piece piece, Board board){
         return Collections.emptyList();
