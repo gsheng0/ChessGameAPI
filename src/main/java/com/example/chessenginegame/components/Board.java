@@ -35,6 +35,17 @@ public class Board {
                 filter(piece -> piece.getColor().equals(color)).
                 toList();
     }
+    public Optional<King> getKing(String color){
+        for(Piece piece : board.values()){
+            if(!(piece instanceof King)){
+                continue;
+            }
+            if(piece.getColor().equals(color)){
+                return Optional.of((King)piece);
+            }
+        }
+        return Optional.empty();
+    }
     public Optional<Move> getPreviousMove(){
         return Optional.ofNullable(previousMove);
     }

@@ -70,4 +70,17 @@ public class MoveGenerator {
     public List<Move> generateKingMoves(Piece piece, Board board){
         return Collections.emptyList();
     }
+
+    /**
+     * This method finds a list of pinned pieces by first finding the tile of the king, and looking in the
+     * 8 directions, checking for bishops on the diagonals, rooks on the files and ranks, and queens on
+     * both, returning only those with one piece in between them and the king
+     * @param board The current board state
+     * @param color The color the check for
+     * @return A list of pinned pieces of the provided color
+     */
+    public List<Piece> getPinnedPieces(Board board, String color){
+        King king = board.getKing(color).orElseThrow(() -> new RuntimeException("No king found for side: " + color));
+        return Collections.emptyList();
+    }
 }
