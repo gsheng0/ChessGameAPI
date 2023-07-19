@@ -1,11 +1,10 @@
 package com.example.chessenginegame.util;
 
-import com.example.chessenginegame.components.*;
+import com.example.chessenginegame.model.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 public class MoveGenerator {
     /**

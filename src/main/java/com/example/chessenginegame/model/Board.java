@@ -1,4 +1,4 @@
-package com.example.chessenginegame.components;
+package com.example.chessenginegame.model;
 
 import java.util.HashMap;
 import java.util.List;

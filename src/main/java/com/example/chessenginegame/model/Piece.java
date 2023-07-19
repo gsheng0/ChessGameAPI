@@ -1,8 +1,7 @@
-package com.example.chessenginegame.components;
+package com.example.chessenginegame.model;
 
 import com.example.chessenginegame.util.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece{

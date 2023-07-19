@@ -1,4 +1,4 @@
-package com.example.chessenginegame.components;
+package com.example.chessenginegame.model;
 
 public class Move {
     private int start, end;

@@ -1,6 +1,6 @@
 package com.example.chessenginegame.util;
 
-import com.example.chessenginegame.components.*;
+import com.example.chessenginegame.model.*;
 
 import java.util.Optional;
 
