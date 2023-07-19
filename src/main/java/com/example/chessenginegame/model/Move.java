@@ -1,5 +1,7 @@
 package com.example.chessenginegame.model;
 
+import com.example.chessenginegame.model.piece.Piece;
+
 public class Move {
     private int start, end;
     private Piece piece;

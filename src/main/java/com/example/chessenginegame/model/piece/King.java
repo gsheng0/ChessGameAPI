@@ -1,9 +1,11 @@
-package com.example.chessenginegame.model;
+package com.example.chessenginegame.model.piece;
+
+import com.example.chessenginegame.model.piece.Piece;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class King extends Piece{
+public class King extends Piece {
     public King(String color, int tile) {
         super(color, tile);
     }

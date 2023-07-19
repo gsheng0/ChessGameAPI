@@ -1,18 +1,20 @@
-package com.example.chessenginegame.util;
+package com.example.chessenginegame.service;
 
 import com.example.chessenginegame.model.*;
+import com.example.chessenginegame.model.piece.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MoveGenerator {
+public class MoveGeneratorImpl implements MoveGenerator {
     /**
      *
      * @param board The current board state
      * @param color The side to generate moves for
      * @return A list of legal moves
      */
+    @Override
     public List<Move> generateLegalMoves(Board board, String color){
         List<Move> moves = new ArrayList<>();
         List<Piece> pieces = board.getPieces(color);

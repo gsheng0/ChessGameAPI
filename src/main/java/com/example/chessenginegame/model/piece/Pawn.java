@@ -1,4 +1,4 @@
-package com.example.chessenginegame.model;
+package com.example.chessenginegame.model.piece;
 
 import java.util.Arrays;
 import java.util.List;

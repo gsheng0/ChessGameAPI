@@ -1,4 +1,4 @@
-package com.example.chessenginegame.model;
+package com.example.chessenginegame.model.piece;
 
 import com.example.chessenginegame.util.Constants;
 

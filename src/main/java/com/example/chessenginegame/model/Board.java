@@ -1,5 +1,8 @@
 package com.example.chessenginegame.model;
 
+import com.example.chessenginegame.model.piece.King;
+import com.example.chessenginegame.model.piece.Piece;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;

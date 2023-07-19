@@ -1,6 +1,10 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.*;
+import com.example.chessenginegame.model.piece.King;
+import com.example.chessenginegame.model.piece.Knight;
+import com.example.chessenginegame.model.piece.Pawn;
+import com.example.chessenginegame.model.piece.Piece;
 
 import java.util.Optional;
 
