@@ -49,6 +49,9 @@ public class Board {
         }
         return Optional.empty();
     }
+    public static Board startingPosition() {
+        return Board.createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    }
     public Optional<Move> getPreviousMove(){
         return Optional.ofNullable(previousMove);
     }

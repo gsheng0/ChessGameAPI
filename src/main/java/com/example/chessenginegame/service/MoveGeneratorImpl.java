@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class MoveGeneratorImpl implements MoveGenerator {
     /**
@@ -60,7 +59,15 @@ public class MoveGeneratorImpl implements MoveGenerator {
         return piece.getMoveShifts().stream().
                 map(moveShift -> moveShift + piece.getTile()).
                 filter(TileUtil::isInBoard).
-                //filter(tile -> board.getPieceAt(tile).isEmpty()).
+                filter(tile -> {
+                    if(board.getPieceAt(tile).isEmpty()){
+                        return true;
+                    }
+                    if(board.getPieceAt(tile).get().getColor().equals(piece.getColor())){ //piece of same color
+                        return false;
+                    }
+                    return true;
+                }).
                 map(tile -> new Move(piece, tile)).toList();
 
     }
@@ -68,6 +75,12 @@ public class MoveGeneratorImpl implements MoveGenerator {
         return Collections.emptyList();
     }
     public List<Move> generateRookMoves(Piece piece, Board board){
+        List<Move> moves = new ArrayList<>();
+        for(int direction : piece.getMoveShifts()){
+            int startingTile = piece.getTile();
+            int currentTile = startingTile + direction;
+
+        }
         return Collections.emptyList();
     }
     public List<Move> generateQueenMoves(Piece piece, Board board){

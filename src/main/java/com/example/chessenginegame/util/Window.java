@@ -22,7 +22,7 @@ public class Window extends JPanel implements MouseListener {
     private static final Color LIGHT_SQUARE_COLOR = Color.decode("#f0d9b5");
     private static final Color DARK_SQUARE_COLOR = Color.decode("#b58862");
     private static final Font SQUARE_NUMBER_FONT = new Font("Lucida", Font.PLAIN, 13);
-    private static final Font PIECE_FONT = new Font("Times New Roman", Font.PLAIN, 60);
+    private static final Font SQUARE_FONT = new Font("Times New Roman", Font.PLAIN, 60);
     private static final int UNIT_HEIGHT = WINDOW_HEIGHT/8;
     private static final int UNIT_WIDTH = WINDOW_WIDTH/8;
     private static final int HORIZONTAL_SHIFT = 1;
@@ -34,15 +34,16 @@ public class Window extends JPanel implements MouseListener {
     public Window(){
         highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorImpl();
-        //board = Board.createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         HashMap<Integer, Piece> map = new HashMap<>();
-        board = Board.createFromFEN("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+        map.put(36, new Rook(Constants.WHITE, 36));
+        board = new Board(map);
         frame = new JFrame();
         frame.add(this);
         frame.addMouseListener(this);
         frame.setSize(WINDOW_WIDTH + HORIZONTAL_SHIFT, WINDOW_HEIGHT + VERTICAL_SHIFT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
 
 
     }
@@ -84,6 +85,7 @@ public class Window extends JPanel implements MouseListener {
                 g.setColor(Color.BLACK);
                 g.setFont(SQUARE_NUMBER_FONT);
                 g.drawString(tileIndex + "", x * UNIT_WIDTH, y * UNIT_HEIGHT + 20);
+
             }
         }
         for(int tile : board.getBoard().keySet()){
@@ -92,25 +94,28 @@ public class Window extends JPanel implements MouseListener {
             drawPiece(g, board.getPieceAt(tile).get(), x, y);
         }
     }
+    public void drawCharacter(Graphics g, String c, int x, int y){
+        g.setFont(SQUARE_FONT);
+        g.drawString("" + c.charAt(0), x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
+    }
     public void drawPiece(Graphics g, Piece piece, int x, int y){
-        g.setFont(PIECE_FONT);
         if (piece.getColor().equals(Constants.BLACK)) {
             g.setColor(Color.BLACK);
         } else if (piece.getColor().equals(Constants.WHITE)) {
             g.setColor(Color.WHITE);
         }
         if(piece instanceof King){
-            g.drawString("K", x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
+            drawCharacter(g, "K", x, y);
         } else if(piece instanceof Queen){
-            g.drawString("Q",  x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
+            drawCharacter(g, "Q", x, y);
         } else if(piece instanceof Rook){
-            g.drawString("R",  x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
+            drawCharacter(g, "R", x, y);
         } else if(piece instanceof Bishop){
-            g.drawString("B",  x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
+            drawCharacter(g, "B", x, y);
         } else if(piece instanceof Knight){
-            g.drawString("N",  x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
+            drawCharacter(g, "N", x, y);
         } else if(piece instanceof Pawn){
-            g.drawString("P",  x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
+            drawCharacter(g, "P", x, y);
         }
     }
     public static void main(String[] args){
