@@ -58,6 +58,7 @@ public class MoveGeneratorImpl implements MoveGenerator {
     public List<Move> generateKnightMoves(Piece piece, Board board){
         return piece.getMoveShifts().stream().map(
                 moveShift -> moveShift + piece.getTile()).
+                filter(TileUtil::isInBoard).
                 filter(tile -> board.getPieceAt(tile).isEmpty()).
                 map(tile -> new Move(piece, tile)).toList();
     }

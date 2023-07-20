@@ -1,12 +1,20 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
+import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.model.piece.*;
+import com.example.chessenginegame.service.MoveGenerator;
+import com.example.chessenginegame.service.MoveGeneratorImpl;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class Window extends JPanel {
+public class Window extends JPanel implements MouseListener {
     private JFrame frame;
     private static final int WINDOW_WIDTH = 800;
     private static final int WINDOW_HEIGHT = 800;
@@ -16,21 +24,37 @@ public class Window extends JPanel {
     private static final Font PIECE_FONT = new Font("Times New Roman", Font.PLAIN, 60);
     private static final int UNIT_HEIGHT = WINDOW_HEIGHT/8;
     private static final int UNIT_WIDTH = WINDOW_WIDTH/8;
+    private static final int HORIZONTAL_SHIFT = 1;
+    private static final int VERTICAL_SHIFT = 29;
+    private static MoveGenerator moveGenerator;
     private Board board;
+    private Piece selected;
     public Window(){
+        moveGenerator = new MoveGeneratorImpl();
+        board = Board.createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         frame = new JFrame();
         frame.add(this);
-        frame.setSize(WINDOW_WIDTH + 1, WINDOW_HEIGHT + 29);
+        frame.addMouseListener(this);
+        frame.setSize(WINDOW_WIDTH + HORIZONTAL_SHIFT, WINDOW_HEIGHT + VERTICAL_SHIFT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        board = Board.createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
 
     }
     @Override
     public void paintComponent(Graphics g){
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
+        List<Move> moveList = moveGenerator.generateLegalMoves(board, Constants.WHITE);
+        List<Integer> tilesToHighlight = new ArrayList<>();
+        if(selected != null){
+            for(Move move : moveList){
+                if(move.getPiece().getId() == selected.getId()){
+                    tilesToHighlight.add(move.getEnd());
+                }
+            }
+            System.out.println(tilesToHighlight);
+        }
         for(int x = 0; x < 8; x++){
             for(int y = 0; y < 8; y++){
                 int tileIndex = x + y;
@@ -39,6 +63,9 @@ public class Window extends JPanel {
                 }
                 else{
                     g.setColor(DARK_SQUARE_COLOR);
+                }
+                if(tilesToHighlight.contains(tileIndex)){
+                    g.setColor(Color.CYAN);
                 }
                 g.fillRect(x * UNIT_WIDTH, y * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
 
@@ -52,6 +79,7 @@ public class Window extends JPanel {
             int x = tile % 8;
             drawPiece(g, board.getPieceAt(tile).get(), x, y);
         }
+        repaint();
     }
     public void drawPiece(Graphics g, Piece piece, int x, int y){
         g.setFont(PIECE_FONT);
@@ -76,6 +104,35 @@ public class Window extends JPanel {
     }
     public static void main(String[] args){
         Window window = new Window();
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        Point point = e.getPoint();
+        int x = point.x - HORIZONTAL_SHIFT;
+        int y = point.y - VERTICAL_SHIFT;
+        int tileNumber = x/UNIT_WIDTH + 8 * (y/UNIT_HEIGHT);
+        selected = board.getPieceAt(tileNumber).orElse(null);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }
