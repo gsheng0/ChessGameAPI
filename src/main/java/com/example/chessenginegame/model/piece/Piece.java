@@ -22,6 +22,44 @@ public abstract class Piece{
     public int getId() { return id; }
     public boolean hasMoved() { return hasMoved; }
     public abstract List<Integer> getMoveShifts();
+
+    /**
+     *
+     * @param c character representation of a piece
+     * @param tile the tile of the piece to be built
+     * @return a piece object
+     * @throws IllegalArgumentException if character is not a valid piece
+     */
+    public static Piece buildFromCharacter(char c, int tile){
+        PieceBuilder pieceBuilder = new PieceBuilder();
+        pieceBuilder.on(tile);
+        if(c == 'p'){
+            return pieceBuilder.black().pawn().build();
+        } else if(c == 'n'){
+            return pieceBuilder.black().knight().build();
+        } else if(c == 'b'){
+            return pieceBuilder.black().bishop().build();
+        } else if(c == 'r'){
+            return pieceBuilder.black().rook().build();
+        } else if(c == 'q'){
+            return pieceBuilder.black().queen().build();
+        } else if(c == 'k'){
+            return pieceBuilder.black().queen().build();
+        } else if(c == 'P'){
+            return pieceBuilder.white().pawn().build();
+        } else if(c == 'N'){
+            return pieceBuilder.white().knight().build();
+        } else if(c == 'B'){
+            return pieceBuilder.white().bishop().build();
+        } else if(c == 'R'){
+            return pieceBuilder.white().rook().build();
+        } else if(c == 'Q'){
+            return pieceBuilder.white().queen().build();
+        } else if(c == 'K'){
+            return pieceBuilder.white().king().build();
+        }
+        throw new IllegalArgumentException("Invalid piece representation: " + c);
+    }
     public static class PieceBuilder{
         private String color;
         private int tile;

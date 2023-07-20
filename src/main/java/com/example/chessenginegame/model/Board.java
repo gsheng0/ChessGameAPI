@@ -55,6 +55,28 @@ public class Board {
     public HashMap<Integer, Piece> getBoard(){
         return board;
     }
+    public static Board createFromFEN(String FEN){
+        HashMap<Integer, Piece> board = new HashMap<>();
+        int index = 0;
+        for(int i = 0; i < FEN.length(); i++){
+            if(index > 63){
+                break;
+            }
+            char current = FEN.charAt(i);
+            if(current == '/'){
+                continue;
+            }
+            if(current > '0' && current < '9'){
+                int num = current - '0';
+                index += num;
+            }
+            else{
+                board.put(index, Piece.buildFromCharacter(current, index));
+                index++;
+            }
+        }
+        return new Board(board);
+    }
 
 
 }
