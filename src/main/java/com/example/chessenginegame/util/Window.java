@@ -8,6 +8,7 @@ import com.example.chessenginegame.service.MoveGeneratorImpl;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.*;
@@ -28,10 +29,14 @@ public class Window extends JPanel implements MouseListener {
     private static final int VERTICAL_SHIFT = 29;
     private static MoveGenerator moveGenerator;
     private Board board;
+    private List<Integer> highlights;
     private Piece selected;
     public Window(){
+        highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorImpl();
-        board = Board.createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        //board = Board.createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        HashMap<Integer, Piece> map = new HashMap<>();
+        board = Board.createFromFEN("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
         frame = new JFrame();
         frame.add(this);
         frame.addMouseListener(this);
@@ -46,6 +51,7 @@ public class Window extends JPanel implements MouseListener {
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         List<Move> moveList = moveGenerator.generateLegalMoves(board, Constants.WHITE);
+        moveList.addAll(moveGenerator.generateLegalMoves(board, Constants.BLACK));
         List<Integer> tilesToHighlight = new ArrayList<>();
         if(selected != null){
             for(Move move : moveList){
@@ -53,25 +59,31 @@ public class Window extends JPanel implements MouseListener {
                     tilesToHighlight.add(move.getEnd());
                 }
             }
-            System.out.println(tilesToHighlight);
+            System.out.println("Tiles to Highlight: "+ tilesToHighlight);
         }
         for(int x = 0; x < 8; x++){
             for(int y = 0; y < 8; y++){
-                int tileIndex = x + y;
-                if(tileIndex% 2 == 0){
+                int tileIndex = x + (y * 8);
+                if((x + y)% 2 == 0){
                     g.setColor(LIGHT_SQUARE_COLOR);
                 }
                 else{
                     g.setColor(DARK_SQUARE_COLOR);
                 }
+
                 if(tilesToHighlight.contains(tileIndex)){
                     g.setColor(Color.CYAN);
                 }
                 g.fillRect(x * UNIT_WIDTH, y * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
 
+                if(highlights.contains(tileIndex)){
+                    g.setColor(Color.GREEN);
+                    g.drawOval(x * UNIT_WIDTH + 5, y * UNIT_HEIGHT + 5, UNIT_WIDTH - 10, UNIT_HEIGHT - 10);
+                }
+
                 g.setColor(Color.BLACK);
                 g.setFont(SQUARE_NUMBER_FONT);
-                g.drawString(x + y * 8 + "", x * UNIT_WIDTH, y * UNIT_HEIGHT + 20);
+                g.drawString(tileIndex + "", x * UNIT_WIDTH, y * UNIT_HEIGHT + 20);
             }
         }
         for(int tile : board.getBoard().keySet()){
@@ -79,7 +91,6 @@ public class Window extends JPanel implements MouseListener {
             int x = tile % 8;
             drawPiece(g, board.getPieceAt(tile).get(), x, y);
         }
-        repaint();
     }
     public void drawPiece(Graphics g, Piece piece, int x, int y){
         g.setFont(PIECE_FONT);
@@ -118,7 +129,20 @@ public class Window extends JPanel implements MouseListener {
         int x = point.x - HORIZONTAL_SHIFT;
         int y = point.y - VERTICAL_SHIFT;
         int tileNumber = x/UNIT_WIDTH + 8 * (y/UNIT_HEIGHT);
-        selected = board.getPieceAt(tileNumber).orElse(null);
+        if(e.getButton() == MouseEvent.BUTTON1){
+            selected = board.getPieceAt(tileNumber).orElse(null);
+        }
+        else{
+            selected = null;
+            if(highlights.contains(tileNumber)){
+                highlights.remove(Integer.valueOf(tileNumber));
+            } else{
+                highlights.add(tileNumber);
+            }
+        }
+        repaint();
+
+
     }
 
     @Override

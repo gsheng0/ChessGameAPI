@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class MoveGeneratorImpl implements MoveGenerator {
     /**
@@ -56,11 +57,12 @@ public class MoveGeneratorImpl implements MoveGenerator {
         return Collections.emptyList();
     }
     public List<Move> generateKnightMoves(Piece piece, Board board){
-        return piece.getMoveShifts().stream().map(
-                moveShift -> moveShift + piece.getTile()).
+        return piece.getMoveShifts().stream().
+                map(moveShift -> moveShift + piece.getTile()).
                 filter(TileUtil::isInBoard).
-                filter(tile -> board.getPieceAt(tile).isEmpty()).
+                //filter(tile -> board.getPieceAt(tile).isEmpty()).
                 map(tile -> new Move(piece, tile)).toList();
+
     }
     public List<Move> generateBishopMoves(Piece piece, Board board){
         return Collections.emptyList();

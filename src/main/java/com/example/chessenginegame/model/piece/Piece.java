@@ -44,7 +44,7 @@ public abstract class Piece{
         } else if(c == 'q'){
             return pieceBuilder.black().queen().build();
         } else if(c == 'k'){
-            return pieceBuilder.black().queen().build();
+            return pieceBuilder.black().king().build();
         } else if(c == 'P'){
             return pieceBuilder.white().pawn().build();
         } else if(c == 'N'){
