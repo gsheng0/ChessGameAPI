@@ -2,10 +2,12 @@ package com.example.chessenginegame.service;
 
 import com.example.chessenginegame.model.*;
 import com.example.chessenginegame.model.piece.*;
+import com.example.chessenginegame.util.TileUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class MoveGeneratorImpl implements MoveGenerator {
     /**
@@ -82,7 +84,35 @@ public class MoveGeneratorImpl implements MoveGenerator {
      */
     public List<Piece> getPinnedPieces(Board board, String color){
         King king = board.getKing(color).orElseThrow(() -> new RuntimeException("No king found for side: " + color));
-
+        List<Integer> directions = Queen.moveShifts();
+        List<Piece> pinnedPieces = new ArrayList<>();
+        for(int direction : directions){
+            Piece prevEncountered = null;
+            int currentTile = king.getTile() + direction;
+            while(TileUtil.isInBoard(currentTile)){ //while the tile to check is still on the board
+                Optional<Piece> tile = board.getPieceAt(currentTile);
+                currentTile += direction;
+                if(tile.isEmpty()){
+                    continue;
+                }
+                Piece encountered = tile.get();
+                if(prevEncountered == null){ //first piece
+                    if (!encountered.getColor().equals(color)) { //color of first piece needs to match in order to be pinned
+                        continue;
+                    }
+                    prevEncountered = encountered;
+                } else { //second piece
+                    if(encountered instanceof King ||
+                        encountered instanceof Knight ||
+                        encountered instanceof Pawn){
+                        continue;
+                    }
+                    if(encountered.getMoveShifts().contains(direction)){
+                        pinnedPieces.add(encountered);
+                    }
+                }
+            }
+        }
         return Collections.emptyList();
     }
 }
