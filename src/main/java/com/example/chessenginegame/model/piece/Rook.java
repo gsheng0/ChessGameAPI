@@ -7,9 +7,9 @@ public class Rook extends Piece{
     public Rook(String color, int tile) {
         super(color, tile);
     }
-
     @Override
     public List<Integer> getMoveShifts() {
-        return Arrays.asList(-1, 1, 8, -8);
+        return Rook.moveShifts();
     }
+    public static List<Integer> moveShifts() { return Arrays.asList(-1, 1, 8, -8);}
 }

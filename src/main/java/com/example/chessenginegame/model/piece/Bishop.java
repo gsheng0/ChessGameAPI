@@ -9,9 +9,9 @@ public class Bishop extends Piece {
     public Bishop(String color, int tile) {
         super(color, tile);
     }
-
     @Override
     public List<Integer> getMoveShifts() {
-        return Arrays.asList(-7, 7, -9, 9);
+        return Bishop.moveShifts();
     }
+    public static List<Integer> moveShifts(){return Arrays.asList(-7, 7, -9, 9); }
 }

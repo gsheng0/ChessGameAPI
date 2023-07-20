@@ -82,6 +82,7 @@ public class MoveGeneratorImpl implements MoveGenerator {
      */
     public List<Piece> getPinnedPieces(Board board, String color){
         King king = board.getKing(color).orElseThrow(() -> new RuntimeException("No king found for side: " + color));
+
         return Collections.emptyList();
     }
 }
