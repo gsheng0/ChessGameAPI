@@ -53,17 +53,16 @@ public class MoveGeneratorImpl implements MoveGenerator {
         List<Move> moves = new ArrayList<>();
         int directionMultiplier = Pawn.getDirectionMultiplier(piece.getColor());
         int currentTile = piece.getTile();
-        Stream.of(7, 9).
-                map(shift -> shift * directionMultiplier + currentTile).
-                filter(tile -> {})
 
-        int leftCapture = 9 * directionMultiplier + currentTile;
-        int rightCapture = 7 * directionMultiplier + currentTile;
+        int leftCaptureDirection = 9 * directionMultiplier + currentTile;
+        int rightCaptureDirection = 7 * directionMultiplier + currentTile;
+        if(isDiagonalCaptureValid(piece, board, pin, leftCaptureDirection)){
+            moves.add(new Move(piece, leftCaptureDirection));
+        }
+        if(isDiagonalCaptureValid(piece, board, pin, rightCaptureDirection)){
+            moves.add(new Move(piece, rightCaptureDirection));
+        }
         int push = 8 * directionMultiplier + currentTile;
-
-
-
-
         return Collections.emptyList();
     }
     public List<Move> generateKnightMoves(Piece piece, Board board, Pin pin){
