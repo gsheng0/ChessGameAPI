@@ -50,7 +50,7 @@ public class MoveGeneratorImpl implements MoveGenerator {
     }
     public List<Move> generatePawnMoves(Piece piece, Board board){
         List<Move> moves = new ArrayList<>();
-
+        
 
 
         return Collections.emptyList();
@@ -72,22 +72,55 @@ public class MoveGeneratorImpl implements MoveGenerator {
 
     }
     public List<Move> generateBishopMoves(Piece piece, Board board){
-        return Collections.emptyList();
+        List<Move> moves = new ArrayList<>();
+        for(int direction : piece.getMoveShifts()){
+            moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
+        }
+        return moves;
     }
     public List<Move> generateRookMoves(Piece piece, Board board){
         List<Move> moves = new ArrayList<>();
         for(int direction : piece.getMoveShifts()){
-            int startingTile = piece.getTile();
-            int currentTile = startingTile + direction;
-
+            moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
         }
-        return Collections.emptyList();
+        return moves;
     }
     public List<Move> generateQueenMoves(Piece piece, Board board){
-        return Collections.emptyList();
+        List<Move> moves = new ArrayList<>();
+        for(int direction : piece.getMoveShifts()){
+            moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
+        }
+        return moves;
     }
     public List<Move> generateKingMoves(Piece piece, Board board){
         return Collections.emptyList();
+    }
+
+    /**
+     *
+     * @param piece The piece to be generated moves for
+     * @param board The current board state
+     * @param direction The direction to check
+     * @return A list of valid moves going in that direction
+     */
+    public List<Move> getMovesFromTileToEdgeOfBoard(Piece piece, Board board, int direction){
+        List<Move> moves = new ArrayList<>();
+        int currentTile = piece.getTile();
+        int numTiles = TileUtil.tilesToEdgeOfBoard(currentTile, direction);
+        for(int i = 0; i < numTiles; i++){
+            currentTile += direction;
+            Optional<Piece> optionalPiece = board.getPieceAt(currentTile);
+            if(optionalPiece.isEmpty()){
+                moves.add(new Move(piece, currentTile));
+            } else {
+                Piece occupant = optionalPiece.get();
+                if(!occupant.getColor().equals(piece.getColor())){
+                    moves.add(new Move(piece, currentTile));
+                }
+                break;
+            }
+        }
+        return moves;
     }
 
     /**

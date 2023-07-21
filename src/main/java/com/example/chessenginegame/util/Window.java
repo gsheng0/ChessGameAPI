@@ -35,7 +35,7 @@ public class Window extends JPanel implements MouseListener {
         highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorImpl();
         HashMap<Integer, Piece> map = new HashMap<>();
-        map.put(36, new Rook(Constants.WHITE, 36));
+        map.put(36, new Bishop(Constants.WHITE, 36));
         board = new Board(map);
         frame = new JFrame();
         frame.add(this);
