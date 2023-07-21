@@ -3,12 +3,14 @@ package com.example.chessenginegame.model;
 import com.example.chessenginegame.model.piece.Piece;
 
 public class Pin {
-    public final Piece pinned;
-    public final Piece pinning;
+    public final Piece pinnedPiece;
+    public final Piece pinningPiece;
+    public final int direction;
 
-    public Pin(Piece pinned, Piece pinning) {
-        this.pinned = pinned;
-        this.pinning = pinning;
+    public Pin(Piece pinnedPiece, Piece pinningPiece, int direction) {
+        this.pinnedPiece = pinnedPiece;
+        this.pinningPiece = pinningPiece;
+        this.direction = direction;
     }
 
 }

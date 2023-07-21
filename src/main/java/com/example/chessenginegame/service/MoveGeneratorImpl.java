@@ -31,6 +31,8 @@ public class MoveGeneratorImpl implements MoveGenerator {
      * @return A list of all the legal moves for the provided piece in the current board state
      */
     public List<Move> generateMovesFor(Piece piece, Board board, Pin pin){
+        int tile = piece.getTile();
+        String color = piece.getColor();
         if(piece instanceof Pawn){
             return generatePawnMoves(piece, board, pin);
         } else if(piece instanceof Knight){
@@ -136,7 +138,7 @@ public class MoveGeneratorImpl implements MoveGenerator {
         HashMap<Integer, Piece> pieceIdToPinningPiece = new HashMap<>();
         List<Pin> pins = getPins(board, color);
         for(Pin pin : pins){
-            pieceIdToPinningPiece.put(pin.pinned.getId(), pin.pinning);
+            pieceIdToPinningPiece.put(pin.pinnedPiece.getId(), pin.pinningPiece);
         }
         return pieceIdToPinningPiece;
     }
@@ -151,7 +153,7 @@ public class MoveGeneratorImpl implements MoveGenerator {
         HashMap<Integer, Pin> pieceIdToPinMap = new HashMap<>();
         List<Pin> pins = getPins(board, color);
         for(Pin pin : pins){
-            pieceIdToPinMap.put(pin.pinned.getId(), pin);
+            pieceIdToPinMap.put(pin.pinnedPiece.getId(), pin);
         }
         return pieceIdToPinMap;
     }
@@ -189,8 +191,8 @@ public class MoveGeneratorImpl implements MoveGenerator {
                         encountered instanceof Pawn){
                         continue;
                     }
-                    if(encountered.getMoveShifts().contains(direction)){
-                        pins.add(new Pin(prevEncountered, encountered));
+                    if(encountered.getMoveShifts().contains(-1 * direction)){
+                        pins.add(new Pin(prevEncountered, encountered, direction));
                     }
                 }
             }
