@@ -41,7 +41,7 @@ public class PositionUtil {
     /**
      *
      * @param index the piece to be chosen
-     * @returns a list of moves for the piece at the specified index
+     * @return a list of moves for the piece at the specified index
      * @throws IllegalArgumentException when the specified tile is empty
      */
     public ArrayList<Integer> getMoves(int index){

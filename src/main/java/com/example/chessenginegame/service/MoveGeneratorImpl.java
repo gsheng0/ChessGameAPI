@@ -94,7 +94,15 @@ public class MoveGeneratorImpl implements MoveGenerator {
         return moves;
     }
     public List<Move> generateKingMoves(Piece piece, Board board, Pin pin){
-        return Collections.emptyList();
+        return piece.getMoveShifts().stream().
+                map(moveShift -> moveShift + piece.getTile()).
+                filter(TileUtil::isInBoard).
+                filter(currentTile -> board.getPieceAt(currentTile).
+                        map(occupant ->
+                            !occupant.getColor().equals(piece.getColor())).
+                        orElse(true)).
+                filter(tile -> isTileProtectedByOppositeColor(tile, piece.getColor())).
+                map(tile -> new Move(piece, tile)).toList();
     }
 
     /**
@@ -188,5 +196,8 @@ public class MoveGeneratorImpl implements MoveGenerator {
             }
         }
         return pins;
+    }
+    public boolean isTileProtectedByOppositeColor(int tile, String color){
+        return false;
     }
 }
