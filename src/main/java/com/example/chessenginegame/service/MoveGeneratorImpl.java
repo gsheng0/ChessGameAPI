@@ -132,6 +132,13 @@ public class MoveGeneratorImpl implements MoveGenerator {
         }
         return pieceIdToPinningPiece;
     }
+
+    /**
+     *
+     * @param board Current board state
+     * @param color The color for whose pins to look for
+     * @return A map that maps pinned piece id to a pin object
+     */
     public HashMap<Integer, Pin> getPieceIdToPinMap(Board board, String color){
         HashMap<Integer, Pin> pieceIdToPinMap = new HashMap<>();
         List<Pin> pins = getPins(board, color);
