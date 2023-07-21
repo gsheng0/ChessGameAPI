@@ -12,5 +12,4 @@ public class Pin {
         this.pinningPiece = pinningPiece;
         this.direction = direction;
     }
-
 }

@@ -23,6 +23,16 @@ public class TileUtil {
     public static int tilesToEdgeOfBoard(int tile, int direction){
         return tilesToEdgeMapMap.get(direction).get(tile);
     }
+    public static boolean isOnRankForEnPassant(int tile, String color){
+        int rank = getRank(tile);
+        if(color.equals(Constants.WHITE)){
+            return rank == 3;
+        }
+        else if(color.equals(Constants.BLACK)){
+            return rank == 4;
+        }
+        throw new IllegalArgumentException(color + " is not a valid color");
+    }
 
     static{
         tilesToEdgeMapMap = new HashMap<>();

@@ -5,6 +5,7 @@ import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.util.TileUtil;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class MoveGeneratorImpl implements MoveGenerator {
     /**
@@ -50,6 +51,16 @@ public class MoveGeneratorImpl implements MoveGenerator {
     }
     public List<Move> generatePawnMoves(Piece piece, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
+        int directionMultiplier = Pawn.getDirectionMultiplier(piece.getColor());
+        int currentTile = piece.getTile();
+        Stream.of(7, 9).
+                map(shift -> shift * directionMultiplier + currentTile).
+                filter(tile -> {})
+
+        int leftCapture = 9 * directionMultiplier + currentTile;
+        int rightCapture = 7 * directionMultiplier + currentTile;
+        int push = 8 * directionMultiplier + currentTile;
+
 
 
 
@@ -198,6 +209,40 @@ public class MoveGeneratorImpl implements MoveGenerator {
             }
         }
         return pins;
+    }
+
+    /**
+     *
+     * @param piece The pawn being checked
+     * @param board The current board state
+     * @param pin The pin involving the current pawn, if exists
+     * @param direction The direction of the capture
+     * @return true of the capture is valid
+     */
+    public boolean isDiagonalCaptureValid(Piece piece, Board board, Pin pin, int direction){
+        int resultantTile = piece.getTile() + direction;
+        Optional<Piece> endTile = board.getPieceAt(piece.getTile() + direction);
+        if(pin != null && pin.direction != direction){//if pin exists and directions do not match, then pawn cannot move
+            return false;
+        }
+
+        if(endTile.isEmpty()){ //no piece on the resultant tile
+            Optional<Move> optionalMove = board.getPreviousMove();
+            if(optionalMove.isEmpty()){ //no previous move
+                return false;
+            }
+            if(!TileUtil.isOnRankForEnPassant(piece.getTile(), piece.getColor())){ //not on right rank for en passant
+                return false;
+            }
+            Move previousMove = optionalMove.get();
+            if(!(previousMove.getPiece() instanceof Pawn)){ //previous move was not a pawn move
+                return false;
+            }
+            //if the previous move involves a pawn ending up on the tile behind the resultant tile
+            return previousMove.getEnd() == resultantTile + (-8 * Pawn.getDirectionMultiplier(piece.getColor()));
+        }
+        Piece occupant = endTile.get();
+        return !occupant.getColor().equals(piece.getColor());
     }
     public boolean isTileProtectedByOppositeColor(int tile, String color){
         return false;

@@ -15,19 +15,13 @@ public class Knight extends Piece {
     @Override
     public List<Integer> getMoveShifts() {
         int file = TileUtil.getFile(this.getTile());
-        if(file == 0) {
-            return Arrays.asList(-15, -6, 10, 17);
-        } else if(file == 1){
-            return Arrays.asList(-17, -15, -6, 10, 15, 17);
-        } else if(file == 6){
-            return Arrays.asList(-17, -15, -10, 6, 15, 17);
-        } else if(file == 7){
-            return Arrays.asList(-17, -10, 6, 15);
-        }
-        return Arrays.asList(-17, -15, -10, -6, 6, 10, 15, 17);
+        return getMoveShiftsFromFile(file);
     }
     public static List<Integer> moveShifts(int tile) {
-        int file = TileUtil.getFile(tile);
+        return getMoveShiftsFromFile(TileUtil.getFile(tile));
+    }
+
+    private static List<Integer> getMoveShiftsFromFile(int file) {
         if(file == 0) {
             return Arrays.asList(-15, -6, 10, 17);
         } else if(file == 1){
@@ -38,11 +32,5 @@ public class Knight extends Piece {
             return Arrays.asList(-17, -10, 6, 15);
         }
         return Arrays.asList(-17, -15, -10, -6, 6, 10, 15, 17);
-    }
-    public static void main(String[] args){
-        Knight knight = new Knight(Constants.BLACK, 3);
-        for(int moveShift : knight.getMoveShifts()){
-            System.out.println(moveShift + " % 8 = " + (moveShift % 8));
-        }
     }
 }
