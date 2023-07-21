@@ -4,14 +4,10 @@ import com.example.chessenginegame.model.*;
 import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.util.TileUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MoveGeneratorImpl implements MoveGenerator {
     /**
-     *
      * @param board The current board state
      * @param color The side to generate moves for
      * @return A list of legal moves
@@ -20,42 +16,47 @@ public class MoveGeneratorImpl implements MoveGenerator {
     public List<Move> generateLegalMoves(Board board, String color){
         List<Move> moves = new ArrayList<>();
         List<Piece> pieces = board.getPieces(color);
+        //HashMap<Integer, Piece> pieceIdToPinningPieceMap = getPieceIdToPinningPieceMap(board, color);
+        HashMap<Integer, Pin> pieceIdToPinMap = getPieceIdToPinMap(board, color);
         for(Piece piece : pieces){
-            moves.addAll(generateMovesFor(piece, board));
+            moves.addAll(generateMovesFor(piece, board, pieceIdToPinMap.get(piece.getId())));
         }
         return moves;
     }
 
     /**
-     *
-     * @param piece The piece to generate moves for
-     * @param board The current board state
+     * @param piece   The piece to generate moves for
+     * @param board   The current board state
+     * @param pin     The pin involving the current piece, if exists
      * @return A list of all the legal moves for the provided piece in the current board state
      */
-    public List<Move> generateMovesFor(Piece piece, Board board){
+    public List<Move> generateMovesFor(Piece piece, Board board, Pin pin){
         if(piece instanceof Pawn){
-            return generatePawnMoves(piece, board);
+            return generatePawnMoves(piece, board, pin);
         } else if(piece instanceof Knight){
-            return generateKnightMoves(piece, board);
+            return generateKnightMoves(piece, board, pin);
         } else if(piece instanceof Bishop){
-            return generateBishopMoves(piece, board);
+            return generateBishopMoves(piece, board, pin);
         } else if(piece instanceof Rook){
-            return generateRookMoves(piece, board);
+            return generateRookMoves(piece, board, pin);
         } else if(piece instanceof Queen){
-            return generateQueenMoves(piece, board);
+            return generateQueenMoves(piece, board, pin);
         } else if(piece instanceof King){
-            return generateKingMoves(piece, board);
+            return generateKingMoves(piece, board, pin);
         }
         return Collections.emptyList();
     }
-    public List<Move> generatePawnMoves(Piece piece, Board board){
+    public List<Move> generatePawnMoves(Piece piece, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
-        
+
 
 
         return Collections.emptyList();
     }
-    public List<Move> generateKnightMoves(Piece piece, Board board){
+    public List<Move> generateKnightMoves(Piece piece, Board board, Pin pin){
+        if(pin != null){
+            return Collections.emptyList();
+        }
         return piece.getMoveShifts().stream().
                 map(moveShift -> moveShift + piece.getTile()).
                 filter(TileUtil::isInBoard).
@@ -71,28 +72,28 @@ public class MoveGeneratorImpl implements MoveGenerator {
                 map(tile -> new Move(piece, tile)).toList();
 
     }
-    public List<Move> generateBishopMoves(Piece piece, Board board){
+    public List<Move> generateBishopMoves(Piece piece, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
         for(int direction : piece.getMoveShifts()){
             moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
         }
         return moves;
     }
-    public List<Move> generateRookMoves(Piece piece, Board board){
+    public List<Move> generateRookMoves(Piece piece, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
         for(int direction : piece.getMoveShifts()){
             moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
         }
         return moves;
     }
-    public List<Move> generateQueenMoves(Piece piece, Board board){
+    public List<Move> generateQueenMoves(Piece piece, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
         for(int direction : piece.getMoveShifts()){
             moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
         }
         return moves;
     }
-    public List<Move> generateKingMoves(Piece piece, Board board){
+    public List<Move> generateKingMoves(Piece piece, Board board, Pin pin){
         return Collections.emptyList();
     }
 
@@ -123,18 +124,35 @@ public class MoveGeneratorImpl implements MoveGenerator {
         return moves;
     }
 
+    public HashMap<Integer, Piece> getPieceIdToPinningPieceMap(Board board, String color){
+        HashMap<Integer, Piece> pieceIdToPinningPiece = new HashMap<>();
+        List<Pin> pins = getPins(board, color);
+        for(Pin pin : pins){
+            pieceIdToPinningPiece.put(pin.pinned.getId(), pin.pinning);
+        }
+        return pieceIdToPinningPiece;
+    }
+    public HashMap<Integer, Pin> getPieceIdToPinMap(Board board, String color){
+        HashMap<Integer, Pin> pieceIdToPinMap = new HashMap<>();
+        List<Pin> pins = getPins(board, color);
+        for(Pin pin : pins){
+            pieceIdToPinMap.put(pin.pinned.getId(), pin);
+        }
+        return pieceIdToPinMap;
+    }
+
     /**
-     * This method finds a list of pinned pieces by first finding the tile of the king, and looking in the
+     * This method finds a list of pins by first finding the tile of the king, and looking in the
      * 8 directions, checking for bishops on the diagonals, rooks on the files and ranks, and queens on
      * both, returning only those with one piece in between them and the king
      * @param board The current board state
      * @param color The color the check for
-     * @return A list of pinned pieces of the provided color
+     * @return A list of pins that exist on the board
      */
-    public List<Piece> getPinnedPieces(Board board, String color){
+    public List<Pin> getPins(Board board, String color){
         King king = board.getKing(color).orElseThrow(() -> new RuntimeException("No king found for side: " + color));
         List<Integer> directions = Queen.moveShifts();
-        List<Piece> pinnedPieces = new ArrayList<>();
+        List<Pin> pins = new ArrayList<>();
         for(int direction : directions){
             Piece prevEncountered = null;
             int currentTile = king.getTile() + direction;
@@ -157,11 +175,11 @@ public class MoveGeneratorImpl implements MoveGenerator {
                         continue;
                     }
                     if(encountered.getMoveShifts().contains(direction)){
-                        pinnedPieces.add(encountered);
+                        pins.add(new Pin(prevEncountered, encountered));
                     }
                 }
             }
         }
-        return Collections.emptyList();
+        return pins;
     }
 }
