@@ -2,9 +2,12 @@ package com.example.chessenginegame.service;
 
 import com.example.chessenginegame.model.*;
 import com.example.chessenginegame.model.piece.*;
+import com.example.chessenginegame.util.Constants;
+import com.example.chessenginegame.util.PieceUtil;
 import com.example.chessenginegame.util.TileUtil;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class MoveGeneratorImpl implements MoveGenerator {
     /**
@@ -102,19 +105,36 @@ public class MoveGeneratorImpl implements MoveGenerator {
         } else if(piece.getMoveShifts().contains(pin.direction)) {
             moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, pin.direction));
         }
-
         return moves;
     }
-    public List<Move> generateKingMoves(Piece piece, Board board, Pin pin){
-        return piece.getMoveShifts().stream().
+    public List<Move> generateKingMoves(Piece piece, Board board, List<Move> allNonKingMoves){
+        List<Integer> possibleEndTiles = new ArrayList<>(piece.getMoveShifts().stream().
                 map(moveShift -> moveShift + piece.getTile()).
                 filter(TileUtil::isInBoard).
                 filter(currentTile -> board.getPieceAt(currentTile).
                         map(occupant ->
-                            !occupant.getColor().equals(piece.getColor())).
-                        orElse(true)).
-                filter(tile -> isTileProtectedByOppositeColor(tile, piece.getColor())).
-                map(tile -> new Move(piece, tile)).toList();
+                                !occupant.getColor().equals(piece.getColor())).
+                        orElse(true)).toList());
+
+        for(Move move : allNonKingMoves){
+            if(possibleEndTiles.contains(move.getEndTile())){
+                possibleEndTiles.remove(Integer.valueOf(move.getEndTile()));
+            }
+        }
+        Optional<King> optionalOtherKing = board.getKing(PieceUtil.getOppositeColor(piece.getColor()));
+        if(optionalOtherKing.isPresent()){
+            King otherKing = optionalOtherKing.get();
+            List<Integer> otherKingEndTiles = otherKing.getMoveShifts().stream().
+                    map(moveShifts -> moveShifts + otherKing.getTile()).toList();
+
+            for(int otherKingEndTile : otherKingEndTiles){
+                if(possibleEndTiles.contains(otherKingEndTile)){
+                    possibleEndTiles.remove(Integer.valueOf(otherKingEndTile));
+                }
+            }
+        }
+
+        return possibleEndTiles.stream().map(endTile -> new Move(piece, endTile)).toList();
     }
 
     /**
@@ -167,7 +187,11 @@ public class MoveGeneratorImpl implements MoveGenerator {
      * @return A list of pins that exist on the board
      */
     public List<Pin> getPins(Board board, String color){
-        King king = board.getKing(color).orElseThrow(() -> new RuntimeException("No king found for side: " + color));
+        Optional<King> optionalKing = board.getKing(color);
+        if(optionalKing.isEmpty()){
+            return Collections.emptyList();
+        }
+        King king = optionalKing.get();
         List<Integer> directions = Queen.moveShifts();
         List<Pin> pins = new ArrayList<>();
         for(int direction : directions){

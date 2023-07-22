@@ -80,5 +80,14 @@ public class PieceUtil {
         }
         throw new IllegalArgumentException("Invalid piece representation: " + piece);
     }
+    public static String getOppositeColor(String color){
+        if(color.equals(Constants.WHITE)){
+            return Constants.BLACK;
+        }
+        else if(color.equals(Constants.BLACK)){
+            return Constants.WHITE;
+        }
+        return "";
+    }
 
 }
