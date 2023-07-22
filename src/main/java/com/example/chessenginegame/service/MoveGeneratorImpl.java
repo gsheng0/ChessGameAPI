@@ -32,8 +32,6 @@ public class MoveGeneratorImpl implements MoveGenerator {
      * @return A list of all the legal moves for the provided piece in the current board state
      */
     public List<Move> generateMovesFor(Piece piece, Board board, Pin pin){
-        int tile = piece.getTile();
-        String color = piece.getColor();
         if(piece instanceof Pawn){
             return generatePawnMoves(piece, board, pin);
         } else if(piece instanceof Knight){
@@ -54,16 +52,25 @@ public class MoveGeneratorImpl implements MoveGenerator {
         int directionMultiplier = Pawn.getDirectionMultiplier(piece.getColor());
         int currentTile = piece.getTile();
 
-        int leftCaptureDirection = 9 * directionMultiplier + currentTile;
-        int rightCaptureDirection = 7 * directionMultiplier + currentTile;
+        int leftCaptureDirection = 9 * directionMultiplier;
+        int rightCaptureDirection = 7 * directionMultiplier;
+        int pushDirection = 8 * directionMultiplier;
         if(isDiagonalCaptureValid(piece, board, pin, leftCaptureDirection)){
-            moves.add(new Move(piece, leftCaptureDirection));
+            moves.add(new Move(piece, currentTile + leftCaptureDirection));
         }
         if(isDiagonalCaptureValid(piece, board, pin, rightCaptureDirection)){
-            moves.add(new Move(piece, rightCaptureDirection));
+            moves.add(new Move(piece, currentTile + rightCaptureDirection));
         }
-        int push = 8 * directionMultiplier + currentTile;
-        return Collections.emptyList();
+        if(pin == null || Math.abs(pin.direction) % 8 == 0){
+            int pushEndTile = currentTile + pushDirection;
+            if(board.getPieceAt(currentTile + pushDirection).isEmpty()){
+                moves.add(new Move(piece, currentTile + pushDirection));
+                if(board.getPieceAt(pushEndTile + pushDirection).isEmpty()){
+                    moves.add(new Move(piece, pushEndTile + pushDirection));
+                }
+            }
+        }
+        return moves;
     }
     public List<Move> generateKnightMoves(Piece piece, Board board, Pin pin){
         if(pin != null){
