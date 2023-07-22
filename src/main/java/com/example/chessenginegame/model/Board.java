@@ -19,10 +19,10 @@ public class Board {
         this.previousMove = previousMove;
     }
     public Optional<Board> apply(Move move){
-        if(!board.containsKey(move.getStart())){
+        if(!board.containsKey(move.getStartTile())){
             return Optional.empty();
         }
-        else if(board.get(move.getStart()).getId() == move.getPiece().getId()){
+        else if(board.get(move.getStartTile()).getId() == move.getPiece().getId()){
             return Optional.empty();
         }
         return Optional.empty();

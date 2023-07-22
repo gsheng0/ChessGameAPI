@@ -20,10 +20,10 @@ public class MoveValidatorImpl implements MoveValidator {
         if(!hasValidTiles(move) || !pieceExistsOnBoard(move, board) || !endTileIsAvailable(move, board)){
             return false;
         }
-        Piece piece = board.getPieceAt(move.getStart()).get();
+        Piece piece = board.getPieceAt(move.getStartTile()).get();
         if(piece instanceof King){
             //need to check for castling moves
-            if(tileIsProtectedByOtherColor(board, move.getEnd())){
+            if(tileIsProtectedByOtherColor(board, move.getEndTile())){
                 return false;
             }
             return true;
@@ -44,10 +44,10 @@ public class MoveValidatorImpl implements MoveValidator {
      * @return true if both the starting and end tiles are within the bounds of the board
      */
     public boolean hasValidTiles(Move move){
-        if(move.getStart() < 0 || move.getStart() > 63){
+        if(move.getStartTile() < 0 || move.getStartTile() > 63){
             return false;
         }
-        if(move.getEnd() < 0 || move.getEnd() > 63){
+        if(move.getEndTile() < 0 || move.getEndTile() > 63){
             return false;
         }
         return true;
@@ -60,7 +60,7 @@ public class MoveValidatorImpl implements MoveValidator {
      * @return true if the correct piece exists on the correct starting square
      */
     public boolean pieceExistsOnBoard(Move move, Board board){
-        Optional<Piece> startTile = board.getPieceAt(move.getStart());
+        Optional<Piece> startTile = board.getPieceAt(move.getStartTile());
         if(startTile.isEmpty()){
             return false;
         }
@@ -78,7 +78,7 @@ public class MoveValidatorImpl implements MoveValidator {
      * @return true if the tile does not contain a piece of the same color
      */
     public boolean endTileIsAvailable(Move move, Board board){
-        Optional<Piece> endTile = board.getPieceAt(move.getEnd());
+        Optional<Piece> endTile = board.getPieceAt(move.getEndTile());
         if(endTile.isEmpty()){
             return true;
         }
@@ -111,7 +111,7 @@ public class MoveValidatorImpl implements MoveValidator {
         if(piece instanceof Pawn || piece instanceof Knight || piece instanceof King){
             return false;
         }
-        int tileDifference = move.getStart() - move.getEnd();
+        int tileDifference = move.getStartTile() - move.getEndTile();
         int moveShift = -1;
         for(int shift : piece.getMoveShifts()){
             int numTiles = tileDifference / shift;

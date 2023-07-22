@@ -5,7 +5,6 @@ import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.util.TileUtil;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class MoveGeneratorImpl implements MoveGenerator {
     /**
@@ -17,11 +16,18 @@ public class MoveGeneratorImpl implements MoveGenerator {
     public List<Move> generateLegalMoves(Board board, String color){
         List<Move> moves = new ArrayList<>();
         List<Piece> pieces = board.getPieces(color);
-        //HashMap<Integer, Piece> pieceIdToPinningPieceMap = getPieceIdToPinningPieceMap(board, color);
         HashMap<Integer, Pin> pieceIdToPinMap = getPieceIdToPinMap(board, color);
+        List<King> kings = new ArrayList<>();
         for(Piece piece : pieces){
-            moves.addAll(generateMovesFor(piece, board, pieceIdToPinMap.get(piece.getId())));
+            if(!(piece instanceof King)) {
+                moves.addAll(generateMovesFor(piece, board, pieceIdToPinMap.get(piece.getId())));
+            } else{
+                kings.add((King)piece);
+            }
         }
+
+
+
         return moves;
     }
 
@@ -33,40 +39,36 @@ public class MoveGeneratorImpl implements MoveGenerator {
      */
     public List<Move> generateMovesFor(Piece piece, Board board, Pin pin){
         if(piece instanceof Pawn){
-            return generatePawnMoves(piece, board, pin);
+            return generatePawnMoves((Pawn)piece, board, pin);
         } else if(piece instanceof Knight){
             return generateKnightMoves(piece, board, pin);
-        } else if(piece instanceof Bishop){
-            return generateBishopMoves(piece, board, pin);
-        } else if(piece instanceof Rook){
-            return generateRookMoves(piece, board, pin);
-        } else if(piece instanceof Queen){
-            return generateQueenMoves(piece, board, pin);
-        } else if(piece instanceof King){
-            return generateKingMoves(piece, board, pin);
+        } else if(piece instanceof Bishop ||
+                  piece instanceof Rook ||
+                  piece instanceof Queen){
+            return generateSlidingPieceMoves(piece, board, pin);
         }
         return Collections.emptyList();
     }
-    public List<Move> generatePawnMoves(Piece piece, Board board, Pin pin){
+    public List<Move> generatePawnMoves(Pawn pawn, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
-        int directionMultiplier = Pawn.getDirectionMultiplier(piece.getColor());
-        int currentTile = piece.getTile();
+        int directionMultiplier = Pawn.getDirectionMultiplier(pawn.getColor());
+        int currentTile = pawn.getTile();
 
         int leftCaptureDirection = 9 * directionMultiplier;
         int rightCaptureDirection = 7 * directionMultiplier;
         int pushDirection = 8 * directionMultiplier;
-        if(isDiagonalCaptureValid(piece, board, pin, leftCaptureDirection)){
-            moves.add(new Move(piece, currentTile + leftCaptureDirection));
+        if(isDiagonalCaptureValid(pawn, board, pin, leftCaptureDirection)){
+            moves.add(new PawnMove(pawn, currentTile + leftCaptureDirection, true));
         }
-        if(isDiagonalCaptureValid(piece, board, pin, rightCaptureDirection)){
-            moves.add(new Move(piece, currentTile + rightCaptureDirection));
+        if(isDiagonalCaptureValid(pawn, board, pin, rightCaptureDirection)){
+            moves.add(new PawnMove(pawn, currentTile + rightCaptureDirection, true));
         }
         if(pin == null || Math.abs(pin.direction) % 8 == 0){
             int pushEndTile = currentTile + pushDirection;
             if(board.getPieceAt(currentTile + pushDirection).isEmpty()){
-                moves.add(new Move(piece, currentTile + pushDirection));
-                if(!piece.hasMoved() && board.getPieceAt(pushEndTile + pushDirection).isEmpty()){
-                    moves.add(new Move(piece, pushEndTile + pushDirection));
+                moves.add(new PawnMove(pawn, currentTile + pushDirection, false));
+                if(!pawn.hasMoved() && board.getPieceAt(pushEndTile + pushDirection).isEmpty()){
+                    moves.add(new PawnMove(pawn, pushEndTile + pushDirection, false));
                 }
             }
         }
@@ -91,25 +93,16 @@ public class MoveGeneratorImpl implements MoveGenerator {
                 map(tile -> new Move(piece, tile)).toList();
 
     }
-    public List<Move> generateBishopMoves(Piece piece, Board board, Pin pin){
+    public List<Move> generateSlidingPieceMoves(Piece piece, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
-        for(int direction : piece.getMoveShifts()){
-            moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
+        if(pin == null){
+            for(int direction : piece.getMoveShifts()){
+                moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
+            }
+        } else if(piece.getMoveShifts().contains(pin.direction)) {
+            moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, pin.direction));
         }
-        return moves;
-    }
-    public List<Move> generateRookMoves(Piece piece, Board board, Pin pin){
-        List<Move> moves = new ArrayList<>();
-        for(int direction : piece.getMoveShifts()){
-            moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
-        }
-        return moves;
-    }
-    public List<Move> generateQueenMoves(Piece piece, Board board, Pin pin){
-        List<Move> moves = new ArrayList<>();
-        for(int direction : piece.getMoveShifts()){
-            moves.addAll(getMovesFromTileToEdgeOfBoard(piece, board, direction));
-        }
+
         return moves;
     }
     public List<Move> generateKingMoves(Piece piece, Board board, Pin pin){
@@ -150,16 +143,6 @@ public class MoveGeneratorImpl implements MoveGenerator {
         }
         return moves;
     }
-
-    public HashMap<Integer, Piece> getPieceIdToPinningPieceMap(Board board, String color){
-        HashMap<Integer, Piece> pieceIdToPinningPiece = new HashMap<>();
-        List<Pin> pins = getPins(board, color);
-        for(Pin pin : pins){
-            pieceIdToPinningPiece.put(pin.pinnedPiece.getId(), pin.pinningPiece);
-        }
-        return pieceIdToPinningPiece;
-    }
-
     /**
      *
      * @param board Current board state
@@ -245,11 +228,18 @@ public class MoveGeneratorImpl implements MoveGenerator {
                 return false;
             }
             //if the previous move involves a pawn ending up on the tile behind the resultant tile
-            return previousMove.getEnd() == resultantTile + (-8 * Pawn.getDirectionMultiplier(piece.getColor()));
+            return previousMove.getEndTile() == resultantTile + (-8 * Pawn.getDirectionMultiplier(piece.getColor()));
         }
         Piece occupant = endTile.get();
         return !occupant.getColor().equals(piece.getColor());
     }
+
+    /**
+     *
+     * @param tile The tile to be checked
+     * @param color The color who's king you are checking for
+     * @return true if the tile is protected, and thus, that color king cannot move there
+     */
     public boolean isTileProtectedByOppositeColor(int tile, String color){
         return false;
     }
