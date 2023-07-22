@@ -7,7 +7,7 @@ import com.example.chessenginegame.util.TileUtil;
 
 import java.util.*;
 
-public class MoveGeneratorImpl implements MoveGenerator {
+public class MoveGeneratorServiceImpl implements MoveGeneratorService {
     /**
      * @param board The current board state
      * @param color The side to generate moves for

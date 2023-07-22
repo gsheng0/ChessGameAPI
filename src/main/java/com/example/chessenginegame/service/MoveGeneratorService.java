@@ -5,6 +5,6 @@ import com.example.chessenginegame.model.Move;
 
 import java.util.List;
 
-public interface MoveGenerator {
+public interface MoveGeneratorService {
     List<Move> generateLegalMoves(Board board, String color);
 }

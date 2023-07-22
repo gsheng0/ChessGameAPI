@@ -3,8 +3,8 @@ package com.example.chessenginegame.util;
 import com.example.chessenginegame.model.Board;
 import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.model.piece.*;
-import com.example.chessenginegame.service.MoveGenerator;
-import com.example.chessenginegame.service.MoveGeneratorImpl;
+import com.example.chessenginegame.service.MoveGeneratorService;
+import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,13 +27,13 @@ public class Window extends JPanel implements MouseListener {
     private static final int UNIT_WIDTH = WINDOW_WIDTH/8;
     private static final int HORIZONTAL_SHIFT = 1;
     private static final int VERTICAL_SHIFT = 29;
-    private static MoveGenerator moveGenerator;
+    private static MoveGeneratorService moveGenerator;
     private Board board;
     private List<Integer> highlights;
     private Piece selected;
     public Window(){
         highlights = new ArrayList<>();
-        moveGenerator = new MoveGeneratorImpl();
+        moveGenerator = new MoveGeneratorServiceImpl();
         HashMap<Integer, Piece> map = new HashMap<>();
         map.put(36, new Bishop(Constants.WHITE, 36));
         map.put(0, new King(Constants.BLACK, 0));
