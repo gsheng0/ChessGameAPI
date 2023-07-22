@@ -1,5 +1,6 @@
 package com.example.chessenginegame.model.piece;
 
+import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.util.Constants;
 
 import java.util.List;
@@ -21,6 +22,12 @@ public abstract class Piece{
     public String getColor() { return color; }
     public int getId() { return id; }
     public boolean hasMoved() { return hasMoved; }
+    public void apply(Move move){
+        if(move.getStartTile() != tile){
+            throw new IllegalArgumentException("Move not applicable to piece: not on right start tile");
+        }
+        this.tile = move.getEndTile();
+    }
     public abstract List<Integer> getMoveShifts();
 
     /**

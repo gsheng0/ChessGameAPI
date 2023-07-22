@@ -18,14 +18,19 @@ public class Board {
         this.board = board;
         this.previousMove = previousMove;
     }
-    public Optional<Board> apply(Move move){
+
+    /**
+     *
+     * @param move The move to be applied to the board
+     * @return a copy of the board, with the move appplied
+     */
+    public Board apply(Move move){
         if(!board.containsKey(move.getStartTile())){
-            return Optional.empty();
+            throw new IllegalArgumentException("Move not applicable to board: missing piece on start tile");
         }
-        else if(board.get(move.getStartTile()).getId() == move.getPiece().getId()){
-            return Optional.empty();
-        }
-        return Optional.empty();
+        //TODO: refactor piece to not contain the tile it is on
+        //TODO: create copy board method
+        return this;
     }
     public Optional<Piece> getPieceAt(int tile){
         if(!board.containsKey(tile)){

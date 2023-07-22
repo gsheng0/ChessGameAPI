@@ -48,10 +48,34 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
         return Collections.emptyList();
     }
-    public List<Move> generatePawnMoves(Pawn pawn, Board board, Pin pin){
+    public List<Move> generatePawnMoves(Pawn pawn, Board board, Pin pin){ //copied
         List<Move> moves = new ArrayList<>();
         int directionMultiplier = Pawn.getDirectionMultiplier(pawn.getColor());
         int currentTile = pawn.getTile();
+
+        int leftCaptureDirection = 9 * directionMultiplier;
+        int rightCaptureDirection = 7 * directionMultiplier;
+        int pushDirection = 8 * directionMultiplier;
+        if(isDiagonalCaptureValid(pawn, board, pin, leftCaptureDirection)){
+            moves.add(new PawnMove(pawn, currentTile + leftCaptureDirection, true));
+        }
+        if(isDiagonalCaptureValid(pawn, board, pin, rightCaptureDirection)){
+            moves.add(new PawnMove(pawn, currentTile + rightCaptureDirection, true));
+        }
+        if(pin == null || Math.abs(pin.direction) % 8 == 0){
+            int pushEndTile = currentTile + pushDirection;
+            if(board.getPieceAt(currentTile + pushDirection).isEmpty()){
+                moves.add(new PawnMove(pawn, currentTile + pushDirection, false));
+                if(!pawn.hasMoved() && board.getPieceAt(pushEndTile + pushDirection).isEmpty()){
+                    moves.add(new PawnMove(pawn, pushEndTile + pushDirection, false));
+                }
+            }
+        }
+        return moves;
+    }
+    public List<Move> generatePawnMoves(Pawn pawn, int currentTile, Board board, Pin pin){
+        List<Move> moves = new ArrayList<>();
+        int directionMultiplier = Pawn.getDirectionMultiplier(pawn.getColor());
 
         int leftCaptureDirection = 9 * directionMultiplier;
         int rightCaptureDirection = 7 * directionMultiplier;
@@ -159,6 +183,24 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
         return moves;
     }
+    public List<Move> getMovesFromTileToEdgeOfBoard(Piece piece, int currentTile, Board board, int direction){
+        List<Move> moves = new ArrayList<>();
+        int numTiles = TileUtil.tilesToEdgeOfBoard(currentTile, direction);
+        for(int i = 0; i < numTiles; i++){
+            currentTile += direction;
+            Optional<Piece> optionalPiece = board.getPieceAt(currentTile);
+            if(optionalPiece.isEmpty()){
+                moves.add(new Move(piece, currentTile));
+            } else {
+                Piece occupant = optionalPiece.get();
+                if(!occupant.getColor().equals(piece.getColor())){
+                    moves.add(new Move(piece, currentTile));
+                }
+                break;
+            }
+        }
+        return moves;
+    }
     /**
      *
      * @param board Current board state
@@ -182,7 +224,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @param color The color the check for
      * @return A list of pins that exist on the board
      */
-    public List<Pin> getPins(Board board, String color){
+    public List<Pin> getPins(Board board, String color){ //TODO: Refactor board.getKing(color) to return the tile that the king is on
         Optional<King> optionalKing = board.getKing(color);
         if(optionalKing.isEmpty()){
             return Collections.emptyList();
