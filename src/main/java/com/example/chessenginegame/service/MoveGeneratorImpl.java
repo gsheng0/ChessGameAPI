@@ -65,7 +65,7 @@ public class MoveGeneratorImpl implements MoveGenerator {
             int pushEndTile = currentTile + pushDirection;
             if(board.getPieceAt(currentTile + pushDirection).isEmpty()){
                 moves.add(new Move(piece, currentTile + pushDirection));
-                if(board.getPieceAt(pushEndTile + pushDirection).isEmpty()){
+                if(!piece.hasMoved() && board.getPieceAt(pushEndTile + pushDirection).isEmpty()){
                     moves.add(new Move(piece, pushEndTile + pushDirection));
                 }
             }
