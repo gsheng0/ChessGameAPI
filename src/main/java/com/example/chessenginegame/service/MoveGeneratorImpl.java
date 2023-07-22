@@ -2,12 +2,10 @@ package com.example.chessenginegame.service;
 
 import com.example.chessenginegame.model.*;
 import com.example.chessenginegame.model.piece.*;
-import com.example.chessenginegame.util.Constants;
 import com.example.chessenginegame.util.PieceUtil;
 import com.example.chessenginegame.util.TileUtil;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public class MoveGeneratorImpl implements MoveGenerator {
     /**
@@ -28,9 +26,7 @@ public class MoveGeneratorImpl implements MoveGenerator {
                 kings.add((King)piece);
             }
         }
-
-
-
+        kings.forEach(king -> moves.addAll(generateKingMoves(king, board, moves)));
         return moves;
     }
 
@@ -256,15 +252,5 @@ public class MoveGeneratorImpl implements MoveGenerator {
         }
         Piece occupant = endTile.get();
         return !occupant.getColor().equals(piece.getColor());
-    }
-
-    /**
-     *
-     * @param tile The tile to be checked
-     * @param color The color who's king you are checking for
-     * @return true if the tile is protected, and thus, that color king cannot move there
-     */
-    public boolean isTileProtectedByOppositeColor(int tile, String color){
-        return false;
     }
 }
