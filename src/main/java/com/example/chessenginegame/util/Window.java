@@ -31,16 +31,13 @@ public class Window extends JPanel implements MouseListener {
     private Board board;
     private List<Integer> highlights;
     private Piece selected;
+    private List<Board> game;
+    private int moveNumber = 0;
     public Window(){
         highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorServiceImpl();
-        HashMap<Integer, Piece> map = new HashMap<>();
-        map.put(36, new Bishop(Constants.WHITE));
-        map.put(1, new King(Constants.BLACK));
-        map.put(9, new Bishop(Constants.BLACK));
-        map.put(16, new Pawn(Constants.WHITE));
-        map.put(63, new King(Constants.WHITE));
-        board = new Board(map);
+        game = generateRandomGame(100);
+        //board = new Board(map);
         frame = new JFrame();
         frame.add(this);
         frame.addMouseListener(this);
@@ -48,21 +45,24 @@ public class Window extends JPanel implements MouseListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
+    public List<Board> generateRandomGame(int moves){
+        List<Board> game = new ArrayList<>();
+        Board board = Board.startingPosition();
+        game.add(board);
+        for(int i = 0; i < moves; i++){
+            String color = i % 2 == 0 ? Constants.WHITE : Constants.BLACK;
+            List<Move> legalMoves = moveGenerator.generateLegalMoves(board, color);
+            int rand = (int)(Math.random() * legalMoves.size());
+            board = board.apply(legalMoves.get(rand));
+            game.add(board);
+        }
+        return game;
+    }
     @Override
     public void paintComponent(Graphics g){
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        List<Move> moveList = moveGenerator.generateLegalMoves(board, Constants.WHITE);
-        moveList.addAll(moveGenerator.generateLegalMoves(board, Constants.BLACK));
-        List<Integer> tilesToHighlight = new ArrayList<>();
-        if(selected != null){
-            for(Move move : moveList){
-                if(move.getPiece().getId() == selected.getId()){
-                    tilesToHighlight.add(move.getEndTile());
-                }
-            }
-            System.out.println("Tiles to Highlight: "+ tilesToHighlight);
-        }
+
         for(int x = 0; x < 8; x++){
             for(int y = 0; y < 8; y++){
                 int tileIndex = x + (y * 8);
@@ -71,10 +71,6 @@ public class Window extends JPanel implements MouseListener {
                 }
                 else{
                     g.setColor(DARK_SQUARE_COLOR);
-                }
-
-                if(tilesToHighlight.contains(tileIndex)){
-                    g.setColor(Color.CYAN);
                 }
                 g.fillRect(x * UNIT_WIDTH, y * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
 
@@ -89,6 +85,7 @@ public class Window extends JPanel implements MouseListener {
 
             }
         }
+        Board board = game.get(moveNumber);
         for(int tile : board.getBoard().keySet()){
             int y = tile/8;
             int x = tile % 8;
@@ -131,21 +128,22 @@ public class Window extends JPanel implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        Point point = e.getPoint();
-        int x = point.x - HORIZONTAL_SHIFT;
-        int y = point.y - VERTICAL_SHIFT;
-        int tileNumber = x/UNIT_WIDTH + 8 * (y/UNIT_HEIGHT);
-        if(e.getButton() == MouseEvent.BUTTON1){
-            selected = board.getPieceAt(tileNumber).orElse(null);
-        }
-        else{
-            selected = null;
-            if(highlights.contains(tileNumber)){
-                highlights.remove(Integer.valueOf(tileNumber));
-            } else{
-                highlights.add(tileNumber);
-            }
-        }
+//        Point point = e.getPoint();
+//        int x = point.x - HORIZONTAL_SHIFT;
+//        int y = point.y - VERTICAL_SHIFT;
+//        int tileNumber = x/UNIT_WIDTH + 8 * (y/UNIT_HEIGHT);
+//        if(e.getButton() == MouseEvent.BUTTON1){
+//            selected = board.getPieceAt(tileNumber).orElse(null);
+//        }
+//        else{
+//            selected = null;
+//            if(highlights.contains(tileNumber)){
+//                highlights.remove(Integer.valueOf(tileNumber));
+//            } else{
+//                highlights.add(tileNumber);
+//            }
+//        }
+        moveNumber++;
         repaint();
 
 
