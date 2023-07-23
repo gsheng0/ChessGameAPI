@@ -30,24 +30,34 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @return A list of legal moves
      */
     //TODO: The moves parameter for generating king moves should be a list of non king moves of the opposing side, not the same side
+    //TODO: Look into attack/defend maps
     @Override
     public List<Move> generateLegalMoves(Board board, String color){
         List<Move> moves = new ArrayList<>();
+        List<Move> opposingMoves = new ArrayList<>();
         List<Integer> pieceTiles = board.getPieceTiles(color);
         HashMap<Integer, Pin> pieceIdToPinMap = getPieceIdToPinMap(board, color);
-        HashMap<Integer, King> tileToKingMap = new HashMap<>();
+        King king = null;
+        int kingTile = -1;
         for(int tile : pieceTiles){
             Piece piece = board.getPieceAt(tile).orElseThrow(() -> new RuntimeException("Piece does not exist on tile " + tile));
             if(!(piece instanceof King)){
-                moves.addAll(generateMovesFor(piece, tile, board, pieceIdToPinMap.get(piece.getId())));
-            } else{
-                tileToKingMap.put(tile, (King)piece);
+                if(piece.getColor().equals(color)) {
+                    moves.addAll(generateMovesFor(piece, tile, board, pieceIdToPinMap.get(piece.getId())));
+                }
+                else{
+                    opposingMoves.addAll(generateMovesFor(piece, tile, board, null));
+                }
+            } else if(piece.getColor().equals(color)){
+                king = (King)piece;
+                kingTile = tile;
             }
         }
-        for(int kingTile : tileToKingMap.keySet()){
-            King king = tileToKingMap.get(kingTile);
-            moves.addAll(generateKingMoves(king, kingTile, board, moves));
+        if(king != null){
+            moves.addAll(generateKingMoves(king, kingTile, board, opposingMoves));
         }
+
+
         return moves;
     }
 
