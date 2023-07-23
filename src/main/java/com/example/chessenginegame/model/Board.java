@@ -29,9 +29,13 @@ public class Board {
         if(!board.containsKey(move.getStartTile())){
             throw new IllegalArgumentException("Move not applicable to board: missing piece on start tile");
         }
-        //TODO: refactor piece to not contain the tile it is on
-        //TODO: create copy board method
-        return this;
+        if(board.get(move.getStartTile()).getId() != move.getPiece().getId()){
+            throw new IllegalArgumentException("Move not applicable to board: wrong piece on start tile");
+        }
+        HashMap<Integer, Piece> newBoard = copyBoard(board);
+        Piece piece = newBoard.remove(move.getStartTile());
+        newBoard.put(move.getEndTile(), piece);
+        return new Board(newBoard, move);
     }
     public Optional<Piece> getPieceAt(int tile){
         if(!board.containsKey(tile)){
@@ -85,6 +89,12 @@ public class Board {
         }
         return new Board(board);
     }
-
+    private static HashMap<Integer, Piece> copyBoard(HashMap<Integer, Piece> board){
+        HashMap<Integer, Piece> copy = new HashMap<>();
+        for(int tile : board.keySet()){
+            copy.put(tile, board.get(tile));
+        }
+        return copy;
+    }
 
 }
