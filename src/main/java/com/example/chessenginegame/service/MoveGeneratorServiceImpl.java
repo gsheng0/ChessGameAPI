@@ -29,6 +29,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @param color The side to generate moves for
      * @return A list of legal moves
      */
+    //TODO: The moves parameter for generating king moves should be a list of non king moves of the opposing side, not the same side
     @Override
     public List<Move> generateLegalMoves(Board board, String color){
         List<Move> moves = new ArrayList<>();
@@ -135,6 +136,15 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         return moves;
     }
     //TODO: Filter out edge of board moves
+
+    /**
+     *
+     * @param piece The king to be generating moves for
+     * @param currentTile The tile that the king is on
+     * @param board The current board state
+     * @param allNonKingMoves
+     * @return
+     */
     public List<Move> generateKingMoves(Piece piece, int currentTile, Board board, List<Move> allNonKingMoves){
         List<Integer> possibleEndTiles = new ArrayList<>(piece.getMoveShifts().stream().
                 map(moveShift -> moveShift + currentTile).
