@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Rook extends Piece{
-    public Rook(String color, int tile) {
-        super(color, tile);
+    public Rook(String color) {
+        super(color);
     }
     @Override
     public List<Integer> getMoveShifts() {

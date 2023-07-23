@@ -4,8 +4,8 @@ import com.example.chessenginegame.model.piece.Pawn;
 
 public class PawnMove extends Move{
     private boolean isCapture;
-    public PawnMove(Pawn pawn, int endTile, boolean isCapture){
-        super(pawn, endTile);
+    public PawnMove(Pawn pawn, int startTile, int endTile, boolean isCapture){
+        super(pawn, startTile, endTile);
         this.isCapture = isCapture;
     }
     public boolean isCapture(){

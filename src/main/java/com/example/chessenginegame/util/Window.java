@@ -35,11 +35,11 @@ public class Window extends JPanel implements MouseListener {
         highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorServiceImpl();
         HashMap<Integer, Piece> map = new HashMap<>();
-        map.put(36, new Bishop(Constants.WHITE, 36));
-        map.put(0, new King(Constants.BLACK, 0));
-        map.put(9, new Bishop(Constants.BLACK, 9));
-        map.put(16, new Pawn(Constants.WHITE, 16));
-        map.put(63, new King(Constants.WHITE, 63));
+        map.put(36, new Bishop(Constants.WHITE));
+        map.put(1, new King(Constants.BLACK));
+        map.put(9, new Bishop(Constants.BLACK));
+        map.put(16, new Pawn(Constants.WHITE));
+        map.put(63, new King(Constants.WHITE));
         board = new Board(map);
         frame = new JFrame();
         frame.add(this);

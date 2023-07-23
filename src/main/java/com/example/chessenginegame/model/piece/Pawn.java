@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Pawn extends Piece{
-    public Pawn(String color, int tile) {
-        super(color, tile);
+    public Pawn(String color) {
+        super(color);
     }
 
     @Override

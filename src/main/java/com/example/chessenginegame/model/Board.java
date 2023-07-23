@@ -3,6 +3,7 @@ package com.example.chessenginegame.model;
 import com.example.chessenginegame.model.piece.King;
 import com.example.chessenginegame.model.piece.Piece;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -38,18 +39,17 @@ public class Board {
         }
         return Optional.of(board.get(tile));
     }
-    public List<Piece> getPieces(String color){
-        return board.values().stream().
-                filter(piece -> piece.getColor().equals(color)).
-                toList();
+    public List<Integer> getPieceTiles(String color){
+        return board.keySet().stream().filter(tile -> board.get(tile).getColor().equals(color)).toList();
     }
-    public Optional<King> getKing(String color){
-        for(Piece piece : board.values()){
+    public Optional<Integer> getTileOfKing(String color){
+        for(int tile : board.keySet()){
+            Piece piece = board.get(tile);
             if(!(piece instanceof King)){
                 continue;
             }
             if(piece.getColor().equals(color)){
-                return Optional.of((King)piece);
+                return Optional.of(tile);
             }
         }
         return Optional.empty();
@@ -79,7 +79,7 @@ public class Board {
                 index += num;
             }
             else{
-                board.put(index, Piece.buildFromCharacter(current, index));
+                board.put(index, Piece.buildFromCharacter(current));
                 index++;
             }
         }

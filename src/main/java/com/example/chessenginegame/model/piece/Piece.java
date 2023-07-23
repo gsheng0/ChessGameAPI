@@ -7,39 +7,28 @@ import java.util.List;
 
 public abstract class Piece{
     private static int counter = 0;
-    private int tile;
     private String color;
     private int id;
     private boolean hasMoved = false;
-    public Piece(String color, int tile){
+    public Piece(String color){
         this.color = color;
-        this.tile = tile;
         this.id = counter;
         counter++;
     }
     private Piece(){}
-    public int getTile() { return tile;}
     public String getColor() { return color; }
     public int getId() { return id; }
     public boolean hasMoved() { return hasMoved; }
-    public void apply(Move move){
-        if(move.getStartTile() != tile){
-            throw new IllegalArgumentException("Move not applicable to piece: not on right start tile");
-        }
-        this.tile = move.getEndTile();
-    }
     public abstract List<Integer> getMoveShifts();
 
     /**
      *
      * @param c character representation of a piece
-     * @param tile the tile of the piece to be built
      * @return a piece object
      * @throws IllegalArgumentException if character is not a valid piece
      */
-    public static Piece buildFromCharacter(char c, int tile){
+    public static Piece buildFromCharacter(char c){
         PieceBuilder pieceBuilder = new PieceBuilder();
-        pieceBuilder.on(tile);
         if(c == 'p'){
             return pieceBuilder.black().pawn().build();
         } else if(c == 'n'){
@@ -69,7 +58,6 @@ public abstract class Piece{
     }
     public static class PieceBuilder{
         private String color;
-        private int tile;
         private Class<? extends Piece> pieceType;
         public PieceBuilder black(){
             this.color = Constants.BLACK;
@@ -103,24 +91,20 @@ public abstract class Piece{
             pieceType = King.class;
             return this;
         }
-        public PieceBuilder on(int tile){
-            this.tile = tile;
-            return this;
-        }
         public Piece build(){
             Piece piece;
             if (pieceType.equals(Pawn.class)) {
-                piece = new Pawn(color, tile);
+                piece = new Pawn(color);
             } else if (pieceType.equals(Knight.class)) {
-                piece = new Knight(color, tile);
+                piece = new Knight(color);
             } else if (pieceType.equals(Bishop.class)) {
-                piece = new Bishop(color, tile);
+                piece = new Bishop(color);
             } else if (pieceType.equals(Rook.class)) {
-                piece = new Rook(color, tile);
+                piece = new Rook(color);
             } else if (pieceType.equals(Queen.class)) {
-                piece = new Queen(color, tile);
+                piece = new Queen(color);
             } else if (pieceType.equals(King.class)) {
-                piece = new King(color, tile);
+                piece = new King(color);
             } else {
                 throw new IllegalArgumentException("Really not sure how you got this error");
             }

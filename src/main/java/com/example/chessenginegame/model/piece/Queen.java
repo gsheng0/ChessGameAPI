@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Queen extends Piece{
-    public Queen(String color, int tile) {
-        super(color, tile);
+    public Queen(String color) {
+        super(color);
     }
     @Override
     public List<Integer> getMoveShifts() {

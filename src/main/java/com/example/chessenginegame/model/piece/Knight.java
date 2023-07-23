@@ -8,14 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Knight extends Piece {
-    public Knight(String color, int tile) {
-        super(color, tile);
+    public Knight(String color) {
+        super(color);
     }
 
     @Override
     public List<Integer> getMoveShifts() {
-        int file = TileUtil.getFile(this.getTile());
-        return getMoveShiftsFromFile(file);
+        return Arrays.asList(-17, -15, -10, -6, 6, 10, 15, 17);
     }
     public static List<Integer> moveShifts(int tile) {
         return getMoveShiftsFromFile(TileUtil.getFile(tile));
