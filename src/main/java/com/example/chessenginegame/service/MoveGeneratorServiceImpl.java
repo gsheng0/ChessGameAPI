@@ -6,8 +6,23 @@ import com.example.chessenginegame.util.PieceUtil;
 import com.example.chessenginegame.util.TileUtil;
 
 import java.util.*;
-import java.util.function.Supplier;
 
+//TODO: Check for checks
+/*
+Ways to get out of check:
+1. Move king to unprotected square
+2. Capture opposing piece
+3. Block check with your own piece
+
+If double check:
+1. Move king to unprotected square
+
+ */
+enum Check{
+    NONE,
+    SINGLE,
+    DOUBLE
+}
 public class MoveGeneratorServiceImpl implements MoveGeneratorService {
     /**
      * @param board The current board state
@@ -54,6 +69,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
         return Collections.emptyList();
     }
+    //TODO: Check if pawn capture doesn't cross side of board
     public List<Move> generatePawnMoves(Pawn pawn, int currentTile, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
         int directionMultiplier = Pawn.getDirectionMultiplier(pawn.getColor());
@@ -277,5 +293,59 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
         Piece occupant = endTile.get();
         return !occupant.getColor().equals(piece.getColor());
+    }
+
+    public Check getCheckStatus(Board board, String color){
+        int attackers = 0;
+        Optional<Integer> optionalKingTile = board.getTileOfKing(color);
+        if(optionalKingTile.isEmpty()){
+            return Check.NONE;
+        }
+        int kingTile = optionalKingTile.get();
+        //checking for knights
+        List<Integer> moveShifts = Knight.moveShifts(kingTile);
+        for(int moveShift : moveShifts){
+            int resultantTile = moveShift + kingTile;
+            Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
+            if(optionalOccupant.isEmpty()){
+                continue;
+            }
+            Piece occupant = optionalOccupant.get();
+            if(occupant instanceof Knight){
+                attackers++;
+            }
+        }
+        //checking for sliding pieces
+        moveShifts = Queen.moveShifts();
+        for(int direction : moveShifts){
+            int tilesInDirection = TileUtil.tilesToEdgeOfBoard(kingTile, direction);
+            int resultantTile = kingTile;
+            for(int i = 0; i < tilesInDirection; i++){
+                resultantTile += direction;
+                Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
+                if(optionalOccupant.isEmpty()){
+                    continue;
+                }
+                Piece occupant = optionalOccupant.get();
+                if(occupant.getMoveShifts().contains(-1 * direction)){
+                    attackers++;
+                }
+            }
+        }
+
+        //check for pawns
+        int directionMultiplier = Pawn.getDirectionMultiplier(color);
+        //check two diagonals
+        //make sure it doesnt cross the side of the board
+
+        if(attackers == 0){
+            return Check.NONE;
+        } else if(attackers == 1){
+            return Check.SINGLE;
+        } else if(attackers == 2){
+            return Check.DOUBLE;
+        }
+        return Check.NONE;
+
     }
 }
