@@ -7,6 +7,7 @@ import com.example.chessenginegame.util.TileUtil;
 import com.example.chessenginegame.util.Tuple;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 //TODO: Check for checks
 /*
@@ -319,7 +320,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             return Collections.emptyList();
         }
         int kingTile = optionalKingTile.get();
-        return getPiecesProtectingSquare(board, kingTile, PieceUtil.getOppositeColor(color));
+        return getPiecesProtectingSquare(board, kingTile, PieceUtil.getOppositeColor(color), true);
     }
 
     /**
@@ -329,8 +330,8 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @param color The color of the pieces to look for
      * @return a list of tuples containing the pieces protecting given tile and their tile numbers
      */
-    public List<Tuple<Piece, Integer>> getPiecesProtectingSquare(Board board, int tile, String color){
-        List<Tuple<Piece, Integer>> attackers = new ArrayList<>();
+    public List<Tuple<Piece, Integer>> getPiecesProtectingSquare(Board board, int tile, String color, boolean includePinnedPieces){
+        List<Tuple<Piece, Integer>> defenders = new ArrayList<>();
 
         //checking for knights
         List<Integer> moveShifts = Knight.moveShifts(tile);
@@ -342,7 +343,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             }
             Piece occupant = optionalOccupant.get();
             if(occupant instanceof Knight){
-                attackers.add(Tuple.of(occupant, resultantTile));
+                defenders.add(Tuple.of(occupant, resultantTile));
             }
         }
         //checking for sliding pieces
@@ -358,7 +359,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 }
                 Piece occupant = optionalOccupant.get();
                 if(occupant instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
-                    attackers.add(Tuple.of(slidingPiece, resultantTile));
+                    defenders.add(Tuple.of(slidingPiece, resultantTile));
                 }
             }
         }
@@ -373,10 +374,16 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             }
             Piece occupant = optionalOccupant.get();
             if(occupant instanceof Pawn){
-                attackers.add(Tuple.of(occupant, resultantTile));
+                defenders.add(Tuple.of(occupant, resultantTile));
             }
         }
-        return attackers;
+
+        if(includePinnedPieces){
+            HashMap<Integer, Pin> pieceIdToPinMap = getPieceIdToPinMap(board, color);
+            return defenders.stream().
+                    filter(defenderInfo -> !pieceIdToPinMap.containsKey(defenderInfo.getFirst().getId())).toList();
+        }
+        return defenders;
     }
 
     /**
@@ -389,6 +396,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
     public boolean isTileProtectedBy(Board board, int tile, String color){
         //checking for knights
         List<Integer> moveShifts = Knight.moveShifts(tile);
+
         for(int moveShift : moveShifts){
             int resultantTile = moveShift + tile;
             Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
@@ -466,14 +474,28 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         Piece attacker = attackerInfo.getFirst();
         if(attacker instanceof Knight || attacker instanceof Pawn){
             int attackerTile = attackerInfo.getSecond();
-            if(isTileProtectedBy(board, attackerTile, color)){
-               List<Tuple<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, attackerTile, color);
-               for(Tuple<Piece, Integer> defenderInfo : defendersInfo){
-                   moves.add(new Move(defenderInfo.getFirst(), defenderInfo.getSecond(), attackerTile));
-               }
+
+           List<Tuple<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, attackerTile, color, false);
+           for(Tuple<Piece, Integer> defenderInfo : defendersInfo){
+               moves.add(new Move(defenderInfo.getFirst(), defenderInfo.getSecond(), attackerTile));
+           }
+
+           return moves;
+        }
+        else if(attacker instanceof SlidingPiece){
+            int attackerTile = attackerInfo.getSecond();
+            int attackerDirection = TileUtil.getSlidingDirection(attackerTile, kingTile);
+            int distance = (kingTile - attackerTile)/attackerDirection;
+            for(int i = 0; i < distance + 1; i++){
+                int currentTile = attackerTile + i * attackerDirection;
+                List<Tuple<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, currentTile, color, false);
+                for(Tuple<Piece, Integer> defenderInfo : defendersInfo){
+                    moves.add(new Move(defenderInfo.getFirst(), defenderInfo.getSecond(), attackerTile));
+                }
             }
             return moves;
         }
+        System.out.println("Not sure how you got here, but Congratulations");
         return moves;
     }
 }

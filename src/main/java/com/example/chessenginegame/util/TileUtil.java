@@ -1,10 +1,18 @@
 package com.example.chessenginegame.util;
 
+import com.example.chessenginegame.model.piece.Queen;
+
 import java.util.HashMap;
+import java.util.List;
 
 public class TileUtil {
     private static HashMap<Integer, HashMap<Integer, Integer>> tilesToEdgeMapMap;
 
+    /**
+     *
+     * @param tile the integer representation of the tile
+     * @return true if the tile exists within the board
+     */
     public static boolean isInBoard(int tile){
         return tile >= 0 && tile < 64;
     }
@@ -17,6 +25,12 @@ public class TileUtil {
     public static int getFile(int tile){
         return tile % 8;
     }
+
+    /**
+     * ranks are numbered from top to bottom, in white perspective
+     * @param tile the integer representation of the tile
+     * @return the rank that the tile is in
+     */
     public static int getRank(int tile){
         return tile / 8;
     }
@@ -29,6 +43,32 @@ public class TileUtil {
     public static int tilesToEdgeOfBoard(int tile, int direction){
         return tilesToEdgeMapMap.get(direction).get(tile);
     }
+
+    /**
+     *
+     * @param from the tile to start the direction vector from
+     * @param to the tile to end the direction vector towards
+     * @return
+     */
+    public static int getSlidingDirection(int from, int to){
+        //TODO: Remove negative directions from usage in this method
+        List<Integer> moveShifts = Queen.moveShifts();
+        int difference = to - from;
+        for(int moveShift : moveShifts){
+            int multiplier = Math.abs(difference)/difference;
+            if(Math.abs(difference) % moveShift == 0 && Math.abs(difference) / moveShift < 8){
+                return multiplier * moveShift;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     *
+     * @param tile the tile of the pawn
+     * @param color the color of the pawn
+     * @return true if the pawn is on approriate rank for en passant to be a legal move
+     */
     public static boolean isOnRankForEnPassant(int tile, String color){
         int rank = getRank(tile);
         if(color.equals(Constants.WHITE)){
