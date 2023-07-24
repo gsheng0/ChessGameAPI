@@ -83,14 +83,10 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         List<Move> moves = new ArrayList<>();
         int directionMultiplier = Pawn.getDirectionMultiplier(pawn.getColor());
 
-        int leftCaptureDirection = 9 * directionMultiplier;
-        int rightCaptureDirection = 7 * directionMultiplier;
+        List<Integer> captureDirections = Pawn.captureDirections(currentTile, pawn.getColor());
         int pushDirection = 8 * directionMultiplier;
-        if(isDiagonalCaptureValid(pawn, currentTile, board, pin, leftCaptureDirection)){
-            moves.add(new PawnMove(pawn, currentTile, currentTile + leftCaptureDirection, true));
-        }
-        if(isDiagonalCaptureValid(pawn, currentTile, board, pin, rightCaptureDirection)){
-            moves.add(new PawnMove(pawn, currentTile, currentTile + rightCaptureDirection, true));
+        for(int captureDirection : captureDirections){
+            moves.add(new PawnMove(pawn, currentTile, currentTile + captureDirection, true));
         }
         if(pin == null || Math.abs(pin.direction) % 8 == 0){
             int pushEndTile = currentTile + pushDirection;
