@@ -108,9 +108,9 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
         if(pin == null || Math.abs(pin.direction) % 8 == 0){
             int pushEndTile = currentTile + pushDirection;
-            if(board.getPieceAt(currentTile + pushDirection).isEmpty()){
-                moves.add(new PawnMove(pawn, currentTile, currentTile + pushDirection, false));
-                if(!pawn.hasMoved() && board.getPieceAt(pushEndTile + pushDirection).isEmpty()){
+            if(board.getPieceAt(pushEndTile).isEmpty()){
+                moves.add(new PawnMove(pawn, currentTile, pushEndTile, false));
+                if(TileUtil.isOnStartingRank(currentTile, pawn.getColor()) && board.getPieceAt(pushEndTile + pushDirection).isEmpty()){
                     moves.add(new PawnMove(pawn, currentTile, pushEndTile + pushDirection, false));
                 }
             }
@@ -375,9 +375,12 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                     continue;
                 }
                 Piece occupant = optionalOccupant.get();
-                if(occupant instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
+                if(occupant instanceof SlidingPiece slidingPiece &&
+                        slidingPiece.getMoveShifts().contains(-1 * direction) &&
+                        slidingPiece.getColor().equals(color)){
                     defenders.add(Tuple.of(slidingPiece, resultantTile));
                 }
+                break;
             }
         }
 
@@ -480,7 +483,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         List<Integer> moveShifts = King.moveShifts(kingTile);
         for(int moveShift : moveShifts){
             int resultantTile = moveShift + kingTile;
-            if(!isTileProtectedBy(board, moveShift + kingTile, oppositeColor)){
+            if(TileUtil.isInBoard(resultantTile) && !isTileProtectedBy(board, resultantTile, oppositeColor)){
                 moves.add(new Move(king, kingTile, resultantTile));
             }
         }

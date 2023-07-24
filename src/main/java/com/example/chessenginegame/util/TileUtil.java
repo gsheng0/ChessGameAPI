@@ -1,6 +1,7 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.piece.Queen;
+import org.apache.tomcat.util.bcel.Const;
 
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +77,23 @@ public class TileUtil {
         }
         else if(color.equals(Constants.BLACK)){
             return rank == 4;
+        }
+        throw new IllegalArgumentException(color + " is not a valid color");
+    }
+
+    /**
+     *
+     * @param tile The tile of the pawn
+     * @param color The color of the pawn
+     * @return true if the pawn is on its starting tile
+     */
+    public static boolean isOnStartingRank(int tile, String color){
+        int rank = getRank(tile);
+        if(color.equals(Constants.WHITE)){
+            return rank == 6;
+        }
+        else if(color.equals(Constants.BLACK)){
+            return rank == 1;
         }
         throw new IllegalArgumentException(color + " is not a valid color");
     }

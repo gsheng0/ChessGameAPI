@@ -52,6 +52,9 @@ public class Window extends JPanel implements MouseListener {
         for(int i = 0; i < moves; i++){
             String color = i % 2 == 0 ? Constants.WHITE : Constants.BLACK;
             List<Move> legalMoves = moveGenerator.generateLegalMoves(board, color);
+            if(legalMoves.size() == 0){
+                break;
+            }
             int rand = (int)(Math.random() * legalMoves.size());
             board = board.apply(legalMoves.get(rand));
             game.add(board);
