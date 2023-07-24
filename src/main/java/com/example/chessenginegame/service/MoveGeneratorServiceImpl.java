@@ -21,14 +21,31 @@ If double check:
 
  */
 public class MoveGeneratorServiceImpl implements MoveGeneratorService {
+
+    //TODO: Look into attack/defend maps
+
+    /**
+     * @param board The current board state
+     * @param color The color to generate moves for
+     * @return a list of legal moves
+     */
+    @Override
+    public List<Move> generateLegalMoves(Board board, String color){
+        List<Tuple<Piece, Integer>> attackers = getAttackersOnKing(board, color);
+        if(attackers.size() == 0){
+            return generateLegalMovesNotInCheck(board, color);
+        }
+        else{
+            int kingTile = board.getTileOfKing(color).orElseThrow(() -> new IllegalStateException("King for " + color + " not found"));
+            return generateLegalMovesInCheck(board, attackers, color, kingTile);
+        }
+    }
     /**
      * @param board The current board state
      * @param color The side to generate moves for
-     * @return A list of legal moves
+     * @return A list of legal moves, disregarding check
      */
-    //TODO: Look into attack/defend maps
-    @Override
-    public List<Move> generateLegalMoves(Board board, String color){
+    public List<Move> generateLegalMovesNotInCheck(Board board, String color){
         List<Move> moves = new ArrayList<>();
         List<Move> opposingMoves = new ArrayList<>();
         List<Integer> pieceTiles = board.getPieceTiles(color);
