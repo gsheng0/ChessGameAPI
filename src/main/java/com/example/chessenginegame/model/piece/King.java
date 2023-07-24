@@ -9,11 +9,6 @@ public class King extends Piece {
     public King(String color) {
         super(color);
     }
-
-    @Override
-    public List<Integer> getMoveShifts() {
-        return Arrays.asList(-7, 7, -9, 9, -8, 8, -1, 1);
-    }
     public static List<Integer> moveShifts() {
         return Arrays.asList(-7, 7, -9, 9, -8, 8, -1, 1);
     }

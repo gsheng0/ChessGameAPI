@@ -10,17 +10,7 @@ public class Pawn extends Piece{
     public Pawn(String color) {
         super(color);
     }
-
-    @Override
-    public List<Integer> getMoveShifts() {
-        int multiplier = getDirectionMultiplier(this.getColor());
-        List<Integer> moveShifts = Arrays.asList(multiplier * 8, multiplier * 7, multiplier * 9);
-        if(!this.hasMoved()){
-            moveShifts.add(multiplier * 16);
-        }
-        return moveShifts;
-    }
-    public static List<Integer> getMoveShifts(int tile, String color){
+    public static List<Integer> moveShifts(int tile, String color){
         int multiplier = getDirectionMultiplier(color);
         List<Integer> moveShifts = Arrays.asList(multiplier * 8, multiplier * 7, multiplier * 9);
         int file = TileUtil.getFile(tile);

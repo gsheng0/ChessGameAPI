@@ -3,7 +3,7 @@ package com.example.chessenginegame.model.piece;
 import java.util.Arrays;
 import java.util.List;
 
-public class Rook extends Piece{
+public class Rook extends SlidingPiece{
     public Rook(String color) {
         super(color);
     }

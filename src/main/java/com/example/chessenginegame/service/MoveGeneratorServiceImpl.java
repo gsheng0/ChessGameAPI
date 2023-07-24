@@ -66,10 +66,8 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             return generatePawnMoves((Pawn)piece, currentTile, board, pin);
         } else if(piece instanceof Knight){
             return generateKnightMoves(piece, currentTile, board, pin);
-        } else if(piece instanceof Bishop ||
-                piece instanceof Rook ||
-                piece instanceof Queen){
-            return generateSlidingPieceMoves(piece, currentTile, board, pin);
+        } else if(piece instanceof SlidingPiece){
+            return generateSlidingPieceMoves((SlidingPiece) piece, currentTile, board, pin);
         }
         return Collections.emptyList();
     }
@@ -127,20 +125,20 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
     }
 
     /**
-     * @param piece The piece to be generating moves for
+     * @param slidingPiece The piece to be generating moves for
      * @param currentTile The tile the piece is currently on
      * @param board The current board state
      * @param pin The pin involving the current piece, if exists
      * @return A list of legal moves for the piece provided
      */
-    public List<Move> generateSlidingPieceMoves(Piece piece, int currentTile, Board board, Pin pin){
+    public List<Move> generateSlidingPieceMoves(SlidingPiece slidingPiece, int currentTile, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
         if(pin == null){
-            for(int direction : piece.getMoveShifts()){
-                moves.addAll(getMovesFromTileToEdgeOfBoard(piece, currentTile, board, direction));
+            for(int direction : slidingPiece.getMoveShifts()){
+                moves.addAll(getMovesFromTileToEdgeOfBoard(slidingPiece, currentTile, board, direction));
             }
-        } else if(piece.getMoveShifts().contains(pin.direction)) {
-            moves.addAll(getMovesFromTileToEdgeOfBoard(piece, currentTile, board, pin.direction));
+        } else if(slidingPiece.getMoveShifts().contains(pin.direction)) {
+            moves.addAll(getMovesFromTileToEdgeOfBoard(slidingPiece, currentTile, board, pin.direction));
         }
         return moves;
     }
@@ -155,7 +153,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @return a list of legal king moves
      */
     public List<Move> generateKingMoves(Piece piece, int currentTile, Board board, List<Move> allNonKingMoves){
-        List<Integer> possibleEndTiles = new ArrayList<>(piece.getMoveShifts().stream().
+        List<Integer> possibleEndTiles = new ArrayList<>(King.moveShifts().stream().
                 map(moveShift -> moveShift + currentTile).
                 filter(TileUtil::isInBoard).
                 filter(tile -> board.getPieceAt(tile).
@@ -266,12 +264,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                     }
                     prevEncountered = encountered;
                 } else { //second piece
-                    if(encountered instanceof King ||
-                        encountered instanceof Knight ||
-                        encountered instanceof Pawn){
-                        continue;
-                    }
-                    if(encountered.getMoveShifts().contains(-1 * direction)){
+                    if(encountered instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
                         pins.add(new Pin(prevEncountered, encountered, direction));
                     }
                 }
@@ -351,7 +344,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                     continue;
                 }
                 Piece occupant = optionalOccupant.get();
-                if(occupant.getMoveShifts().contains(-1 * direction)){
+                if(occupant instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
                     attackers++;
                 }
             }
