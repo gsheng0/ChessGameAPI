@@ -2,11 +2,9 @@ package com.example.chessenginegame.service;
 
 import com.example.chessenginegame.model.*;
 import com.example.chessenginegame.model.piece.*;
-import com.example.chessenginegame.util.Constants;
 import com.example.chessenginegame.util.PieceUtil;
 import com.example.chessenginegame.util.TileUtil;
 import com.example.chessenginegame.util.Tuple;
-import org.apache.tomcat.util.bcel.Const;
 
 import java.util.*;
 
@@ -86,7 +84,9 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         List<Integer> captureDirections = Pawn.captureDirections(currentTile, pawn.getColor());
         int pushDirection = 8 * directionMultiplier;
         for(int captureDirection : captureDirections){
-            moves.add(new PawnMove(pawn, currentTile, currentTile + captureDirection, true));
+            if(isDiagonalCaptureValid(pawn, currentTile, board, pin, captureDirection)){
+                moves.add(new PawnMove(pawn, currentTile, currentTile + captureDirection, true));
+            }
         }
         if(pin == null || Math.abs(pin.direction) % 8 == 0){
             int pushEndTile = currentTile + pushDirection;
@@ -311,33 +311,45 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
     /**
      * @param board the current board state
      * @param color the color of the side to be checking
-     * @return an integer representing the check status of the board
+     * @return a list of attackers on the king
      */
-    public int getCheckStatus(Board board, String color){
-        int attackers = 0;
+    public List<Tuple<Piece, Integer>> getAttackersOnKing(Board board, String color){
         Optional<Integer> optionalKingTile = board.getTileOfKing(color);
         if(optionalKingTile.isEmpty()){
-            return Constants.NO_CHECK;
+            return Collections.emptyList();
         }
         int kingTile = optionalKingTile.get();
+        return getPiecesProtectingSquare(board, kingTile, PieceUtil.getOppositeColor(color));
+    }
+
+    /**
+     *
+     * @param board The current board state
+     * @param tile The tile to be checked
+     * @param color The color of the pieces to look for
+     * @return a list of tuples containing the pieces protecting given tile and their tile numbers
+     */
+    public List<Tuple<Piece, Integer>> getPiecesProtectingSquare(Board board, int tile, String color){
+        List<Tuple<Piece, Integer>> attackers = new ArrayList<>();
+
         //checking for knights
-        List<Integer> moveShifts = Knight.moveShifts(kingTile);
+        List<Integer> moveShifts = Knight.moveShifts(tile);
         for(int moveShift : moveShifts){
-            int resultantTile = moveShift + kingTile;
+            int resultantTile = moveShift + tile;
             Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
             if(optionalOccupant.isEmpty()){
                 continue;
             }
             Piece occupant = optionalOccupant.get();
             if(occupant instanceof Knight){
-                attackers++;
+                attackers.add(Tuple.of(occupant, resultantTile));
             }
         }
         //checking for sliding pieces
         moveShifts = Queen.moveShifts();
         for(int direction : moveShifts){
-            int tilesInDirection = TileUtil.tilesToEdgeOfBoard(kingTile, direction);
-            int resultantTile = kingTile;
+            int tilesInDirection = TileUtil.tilesToEdgeOfBoard(tile, direction);
+            int resultantTile = tile;
             for(int i = 0; i < tilesInDirection; i++){
                 resultantTile += direction;
                 Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
@@ -346,22 +358,122 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 }
                 Piece occupant = optionalOccupant.get();
                 if(occupant instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
-                    attackers++;
+                    attackers.add(Tuple.of(slidingPiece, resultantTile));
                 }
             }
         }
 
         //check for pawns
-        int directionMultiplier = Pawn.getDirectionMultiplier(color);
-        //check two diagonals
-        //make sure it doesn't cross the side of the board
-
-        if(attackers == 1){
-            return Constants.CHECK;
-        } else if(attackers == 2){
-            return Constants.DOUBLE_CHECK;
+        List<Integer> captureDirections = Pawn.captureDirections(tile, color);
+        for(int captureDirection : captureDirections){
+            int resultantTile = captureDirection + tile;
+            Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
+            if(optionalOccupant.isEmpty()){
+                continue;
+            }
+            Piece occupant = optionalOccupant.get();
+            if(occupant instanceof Pawn){
+                attackers.add(Tuple.of(occupant, resultantTile));
+            }
         }
-        return Constants.NO_CHECK;
+        return attackers;
+    }
 
+    /**
+     *
+     * @param board the current board state
+     * @param tile the tile to be checked
+     * @param color the color of the pieces to check
+     * @return true if the tile is covered by any piece of the specified color
+     */
+    public boolean isTileProtectedBy(Board board, int tile, String color){
+        //checking for knights
+        List<Integer> moveShifts = Knight.moveShifts(tile);
+        for(int moveShift : moveShifts){
+            int resultantTile = moveShift + tile;
+            Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
+            if(optionalOccupant.isEmpty()){
+                continue;
+            }
+            Piece occupant = optionalOccupant.get();
+            if(occupant instanceof Knight){
+                return true;
+            }
+        }
+        //checking for sliding pieces
+        moveShifts = Queen.moveShifts();
+        for(int direction : moveShifts){
+            int tilesInDirection = TileUtil.tilesToEdgeOfBoard(tile, direction);
+            int resultantTile = tile;
+            for(int i = 0; i < tilesInDirection; i++){
+                resultantTile += direction;
+                Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
+                if(optionalOccupant.isEmpty()){
+                    continue;
+                }
+                Piece occupant = optionalOccupant.get();
+                if(occupant instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
+                    return true;
+                }
+            }
+        }
+
+        //check for pawns
+        List<Integer> captureDirections = Pawn.captureDirections(tile, color);
+        for(int captureDirection : captureDirections){
+            int resultantTile = captureDirection + tile;
+            Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
+            if(optionalOccupant.isEmpty()){
+                continue;
+            }
+            Piece occupant = optionalOccupant.get();
+            if(occupant instanceof Pawn){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param board the current board state
+     * @param attackers list of pieces threatening the king and their tile numbers
+     * @param color the color of the king being threatened
+     * @return a list of legal moves for defending the king from the check
+     */
+    public List<Move> generateLegalMovesInCheck(Board board, List<Tuple<Piece, Integer>> attackers, String color, int kingTile){
+        List<Move> moves = new ArrayList<>();
+        String oppositeColor = PieceUtil.getOppositeColor(color);
+        Optional<Integer> optionalKingTile = board.getTileOfKing(color);
+        if(optionalKingTile.isEmpty()){
+            throw new IllegalStateException(color + " does not have a king");
+        }
+        King king = (King)board.getBoard().get(optionalKingTile.get());
+        if(attackers.size() == 0){
+            throw new IllegalStateException(color + " is not in check");
+        }
+        //generate legal king moves first
+        List<Integer> moveShifts = King.moveShifts(kingTile);
+        for(int moveShift : moveShifts){
+            int resultantTile = moveShift + kingTile;
+            if(!isTileProtectedBy(board, moveShift + kingTile, oppositeColor)){
+                moves.add(new Move(king, kingTile, resultantTile));
+            }
+        }
+        if(attackers.size() == 2 ){
+            return moves;
+        }
+        Tuple<Piece, Integer> attackerInfo = attackers.get(0);
+        Piece attacker = attackerInfo.getFirst();
+        if(attacker instanceof Knight || attacker instanceof Pawn){
+            int attackerTile = attackerInfo.getSecond();
+            if(isTileProtectedBy(board, attackerTile, color)){
+               List<Tuple<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, attackerTile, color);
+               for(Tuple<Piece, Integer> defenderInfo : defendersInfo){
+                   moves.add(new Move(defenderInfo.getFirst(), defenderInfo.getSecond(), attackerTile));
+               }
+            }
+            return moves;
+        }
+        return moves;
     }
 }
