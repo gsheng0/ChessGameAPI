@@ -71,7 +71,14 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
         return Collections.emptyList();
     }
-    //TODO: Check if pawn capture doesn't cross side of board
+
+    /**
+     * @param pawn The pawn to be generating moves for
+     * @param currentTile The tile that the pawn is sitting on
+     * @param board The current board state
+     * @param pin  The pin involving the current pawn, if exists
+     * @return a list of legal moves for this pawn
+     */
     public List<Move> generatePawnMoves(Pawn pawn, int currentTile, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
         int directionMultiplier = Pawn.getDirectionMultiplier(pawn.getColor());
@@ -142,10 +149,8 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
         return moves;
     }
-    //TODO: Filter out edge of board moves
 
     /**
-     *
      * @param piece The king to be generating moves for
      * @param currentTile The tile that the king is on
      * @param board The current board state
@@ -153,7 +158,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @return a list of legal king moves
      */
     public List<Move> generateKingMoves(Piece piece, int currentTile, Board board, List<Move> allNonKingMoves){
-        List<Integer> possibleEndTiles = new ArrayList<>(King.moveShifts().stream().
+        List<Integer> possibleEndTiles = new ArrayList<>(King.moveShifts(currentTile).stream().
                 map(moveShift -> moveShift + currentTile).
                 filter(TileUtil::isInBoard).
                 filter(tile -> board.getPieceAt(tile).
@@ -177,7 +182,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         Optional<Integer> optionalOtherKingTile = board.getTileOfKing(PieceUtil.getOppositeColor(piece.getColor()));
         if(optionalOtherKingTile.isPresent()){
             int otherKingTile = optionalOtherKingTile.get();
-            List<Integer> otherKingEndTiles = King.moveShifts().stream().
+            List<Integer> otherKingEndTiles = King.moveShifts(currentTile).stream().
                     map(moveShifts -> moveShifts + otherKingTile).toList();
 
             for(int otherKingEndTile : otherKingEndTiles){
@@ -310,7 +315,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
     /**
      * @param board the current board state
      * @param color the color of the side to be checking
-     * @return
+     * @return an integer representing the check status of the board
      */
     public int getCheckStatus(Board board, String color){
         int attackers = 0;
