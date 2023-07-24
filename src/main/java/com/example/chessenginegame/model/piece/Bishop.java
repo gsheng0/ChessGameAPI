@@ -5,7 +5,7 @@ import com.example.chessenginegame.model.piece.Piece;
 import java.util.Arrays;
 import java.util.List;
 
-public class Bishop extends Piece {
+public class Bishop extends SlidingPiece {
     public Bishop(String color) {
         super(color);
     }

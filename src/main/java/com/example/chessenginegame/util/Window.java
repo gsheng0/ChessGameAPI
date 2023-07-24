@@ -89,7 +89,7 @@ public class Window extends JPanel implements MouseListener {
         for(int tile : board.getBoard().keySet()){
             int y = tile/8;
             int x = tile % 8;
-            drawPiece(g, board.getPieceAt(tile).get(), x, y);
+            drawPiece(g, board.getBoard().get(tile), x, y);
         }
     }
     public void drawCharacter(Graphics g, String c, int x, int y){

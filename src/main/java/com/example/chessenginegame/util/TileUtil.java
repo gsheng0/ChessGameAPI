@@ -8,6 +8,12 @@ public class TileUtil {
     public static boolean isInBoard(int tile){
         return tile >= 0 && tile < 64;
     }
+
+    /**
+     * files are numbered from left to right, in white's perspective
+     * @param tile the integer representation of the tile
+     * @return the file that the tile is in
+     */
     public static int getFile(int tile){
         return tile % 8;
     }
