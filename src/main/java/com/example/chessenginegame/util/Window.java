@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class Window extends JPanel implements MouseListener {
+    //TODO: Add logging for games, translate to PGN with chatgpt, paste into analysis on lichess
     private JFrame frame;
     private static final int WINDOW_WIDTH = 800;
     private static final int WINDOW_HEIGHT = 800;
@@ -97,7 +98,7 @@ public class Window extends JPanel implements MouseListener {
     }
     public void drawCharacter(Graphics g, String c, int x, int y){
         g.setFont(SQUARE_FONT);
-        g.drawString("" + c.charAt(0), x * UNIT_WIDTH + 10, y * UNIT_HEIGHT + 80);
+        g.drawString(c, x * UNIT_WIDTH, y * UNIT_HEIGHT + 80);
     }
     public void drawPiece(Graphics g, Piece piece, int x, int y){
         if (piece.getColor().equals(Constants.BLACK)) {
@@ -106,17 +107,17 @@ public class Window extends JPanel implements MouseListener {
             g.setColor(Color.WHITE);
         }
         if(piece instanceof King){
-            drawCharacter(g, "K", x, y);
+            drawCharacter(g, "K" + piece.getId(), x, y);
         } else if(piece instanceof Queen){
-            drawCharacter(g, "Q", x, y);
+            drawCharacter(g, "Q" + piece.getId(), x, y);
         } else if(piece instanceof Rook){
-            drawCharacter(g, "R", x, y);
+            drawCharacter(g, "R" + piece.getId(), x, y);
         } else if(piece instanceof Bishop){
-            drawCharacter(g, "B", x, y);
+            drawCharacter(g, "B" + piece.getId(), x, y);
         } else if(piece instanceof Knight){
-            drawCharacter(g, "N", x, y);
+            drawCharacter(g, "N" + piece.getId(), x, y);
         } else if(piece instanceof Pawn){
-            drawCharacter(g, "P", x, y);
+            drawCharacter(g, "P" + piece.getId(), x, y);
         }
     }
     public static void main(String[] args){

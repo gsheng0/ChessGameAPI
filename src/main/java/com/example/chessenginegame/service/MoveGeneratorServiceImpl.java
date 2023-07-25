@@ -7,7 +7,6 @@ import com.example.chessenginegame.util.TileUtil;
 import com.example.chessenginegame.util.Tuple;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 //TODO: Check for checks
 /*
@@ -269,10 +268,10 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         List<Pin> pins = new ArrayList<>();
         for(int direction : directions){
             Piece prevEncountered = null;
-            int currentTile = kingTile + direction;
-            while(TileUtil.isInBoard(currentTile)){ //while the tile to check is still on the board
+
+            for(int i = 1; i < TileUtil.tilesToEdgeOfBoard(kingTile, direction); i++){ //while the tile to check is still on the board
+                int currentTile = kingTile + direction * i;
                 Optional<Piece> tile = board.getPieceAt(currentTile);
-                currentTile += direction;
                 if(tile.isEmpty()){
                     continue;
                 }
@@ -283,7 +282,9 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                     }
                     prevEncountered = encountered;
                 } else { //second piece
-                    if(encountered instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
+                    if(encountered instanceof SlidingPiece slidingPiece &&
+                            slidingPiece.getMoveShifts().contains(-1 * direction) &&
+                            !slidingPiece.getColor().equals(color)){
                         pins.add(new Pin(prevEncountered, encountered, direction));
                     }
                 }
