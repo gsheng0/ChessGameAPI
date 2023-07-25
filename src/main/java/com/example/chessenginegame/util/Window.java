@@ -7,6 +7,8 @@ import com.example.chessenginegame.service.MoveGeneratorService;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +17,7 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Window extends JPanel implements MouseListener {
+public class Window extends JPanel implements MouseListener, KeyListener {
     //TODO: Add logging for games, translate to PGN with chatgpt, paste into analysis on lichess
     private JFrame frame;
     private static final int WINDOW_WIDTH = 800;
@@ -37,11 +39,14 @@ public class Window extends JPanel implements MouseListener {
     public Window(){
         highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorServiceImpl();
-        game = generateRandomGame(100);
+        ChessGameTester tester = new ChessGameTester();
+        game = tester.generateMoves(Board.startingPosition(), 0, 3);
+        System.out.println(game.size());
         //board = new Board(map);
         frame = new JFrame();
         frame.add(this);
         frame.addMouseListener(this);
+        frame.addKeyListener(this);
         frame.setSize(WINDOW_WIDTH + HORIZONTAL_SHIFT, WINDOW_HEIGHT + VERTICAL_SHIFT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -166,5 +171,25 @@ public class Window extends JPanel implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_LEFT){
+            moveNumber = Math.max(0, moveNumber - 1);
+            repaint();
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+            moveNumber = Math.min(moveNumber + 1, game.size() - 1);
+            repaint();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }
