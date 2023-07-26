@@ -10,6 +10,10 @@ public class Bishop extends SlidingPiece {
         super(color);
     }
     @Override
+    public String getName() {
+        return "Bishop";
+    }
+    @Override
     public List<Integer> getMoveShifts() {
         return Bishop.moveShifts();
     }

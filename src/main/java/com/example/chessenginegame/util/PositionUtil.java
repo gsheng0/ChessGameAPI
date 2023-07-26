@@ -51,23 +51,6 @@ public class PositionUtil {
 
     /**
      *
-     * @param coordinates the string representation of a chess tile ie: "g3" or "F7"
-     *                    Only the first two characters are checked
-     * @return the corresponding index in the 1d representation of the board. Passing in "A8" returns 0
-     * @throws IllegalArgumentException if an invalid coordinate is entered.
-     */
-    public static int getIndexFromNamedTile(String coordinates){
-        coordinates = coordinates.toLowerCase();
-        int letter = coordinates.charAt(0) - 'a';
-        int number = Integer.parseInt(coordinates.substring(1));
-        if(number < 1 || number > 8 || letter < 0 || letter > 7){
-            throw new IllegalArgumentException("Invalid input: " + coordinates);
-        }
-        return letter + 8 * (8 - number);
-    }
-
-    /**
-     *
      * @param FEN Fen string representing the board state
      *        FEN strings are in the format of the following, each separated by a single space
      *            1. Board state, with characters representing pieces, and numbers that many empty squares,

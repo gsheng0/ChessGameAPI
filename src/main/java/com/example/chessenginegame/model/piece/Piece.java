@@ -19,6 +19,7 @@ public abstract class Piece{
     public String getColor() { return color; }
     public int getId() { return id; }
     public boolean hasMoved() { return hasMoved; }
+    public abstract String getName();
 
     /**
      *

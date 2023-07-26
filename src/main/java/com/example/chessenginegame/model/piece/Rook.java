@@ -8,6 +8,10 @@ public class Rook extends SlidingPiece{
         super(color);
     }
     @Override
+    public String getName() {
+        return "Rook";
+    }
+    @Override
     public List<Integer> getMoveShifts() {
         return Rook.moveShifts();
     }

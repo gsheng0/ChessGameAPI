@@ -98,6 +98,36 @@ public class TileUtil {
         throw new IllegalArgumentException(color + " is not a valid color");
     }
 
+    /**
+     *
+     * @param coordinates the string representation of a chess tile ie: "g3" or "F7"
+     *                    Only the first two characters are checked
+     * @return the corresponding index in the 1d representation of the board. Passing in "A8" returns 0
+     * @throws IllegalArgumentException if an invalid coordinate is entered.
+     */
+    public static int getIndexFromNamedTile(String coordinates){
+        coordinates = coordinates.toLowerCase();
+        int letter = coordinates.charAt(0) - 'a';
+        int number = Integer.parseInt(coordinates.substring(1));
+        if(number < 1 || number > 8 || letter < 0 || letter > 7){
+            throw new IllegalArgumentException("Invalid input: " + coordinates);
+        }
+        return letter + 8 * (8 - number);
+    }
+
+    /**
+     *
+     * @param tileIndex the tile to be named
+     * @return The corresponding standard chess name for the tile
+     */
+    public static String getNamedTileFromIndex(int tileIndex){
+        int file = getFile(tileIndex);
+        int rank = getRank(tileIndex);
+        char letter = (char)('a' + file);
+        int number = 8 - rank;
+        return "" + letter + number;
+    }
+
     static{
         tilesToEdgeMapMap = new HashMap<>();
         HashMap<Integer, Integer> minusOne = new HashMap<>();

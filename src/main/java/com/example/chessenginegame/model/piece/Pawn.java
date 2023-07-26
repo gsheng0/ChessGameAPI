@@ -11,6 +11,10 @@ public class Pawn extends Piece{
     public Pawn(String color) {
         super(color);
     }
+    @Override
+    public String getName() {
+        return "Pawn";
+    }
     public static List<Integer> captureDirections(int tile, String color){
         int multiplier = getDirectionMultiplier(color);
         List<Integer> moveShifts = new ArrayList<>(Arrays.asList(multiplier * 7, multiplier * 9));

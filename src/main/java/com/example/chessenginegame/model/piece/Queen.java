@@ -8,6 +8,10 @@ public class Queen extends SlidingPiece{
         super(color);
     }
     @Override
+    public String getName() {
+        return "Queen";
+    }
+    @Override
     public List<Integer> getMoveShifts() {
         return Queen.moveShifts();
     }

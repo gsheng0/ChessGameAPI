@@ -11,6 +11,10 @@ public class Knight extends Piece {
     public Knight(String color) {
         super(color);
     }
+    @Override
+    public String getName() {
+        return "Knight";
+    }
     public static List<Integer> moveShifts(int tile) {
         return getMoveShiftsFromFile(TileUtil.getFile(tile));
     }

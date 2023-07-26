@@ -11,6 +11,10 @@ public class King extends Piece {
     public King(String color) {
         super(color);
     }
+    @Override
+    public String getName() {
+        return "King";
+    }
     public static List<Integer> moveShifts(int tile) {
         int file = TileUtil.getFile(tile);
         List<Integer> moveShifts = new ArrayList<>(Arrays.asList(-7, 7, -9, 9, -8, 8, -1, 1));
