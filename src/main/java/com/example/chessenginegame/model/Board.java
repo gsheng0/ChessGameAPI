@@ -29,9 +29,6 @@ public class Board {
         if(!board.containsKey(move.getStartTile())){
             throw new IllegalArgumentException("Move not applicable to board: missing piece on start tile");
         }
-        if(board.get(move.getStartTile()).getId() != move.getPiece().getId()){
-            throw new IllegalArgumentException("Move not applicable to board: wrong piece on start tile");
-        }
         HashMap<Integer, Piece> newBoard = copyBoard(board);
         Piece piece = newBoard.remove(move.getStartTile());
         newBoard.put(move.getEndTile(), piece);

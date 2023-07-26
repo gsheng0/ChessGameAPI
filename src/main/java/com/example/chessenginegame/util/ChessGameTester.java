@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ChessGameTester {
-    MoveGeneratorService moveGeneratorService = new MoveGeneratorServiceImpl();
+    static MoveGeneratorService moveGeneratorService = new MoveGeneratorServiceImpl();
     public int countMoves(Board board, int depth, int limit){
         if(depth == limit){
             return 1;
@@ -25,9 +25,6 @@ public class ChessGameTester {
         for(Move move : moves){
             count += countMoves(board.apply(move), depth + 1, limit);
         }
-        int movesPossible = count / moves.size();
-        if(movesPossible != 1)
-            System.out.println(movesPossible + " moves possible for " + color + " at depth " + depth);
         return count;
     }
     public List<Board> generateMoves(Board board, int depth, int limit){
@@ -68,15 +65,21 @@ public class ChessGameTester {
     public static void main(String[] args){
         ChessGameTester tester = new ChessGameTester();
         Board board = Board.startingPosition();
-        List<Tuple<Board, List<Move>>> twoMoves = tester.generateMovesWithHistory(board, 0, 2);
-        for(Tuple<Board, List<Move>> tuple : twoMoves){
-            Board boardState = tuple.getFirst();
-            List<Move> history = tuple.getSecond();
-            int moveCount = tester.countMoves(boardState, 0, 1);
-            System.out.println(history.get(0).getSimpleName() + " " + history.get(1).getSimpleName() + ": " + moveCount);
-        }
-
-        System.out.println(twoMoves.size());
+        System.out.println(tester.countMoves(board, 0, 5));
+//        board = board.apply(new Move(Piece.buildFromCharacter('N'), 62, 45));
+//        List<Move> moves = moveGeneratorService.generateLegalMoves(board, Constants.WHITE);
+//        for(Move move: moves){
+//            System.out.println(move.getSimpleName());
+//        }
+//        List<Tuple<Board, List<Move>>> twoMoves = tester.generateMovesWithHistory(board, 0, 2);
+//        for(Tuple<Board, List<Move>> tuple : twoMoves){
+//            Board boardState = tuple.getFirst();
+//            List<Move> history = tuple.getSecond();
+//            int moveCount = tester.countMoves(boardState, 0, 1);
+//            System.out.println(history.get(0).getSimpleName() + " " + history.get(1).getSimpleName() + ": " + moveCount);
+//        }
+//
+//        System.out.println(twoMoves.size());
 
     }
 }

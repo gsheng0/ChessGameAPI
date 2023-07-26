@@ -18,8 +18,8 @@ public class Move {
         return piece.getName() + " from " + TileUtil.getNamedTileFromIndex(startTile) + " to " + TileUtil.getNamedTileFromIndex(endTile);
     }
     public String getSimpleName(){
-        String name = piece instanceof Knight ? "N" : piece.getName();
-        return name + TileUtil.getNamedTileFromIndex(startTile) + TileUtil.getNamedTileFromIndex(endTile);
+        String name = piece instanceof Knight ? "N" : piece instanceof Pawn ? "" : piece.getName().substring(0, 1);
+        return name + TileUtil.getNamedTileFromIndex(endTile);
 
     }
 }

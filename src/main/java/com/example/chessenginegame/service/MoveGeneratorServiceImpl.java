@@ -30,7 +30,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      */
     @Override
     public List<Move> generateLegalMoves(Board board, String color){
-        List<Tuple<Piece, Integer>> attackers = getAttackersOnKing(board, color);
+        List<Tuple<Piece, Integer>> attackers = getAttackersOnKingOfColor(board, color);
         if(attackers.size() == 0){
             return generateLegalMovesNotInCheck(board, color);
         }
@@ -332,7 +332,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @param color the color of the side to be checking
      * @return a list of attackers on the king
      */
-    public List<Tuple<Piece, Integer>> getAttackersOnKing(Board board, String color){
+    public List<Tuple<Piece, Integer>> getAttackersOnKingOfColor(Board board, String color){
         Optional<Integer> optionalKingTile = board.getTileOfKing(color);
         if(optionalKingTile.isEmpty()){
             return Collections.emptyList();
@@ -360,7 +360,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 continue;
             }
             Piece occupant = optionalOccupant.get();
-            if(occupant instanceof Knight){
+            if(occupant instanceof Knight && occupant.getColor().equals(color)){
                 defenders.add(Tuple.of(occupant, resultantTile));
             }
         }
@@ -484,9 +484,16 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         List<Integer> moveShifts = King.moveShifts(kingTile);
         for(int moveShift : moveShifts){
             int resultantTile = moveShift + kingTile;
-            if(TileUtil.isInBoard(resultantTile) && !isTileProtectedBy(board, resultantTile, oppositeColor)){
-                moves.add(new Move(king, kingTile, resultantTile));
+            if(!TileUtil.isInBoard(resultantTile)){
+                continue;
             }
+            if(isTileProtectedBy(board, resultantTile, oppositeColor)){
+                continue;
+            }
+            if(board.getPieceAt(resultantTile).isPresent() && board.getPieceAt(resultantTile).get().getColor().equals(color)){
+                continue;
+            }
+            moves.add(new Move(king, kingTile, resultantTile));
         }
         if(attackers.size() == 2 ){
             return moves;
