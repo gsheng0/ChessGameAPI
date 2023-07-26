@@ -20,6 +20,8 @@ public class Move {
     public String getSimpleName(){
         String name = piece instanceof Knight ? "N" : piece instanceof Pawn ? "" : piece.getName().substring(0, 1);
         return name + TileUtil.getNamedTileFromIndex(endTile);
-
+    }
+    public String getUCINotation(){
+        return TileUtil.getNamedTileFromIndex(startTile) + TileUtil.getNamedTileFromIndex(endTile);
     }
 }

@@ -8,6 +8,7 @@ import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChessGameTester {
@@ -65,21 +66,17 @@ public class ChessGameTester {
     public static void main(String[] args){
         ChessGameTester tester = new ChessGameTester();
         Board board = Board.startingPosition();
-        System.out.println(tester.countMoves(board, 0, 5));
-//        board = board.apply(new Move(Piece.buildFromCharacter('N'), 62, 45));
-//        List<Move> moves = moveGeneratorService.generateLegalMoves(board, Constants.WHITE);
-//        for(Move move: moves){
-//            System.out.println(move.getSimpleName());
-//        }
-//        List<Tuple<Board, List<Move>>> twoMoves = tester.generateMovesWithHistory(board, 0, 2);
-//        for(Tuple<Board, List<Move>> tuple : twoMoves){
-//            Board boardState = tuple.getFirst();
-//            List<Move> history = tuple.getSecond();
-//            int moveCount = tester.countMoves(boardState, 0, 1);
-//            System.out.println(history.get(0).getSimpleName() + " " + history.get(1).getSimpleName() + ": " + moveCount);
-//        }
-//
-//        System.out.println(twoMoves.size());
-
+        board = board.apply(new Move(Piece.buildFromCharacter('P'), TileUtil.getIndexFromNamedTile("b2"), TileUtil.getIndexFromNamedTile("b3")));
+        List<Tuple<Board, List<Move>>> oneMove = tester.generateMovesWithHistory(board, 1, 2);
+        int totalCount = 0;
+        for(Tuple<Board, List<Move>> tuple : oneMove){
+            Board boardState = tuple.getFirst();
+            List<Move> history = tuple.getSecond();
+            int moveCount = tester.countMoves(boardState, 2, 4);
+            totalCount += moveCount;
+            String boardVariation = history.stream().map(Move::getUCINotation).reduce((s, s2) -> s + " " + s2).get();
+            System.out.println(boardVariation + ": " + moveCount);
+        }
+        System.out.println(totalCount);
     }
 }
