@@ -91,6 +91,9 @@ public class Window extends JPanel implements MouseListener, KeyListener {
                 g.setColor(Color.BLACK);
                 g.setFont(SQUARE_NUMBER_FONT);
                 g.drawString(tileIndex + "", x * UNIT_WIDTH, y * UNIT_HEIGHT + 20);
+                if(tileIndex == 7){
+                    g.drawString("" + moveNumber, x * UNIT_WIDTH + 60, 20);
+                }
 
             }
         }
