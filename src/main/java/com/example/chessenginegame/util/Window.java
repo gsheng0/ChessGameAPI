@@ -19,7 +19,10 @@ import java.awt.event.MouseListener;
 
 public class Window extends JPanel implements MouseListener, KeyListener {
     //TODO: Add logging for games, translate to PGN with chatgpt, paste into analysis on lichess
+    //TODO: Add feature to skip to next set of possible moves by either side eg: skip all boards where pawn a6 was played
+    //use countMoves() to calculate how many to skip
     private JFrame frame;
+    private int tileNumber;
     private static final int WINDOW_WIDTH = 800;
     private static final int WINDOW_HEIGHT = 800;
     private static final Color LIGHT_SQUARE_COLOR = Color.decode("#f0d9b5");
@@ -71,6 +74,15 @@ public class Window extends JPanel implements MouseListener, KeyListener {
     public void paintComponent(Graphics g){
         g.setColor(Color.BLACK);
         g.drawRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        List<Integer> tilesToHighlight = new ArrayList<>();
+        if(selected != null) {
+            tilesToHighlight = new ArrayList<>(
+                moveGenerator.generateLegalMoves(game.get(moveNumber), selected.getColor()).stream().
+                filter(move -> move.getPiece().getId() == selected.getId()).
+                map(Move::getEndTile).
+                toList());
+            tilesToHighlight.add(tileNumber);
+        }
 
         for(int x = 0; x < 8; x++){
             for(int y = 0; y < 8; y++){
@@ -80,6 +92,9 @@ public class Window extends JPanel implements MouseListener, KeyListener {
                 }
                 else{
                     g.setColor(DARK_SQUARE_COLOR);
+                }
+                if(tilesToHighlight.contains(tileIndex)){
+                    g.setColor(Color.CYAN);
                 }
                 g.fillRect(x * UNIT_WIDTH, y * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT);
 
@@ -140,22 +155,22 @@ public class Window extends JPanel implements MouseListener, KeyListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-//        Point point = e.getPoint();
-//        int x = point.x - HORIZONTAL_SHIFT;
-//        int y = point.y - VERTICAL_SHIFT;
-//        int tileNumber = x/UNIT_WIDTH + 8 * (y/UNIT_HEIGHT);
-//        if(e.getButton() == MouseEvent.BUTTON1){
-//            selected = board.getPieceAt(tileNumber).orElse(null);
-//        }
-//        else{
-//            selected = null;
-//            if(highlights.contains(tileNumber)){
-//                highlights.remove(Integer.valueOf(tileNumber));
-//            } else{
-//                highlights.add(tileNumber);
-//            }
-//        }
-        moveNumber++;
+        Point point = e.getPoint();
+        int x = point.x - HORIZONTAL_SHIFT;
+        int y = point.y - VERTICAL_SHIFT;
+        tileNumber = x/UNIT_WIDTH + 8 * (y/UNIT_HEIGHT);
+        if(e.getButton() == MouseEvent.BUTTON1){
+            selected = game.get(moveNumber).getPieceAt(tileNumber).orElse(null);
+        }
+        else{
+            selected = null;
+            if(highlights.contains(tileNumber)){
+                highlights.remove(Integer.valueOf(tileNumber));
+            } else{
+                highlights.add(tileNumber);
+            }
+        }
+
         repaint();
 
 
