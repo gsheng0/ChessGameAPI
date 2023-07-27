@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 public class StockfishRunner {
-
-    public static void main(String[] args) {
+    public HashMap<String, Integer> getStockfishPerftNumbers(){
+        HashMap<String, Integer> perftNumbers = new HashMap<>();
         try {
             Process stockfishProcess = new ProcessBuilder("stockfish").start();
             BufferedReader stockfishInput = new BufferedReader(new InputStreamReader(stockfishProcess.getInputStream()));
@@ -45,5 +46,9 @@ public class StockfishRunner {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return perftNumbers;
+    }
+    public static void main(String[] args) {
+
     }
 }
