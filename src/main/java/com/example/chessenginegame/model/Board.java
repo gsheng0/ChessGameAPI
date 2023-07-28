@@ -34,6 +34,13 @@ public class Board {
         newBoard.put(move.getEndTile(), piece);
         return new Board(newBoard, move);
     }
+    public Board apply(List<Move> moves){
+        Board current = this;
+        for(Move move : moves){
+            current = current.apply(move);
+        }
+        return current;
+    }
     public Board apply(String uci){
         return apply(Move.parseUCIMove(this, uci));
     }

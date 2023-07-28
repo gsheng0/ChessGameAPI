@@ -3,6 +3,9 @@ package com.example.chessenginegame.model;
 import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.util.TileUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Move {
     private int startTile, endTile;
     private Piece piece;
@@ -62,5 +65,13 @@ public class Move {
     }
     public static Move of(Piece piece, int startTile, int endTile){
         return new Move(piece, startTile, endTile);
+    }
+    public static List<Move> listOf(Board board, String... uciArr){
+        List<Move> moves = new ArrayList<>();
+        for(String uci : uciArr){
+            moves.add(Move.parseUCIMove(board, uci));
+            board = board.apply(uci);
+        }
+        return moves;
     }
 }

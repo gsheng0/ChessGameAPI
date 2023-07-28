@@ -9,6 +9,7 @@ import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 import java.util.*;
 
 public class ChessGameTester {
+    //TODO: Make all methods static, refactor methods that have both a depth and limit parameter
     static MoveGeneratorService moveGeneratorService = new MoveGeneratorServiceImpl();
     public int countMoves(Board board, int depth, String startingColor){
         if(depth == 0){
@@ -115,13 +116,15 @@ public class ChessGameTester {
     }
     public static void main(String[] args){
         ChessGameTester tester = new ChessGameTester();
+
         Board board = Board.startingPosition();
-        board = board.apply(Move.parseUCIMove(board, "b2b3"));
-        HashMap<Move, Integer> perftResults = tester.doPerftFromPosition(board, 3, Constants.BLACK);
-        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(Collections.singletonList(Move.parseUCIMove(Board.startingPosition(), "b2b3")), 3);
+        List<Move> moves = Move.listOf(board, "b2b3", "e7e6", "c1a3");
+        board = board.apply(moves);
+        HashMap<Move, Integer> perftResults = tester.doPerftFromPosition(board, 1, Constants.BLACK);
+        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, 1);
         HashMap<Move, Integer> differences = tester.comparePerftResults(stockfishPerftResults, perftResults);
         for(Move move : differences.keySet()){
-            System.out.println(move.getUCINotation() + ": " + differences.get(move));
+            System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move));
         }
 //        List<Tuple<Board, List<Move>>> oneMove = tester.generateMovesWithHistory(board, 1, 2);
 //        int totalCount = 0;
