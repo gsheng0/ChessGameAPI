@@ -21,6 +21,17 @@ public abstract class Piece{
     public boolean hasMoved() { return hasMoved; }
     public abstract String getName();
 
+    @Override
+    public int hashCode() {
+        int prime = 31;
+        int result = 0;
+
+        result = prime * result + color.hashCode();
+        result += prime * result + getName().hashCode();
+
+        return result;
+    }
+
     /**
      *
      * @param c character representation of a piece

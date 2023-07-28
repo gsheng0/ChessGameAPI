@@ -34,6 +34,9 @@ public class Board {
         newBoard.put(move.getEndTile(), piece);
         return new Board(newBoard, move);
     }
+    public Board apply(String uci){
+        return apply(Move.parseUCIMove(this, uci));
+    }
     public Optional<Piece> getPieceAt(int tile){
         if(!board.containsKey(tile)){
             return Optional.empty();

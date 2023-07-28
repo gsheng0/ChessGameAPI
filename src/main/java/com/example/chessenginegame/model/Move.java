@@ -24,6 +24,34 @@ public class Move {
     public String getUCINotation(){
         return TileUtil.getNamedTileFromIndex(startTile) + TileUtil.getNamedTileFromIndex(endTile);
     }
+
+    /**
+     *
+     * @param obj another object
+     * @return true if the other object is a move object that involves the same piece and tiles
+     */
+    @Override
+    public boolean equals(Object obj) {
+        //left like this for readability purposes
+        if(obj instanceof Move other){
+            return other.piece.getName().equals(this.piece.getName()) &&
+               other.piece.getColor().equals(this.piece.getColor()) &&
+               other.startTile == this.startTile &&
+               other.endTile == this.endTile;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int prime = 37;
+        int result = 0;
+        result += piece.hashCode() * prime * prime;
+        result += endTile * prime + result;
+        result += startTile * prime + result;
+        return result;
+    }
+
     public static Move parseUCIMove(Board board, String UCI){
         String firstHalf = UCI.substring(0, 2);
         String secondHalf = UCI.substring(2, 4);

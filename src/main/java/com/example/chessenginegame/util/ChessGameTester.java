@@ -104,6 +104,10 @@ public class ChessGameTester {
                 differences.put(move, myResults.get(move));
             }
             else{
+                int difference = myResults.get(move) - stockfishResults.get(move);
+                if(difference == 0){
+                    continue;
+                }
                 differences.put(move, myResults.get(move) - stockfishResults.get(move));
             }
         }
