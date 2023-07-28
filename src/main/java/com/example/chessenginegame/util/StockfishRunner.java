@@ -65,7 +65,6 @@ public class StockfishRunner {
                 }
                 String[] split = response.split(":");
                 perftNumbers.put(Move.parseUCIMove(board, split[0]), Integer.parseInt(split[1].substring(1)));
-                System.out.println(response);
             }
 
             stockfishProcess.destroy();

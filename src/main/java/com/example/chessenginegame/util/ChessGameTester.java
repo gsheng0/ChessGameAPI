@@ -13,6 +13,18 @@ import java.util.List;
 
 public class ChessGameTester {
     static MoveGeneratorService moveGeneratorService = new MoveGeneratorServiceImpl();
+    public int countMoves(Board board, int depth, String startingColor){
+        if(depth == 0){
+            return 1;
+        }
+        String oppositeSide = PieceUtil.getOppositeColor(startingColor);
+        List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
+        int count = 0;
+        for(Move move : moves){
+            count += countMoves(board.apply(move), depth - 1, oppositeSide);
+        }
+        return count;
+    }
     public int countMoves(Board board, int depth, int limit){
         if(depth == limit){
             return 1;
@@ -63,10 +75,14 @@ public class ChessGameTester {
         }
         return output;
     }
+    public HashMap<Move, Integer> doPerftFromPosition(Board board, int depth, String side){
+        HashMap<Move, Integer> perftResults = new HashMap<>();
+        List<Move> moves = moveGeneratorService.generateLegalMoves(board, side);
+    }
     public static void main(String[] args){
         ChessGameTester tester = new ChessGameTester();
         Board board = Board.startingPosition();
-        board = board.apply(new Move(Piece.buildFromCharacter('P'), TileUtil.getIndexFromNamedTile("b2"), TileUtil.getIndexFromNamedTile("b3")));
+        board = board.apply(Move.parseUCIMove(board, "b2b3"));
         List<Tuple<Board, List<Move>>> oneMove = tester.generateMovesWithHistory(board, 1, 2);
         int totalCount = 0;
         for(Tuple<Board, List<Move>> tuple : oneMove){
