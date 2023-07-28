@@ -64,7 +64,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             }
         }
         if(kingTuple != null){
-            moves.addAll(generateKingMoves(kingTuple.getFirst(), kingTuple.getSecond(), board, opposingMoves));
+            moves.addAll(generateKingMoves1(kingTuple.getFirst(), kingTuple.getSecond(), board));//, opposingMoves));
         }
         return moves;
     }
@@ -204,6 +204,20 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 }
             }
         }
+
+        return possibleEndTiles.stream().map(endTile -> new Move(piece, currentTile, endTile)).toList();
+    }
+    public List<Move> generateKingMoves1(Piece piece, int currentTile, Board board){
+        String oppositeColor = PieceUtil.getOppositeColor(piece.getColor());
+        List<Integer> possibleEndTiles = new ArrayList<>(King.moveShifts(currentTile).stream().
+                map(moveShift -> moveShift + currentTile).
+                filter(TileUtil::isInBoard).
+                filter(tile -> board.getPieceAt(tile).
+                        map(occupant ->
+                                !occupant.getColor().equals(piece.getColor())).
+                        orElse(true)).
+                filter(tile -> !isTileProtectedBy(board, tile, oppositeColor)).toList());
+
 
         return possibleEndTiles.stream().map(endTile -> new Move(piece, currentTile, endTile)).toList();
     }
