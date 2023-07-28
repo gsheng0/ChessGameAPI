@@ -118,10 +118,10 @@ public class ChessGameTester {
         ChessGameTester tester = new ChessGameTester();
 
         Board board = Board.startingPosition();
-        List<Move> moves = Move.listOf(board, "b2b3", "e7e6");
+        List<Move> moves = Move.listOf(board, "b2b3", "e7e6", "a2a3");
         board = board.apply(moves);
-        HashMap<Move, Integer> perftResults = tester.doPerftFromPosition(board, 2, Constants.WHITE);
-        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, 2);
+        HashMap<Move, Integer> perftResults = tester.doPerftFromPosition(board, 1, Constants.BLACK);
+        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, 1);
         HashMap<Move, Integer> differences = tester.comparePerftResults(stockfishPerftResults, perftResults);
         for(Move move : differences.keySet()){
             System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move));

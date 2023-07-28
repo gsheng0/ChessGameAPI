@@ -8,7 +8,7 @@ import com.example.chessenginegame.util.Tuple;
 
 import java.util.*;
 
-//TODO: Check for checks
+//TODO: Write unit tests for each of the functions in this class
 /*
 Ways to get out of check:
 1. Move king to unprotected square
@@ -458,6 +458,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 if(occupant instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
                     return true;
                 }
+                break;
             }
         }
 
