@@ -6,10 +6,7 @@ import com.example.chessenginegame.model.piece.Piece;
 import com.example.chessenginegame.service.MoveGeneratorService;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ChessGameTester {
     static MoveGeneratorService moveGeneratorService = new MoveGeneratorServiceImpl();
@@ -75,24 +72,63 @@ public class ChessGameTester {
         }
         return output;
     }
-    public HashMap<Move, Integer> doPerftFromPosition(Board board, int depth, String side){
+    public HashMap<Move, Integer> doPerftFromPosition(Board board, int depth, String startingColor){
         HashMap<Move, Integer> perftResults = new HashMap<>();
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, side);
+        List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
+        String oppositeColor = PieceUtil.getOppositeColor(startingColor);
+        for(Move move : moves){
+            Board currentBoard = board.apply(move);
+            int moveCount = countMoves(currentBoard, depth - 1, oppositeColor);
+            perftResults.put(move, moveCount);
+        }
+        return perftResults;
+    }
+
+    /**
+     *
+     * @param stockfishResults stockfish's perft results
+     * @param myResults my perft results
+     * @return a hash map mapping moves and the difference in move counts between stockfish's and my results. If a move is mapped to plus one,
+     * that means that my perft found an extra move, compared to stockfish's perft
+     */
+    public HashMap<Move, Integer> comparePerftResults(HashMap<Move, Integer> stockfishResults, HashMap<Move, Integer> myResults){
+        HashMap<Move, Integer> differences = new HashMap<>();
+        Set<Move> moveSet = new HashSet<>(stockfishResults.keySet());
+        moveSet.addAll(myResults.keySet());
+
+        for(Move move : moveSet){
+            if(!myResults.containsKey(move)){
+                differences.put(move, -1 * stockfishResults.get(move));
+            }
+            else if(!stockfishResults.containsKey(move)){
+                differences.put(move, myResults.get(move));
+            }
+            else{
+                differences.put(move, myResults.get(move) - stockfishResults.get(move));
+            }
+        }
+        return differences;
     }
     public static void main(String[] args){
         ChessGameTester tester = new ChessGameTester();
         Board board = Board.startingPosition();
         board = board.apply(Move.parseUCIMove(board, "b2b3"));
-        List<Tuple<Board, List<Move>>> oneMove = tester.generateMovesWithHistory(board, 1, 2);
-        int totalCount = 0;
-        for(Tuple<Board, List<Move>> tuple : oneMove){
-            Board boardState = tuple.getFirst();
-            List<Move> history = tuple.getSecond();
-            int moveCount = tester.countMoves(boardState, 2, 4);
-            totalCount += moveCount;
-            String boardVariation = history.stream().map(Move::getUCINotation).reduce((s, s2) -> s + " " + s2).get();
-            System.out.println(boardVariation + ": " + moveCount);
+        HashMap<Move, Integer> perftResults = tester.doPerftFromPosition(board, 3, Constants.BLACK);
+        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(Collections.singletonList(Move.parseUCIMove(Board.startingPosition(), "b2b3")), 3);
+        HashMap<Move, Integer> differences = tester.comparePerftResults(stockfishPerftResults, perftResults);
+        for(Move move : differences.keySet()){
+            System.out.println(move.getUCINotation() + ": " + differences.get(move));
         }
-        System.out.println(totalCount);
+//        List<Tuple<Board, List<Move>>> oneMove = tester.generateMovesWithHistory(board, 1, 2);
+//        int totalCount = 0;
+//        for(Tuple<Board, List<Move>> tuple : oneMove){
+//            Board boardState = tuple.getFirst();
+//            List<Move> history = tuple.getSecond();
+//            int moveCount = tester.countMoves(boardState, 2, 4);
+//            totalCount += moveCount;
+//            String boardVariation = history.stream().map(Move::getUCINotation).reduce((s, s2) -> s + " " + s2).get();
+//            System.out.println(boardVariation + ": " + moveCount);
+//        }
+//        System.out.println(totalCount);
     }
 }
