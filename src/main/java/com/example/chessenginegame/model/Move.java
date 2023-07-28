@@ -24,4 +24,16 @@ public class Move {
     public String getUCINotation(){
         return TileUtil.getNamedTileFromIndex(startTile) + TileUtil.getNamedTileFromIndex(endTile);
     }
+    public static Move parseUCIMove(Board board, String UCI){
+        String firstHalf = UCI.substring(0, 2);
+        String secondHalf = UCI.substring(2, 4);
+        System.out.println(UCI + " First half: " + firstHalf + " Second half: " + secondHalf);
+        int startTile = TileUtil.getIndexFromNamedTile(firstHalf);
+        int endTile = TileUtil.getIndexFromNamedTile(secondHalf);
+        Piece piece = board.getPieceAt(startTile).orElseThrow(() -> new IllegalStateException("No piece exists on that start tile"));
+        return new Move(piece, startTile, endTile);
+    }
+    public static Move of(Piece piece, int startTile, int endTile){
+        return new Move(piece, startTile, endTile);
+    }
 }
