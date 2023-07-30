@@ -39,6 +39,7 @@ public class Board {
         for(Move move : moves){
             current = current.apply(move);
         }
+        //TODO:
         return current;
     }
     public Board apply(String uci){
