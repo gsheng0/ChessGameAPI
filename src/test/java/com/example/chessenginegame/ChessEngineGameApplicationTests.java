@@ -6,6 +6,7 @@ class ChessEngineGameApplicationTests {
 
 
     void contextLoads() {
+//
     }
 
 }
