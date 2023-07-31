@@ -1,34 +1,97 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
-import com.example.chessenginegame.model.piece.Piece;
+import com.example.chessenginegame.model.Move;
+import com.example.chessenginegame.model.Pin;
+import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MoveGeneratorServiceImplTest {
 
     private MoveGeneratorServiceImpl moveGeneratorService;
+    private BoardBuilder boardBuilder;
+    private PieceBuilder pieceBuilder;
     @BeforeEach
     public void setUp(){
         moveGeneratorService = new MoveGeneratorServiceImpl();
+        boardBuilder = BoardBuilder.getInstance();
+        pieceBuilder = PieceBuilder.getInstance();
+    }
+    public MoveGeneratorServiceImplTest(){
+        moveGeneratorService = new MoveGeneratorServiceImpl();
+        boardBuilder = BoardBuilder.getInstance();
+        pieceBuilder = PieceBuilder.getInstance();
     }
     @Test
     public void GenerateKnightMoves_GivenKnightOnEmptyBoard_ReturnMoves(){
-        BoardBuilder boardBuilder = BoardBuilder.getInstance();
+        Piece knight = new Knight(Constants.WHITE);
+        int currentTile = 35;
+        Board currentBoard = boardWith(Knight.class, currentTile);
+
+        assertEquals(createMoveList(knight, currentTile,
+                Arrays.asList(18, 20, 25, 29, 41, 45, 50, 52)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
+        currentTile = 49;
+        assertEquals(createMoveList(knight, currentTile,
+                Arrays.asList(32, 34, 43, 59)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
+        currentTile = 1;
+        assertEquals(createMoveList(knight, currentTile,
+                Arrays.asList(11, 16, 18)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
+        currentTile = 7;
+        assertEquals(createMoveList(knight, currentTile,
+                Arrays.asList(13, 22)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
+        currentTile = 39;
+        assertEquals(createMoveList(knight, currentTile,
+                Arrays.asList(22, 29, 45, 54)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
+        currentTile = 24;
+        assertEquals(createMoveList(knight, currentTile,
+                Arrays.asList(9, 18, 34, 41)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
+        currentTile = 61;
+        assertEquals(createMoveList(knight, currentTile,
+                Arrays.asList(44, 46, 51, 55)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
+    }
+    public static void main(String[] args){
+        MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
+        tests.GenerateKnightMoves_GivenKnightOnEmptyBoard_ReturnMoves();
     }
 
-    private BoardBuilder boardWithA(Piece piece){
-        return BoardBuilder.getInstance().setPiece(piece);
+
+    private List<Move> createMoveList(Piece piece, int startTile, List<Integer> endTiles){
+        return endTiles.stream().map(endTile -> new Move(piece, startTile, endTile)).toList();
     }
-    private BoardBuilder onTile(int tile){
-        return BoardBuilder.getInstance().setTile(tile);
+    private Board boardWith(Class<? extends Piece> type, int tile){
+        if(type.equals(Pawn.class)){
+            return boardBuilder.newBoard()
+                    .withA(pieceBuilder.pawn()).onTile(tile).build();
+        } else if(type.equals(Knight.class)){
+            return boardBuilder.newBoard()
+                    .withA(pieceBuilder.knight()).onTile(tile).build();
+        } else if(type.equals(Bishop.class)){
+            return boardBuilder.newBoard()
+                    .withA(pieceBuilder.bishop()).onTile(tile).build();
+        } else if(type.equals(Rook.class)){
+            return boardBuilder.newBoard()
+                    .withA(pieceBuilder.rook()).onTile(tile).build();
+        } else if(type.equals(Queen.class)){
+            return boardBuilder.newBoard()
+                    .withA(pieceBuilder.queen()).onTile(tile).build();
+        } else if(type.equals(King.class)){
+            return boardBuilder.newBoard()
+                    .withA(pieceBuilder.king()).onTile(tile).build();
+        }
+        return null;
     }
     private static class BoardBuilder{
-        private Piece piece;
-        private int tile;
+        private Piece piece = null;
+        private int tile = -1;
         private static BoardBuilder boardBuilder = null;
         private HashMap<Integer, Piece> map;
 
@@ -39,24 +102,88 @@ class MoveGeneratorServiceImplTest {
             }
             return boardBuilder;
         }
-        public BoardBuilder setPiece(Piece piece){
-            this.piece = piece;
+        public BoardBuilder newBoard(){
+            map = new HashMap<>();
             return this;
         }
-        public BoardBuilder setTile(int tile){
+        public BoardBuilder withA(Piece piece){
+            this.piece = piece;
+            if(tile != -1){
+                add();
+            }
+            return this;
+        }
+        public BoardBuilder onTile(int tile){
             this.tile = tile;
+            if(piece != null){
+                add();
+            }
             return this;
         }
         public BoardBuilder add(){
             map.put(tile, piece);
+            tile = -1;
+            piece = null;
             return this;
         }
-        public Board build() {
+        public Board build(){
             return new Board(map);
         }
-        public BoardBuilder clear(){
-            map = new HashMap<>();
+
+    }
+    private static class PieceBuilder{
+        private String color = null;
+        private static PieceBuilder pieceBuilder = null;
+        private PieceBuilder() {}
+        public static PieceBuilder getInstance(){
+            if(pieceBuilder == null){
+                pieceBuilder = new PieceBuilder();
+            }
+            return pieceBuilder;
+        }
+        public PieceBuilder black(){
+            this.color = Constants.BLACK;
             return this;
+        }
+        public PieceBuilder white(){
+            this.color = Constants.WHITE;
+            return this;
+        }
+        public Piece pawn(){
+            if(this.color == null){
+                white();
+            }
+            return new Pawn(color);
+        }
+        public Piece knight(){
+            if(this.color == null){
+                white();
+            }
+            return new Knight(color);
+        }
+        public Piece bishop(){
+            if(this.color == null){
+                white();
+            }
+            return new Bishop(color);
+        }
+        public Piece rook(){
+            if(this.color == null){
+                white();
+            }
+            return new Rook(color);
+        }
+        public Piece queen(){
+            if(this.color == null){
+                white();
+            }
+            return new Queen(color);
+        }
+        public Piece king(){
+            if(this.color == null){
+                white();
+            }
+            return new King(color);
         }
     }
 }
