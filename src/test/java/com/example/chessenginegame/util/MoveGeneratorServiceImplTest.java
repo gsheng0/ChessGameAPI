@@ -74,12 +74,27 @@ class MoveGeneratorServiceImplTest {
         testSinglePiece(rook, 54, 6, 14, 22, 30, 38, 46, 62, 48, 49, 50, 51, 52, 53, 55);
         testSinglePiece(rook, 1, 0, 2, 3, 4, 5, 6, 7, 9, 17, 25, 33, 41, 49, 57);
     }
+    @Test
+    public void QueenOnEmptyBoard(){
+        Piece queen = Piece.of('Q');
+        testSinglePiece(queen, 56, 48, 40, 32, 24, 16, 8, 0, 57, 58, 59, 60, 61, 62, 63,
+                49, 42, 35, 28, 21, 14, 7);
+        testSinglePiece(queen, 36, 28, 20, 12, 4, 44, 52, 60, 32, 33, 34, 35, 37, 38, 39,
+                57, 50, 43, 29, 22, 15, 0, 9, 18, 27, 45, 54, 63);
+        testSinglePiece(queen, 62, 6, 14, 22, 30, 38, 46, 54, 56, 57, 58, 59, 60, 61, 63,
+                53, 44, 35, 26, 17, 8, 55);
+        testSinglePiece(queen, 11, 3, 19, 27, 35, 43, 51, 59, 8, 9, 10, 12, 13, 14, 15,
+                2, 20, 29, 38, 47, 4, 18, 25, 32);
+        testSinglePiece(queen, 58, 50, 42, 34, 26, 18, 10, 2, 56, 57, 59, 60, 61, 62, 63,
+                40, 49, 23, 30, 37, 44, 51);
+    }
     public static void main(String[] args){
         MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
         tests.KnightOnEmptyBoard();
         tests.PawnOnEmptyBoard();
         tests.BishopOnEmptyBoard();
         tests.RookOnEmptyBoard();
+        tests.QueenOnEmptyBoard();
     }
 
     private void testSinglePiece(Piece piece, int tile, int... expected){
@@ -105,13 +120,9 @@ class MoveGeneratorServiceImplTest {
         } catch(Error e){
             HashSet<Move> expectedMoveSet = new HashSet<>(expected);
             HashSet<Move> actualMoveSet = new HashSet<>(actual);
-
-            for(Move actualMove : actualMoveSet){
-                if(expectedMoveSet.contains(actualMove)){
-                    expected.remove(actualMove);
-                    actual.remove(actualMove);
-                }
-            }
+//            for(int i = 0; i < expected.size(); i++){
+//                System.out.println(expected.get(i) + " " + actual.get(i));
+//            }
             System.out.println("Missing Moves: ");
             expected.stream().filter(expectedMove -> !actualMoveSet.contains(expectedMove)).forEach(System.out::println);
             System.out.println("Extra Moves: ");
