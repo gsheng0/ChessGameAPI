@@ -2,9 +2,9 @@ package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
 import com.example.chessenginegame.model.Move;
-import com.example.chessenginegame.model.Pin;
 import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
+import junit.framework.AssertionFailedError;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ class MoveGeneratorServiceImplTest {
         pieceBuilder = PieceBuilder.getInstance();
     }
     @Test
-    public void GeneratePawnMoves_GivenPawnOnEmptyBoard_ReturnMoves(){
+    public void PawnOnEmptyBoard(){
         Piece whitePawn = Piece.of('P');
         testSinglePiece(whitePawn, 51, 43, 35);
         testSinglePiece(whitePawn, 32, 24);
@@ -45,7 +45,7 @@ class MoveGeneratorServiceImplTest {
 
     }
     @Test
-    public void GenerateKnightMoves_GivenKnightOnEmptyBoard_ReturnMoves(){
+    public void KnightOnEmptyBoard(){
         Piece knight = Piece.of('N');
         testSinglePiece(knight, 35, 18, 20, 25, 29, 41, 45, 50, 52);
         testSinglePiece(knight, 49, 32, 34, 43, 59);
@@ -55,10 +55,20 @@ class MoveGeneratorServiceImplTest {
         testSinglePiece(knight, 24, 9, 18, 34, 41);
         testSinglePiece(knight, 61, 44, 46, 51, 55);
     }
+    @Test
+    public void BishopOnEmptyBoard(){
+        Piece bishop = Piece.of('B');
+        testSinglePiece(bishop, 56, 49, 42, 35, 28, 21, 14, 7);
+        testSinglePiece(bishop, 63, 54, 45, 36, 27, 18, 9, 0);
+        testSinglePiece(bishop, 35, 56, 49, 42, 28, 21, 14, 7, 8, 17, 26, 44, 53, 62);
+        testSinglePiece(bishop, 36, 57, 50, 43, 29, 22, 15, 0, 9, 18, 27, 45, 54, 63);
+        testSinglePiece(bishop, 10, 1, 19, 28, 37, 46, 55, 3, 17, 24);
+    }
     public static void main(String[] args){
         MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
-        tests.GenerateKnightMoves_GivenKnightOnEmptyBoard_ReturnMoves();
-        tests.GeneratePawnMoves_GivenPawnOnEmptyBoard_ReturnMoves();
+        tests.KnightOnEmptyBoard();
+        tests.PawnOnEmptyBoard();
+        tests.BishopOnEmptyBoard();
     }
 
     private void testSinglePiece(Piece piece, int tile, int... expected){
@@ -75,9 +85,30 @@ class MoveGeneratorServiceImplTest {
         }
     }
     private void assertEquals(List<Move> expected, List<Move> actual){
-        Collections.sort(new ArrayList<>(expected));
-        Collections.sort(new ArrayList<>(actual));
-        Assertions.assertEquals(expected, actual);
+        expected = new ArrayList<>(expected);
+        actual = new ArrayList<>(actual);
+        Collections.sort(expected);
+        Collections.sort(actual);
+        try{
+            Assertions.assertEquals(expected, actual);
+        } catch(Error e){
+            HashSet<Move> expectedMoveSet = new HashSet<>(expected);
+            HashSet<Move> actualMoveSet = new HashSet<>(actual);
+
+            for(Move actualMove : actualMoveSet){
+                if(expectedMoveSet.contains(actualMove)){
+                    expected.remove(actualMove);
+                    actual.remove(actualMove);
+                }
+            }
+            System.out.println("Missing Moves: ");
+            expected.stream().filter(expectedMove -> !actualMoveSet.contains(expectedMove)).forEach(System.out::println);
+            System.out.println("Extra Moves: ");
+            actual.stream().filter(actualMove -> !expectedMoveSet.contains(actualMove)).forEach(System.out::println);
+            throw new AssertionFailedError("Assertion failed!");
+
+        }
+
     }
     private List<Move> createMoveList(Piece piece, int startTile, List<Integer> endTiles){
         return endTiles.stream().map(endTile -> new Move(piece, startTile, endTile)).toList();
