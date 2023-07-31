@@ -14,7 +14,6 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MoveGeneratorServiceImplTest {
-
     private MoveGeneratorServiceImpl moveGeneratorService;
     private BoardBuilder boardBuilder;
     private PieceBuilder pieceBuilder;
