@@ -64,11 +64,22 @@ class MoveGeneratorServiceImplTest {
         testSinglePiece(bishop, 36, 57, 50, 43, 29, 22, 15, 0, 9, 18, 27, 45, 54, 63);
         testSinglePiece(bishop, 10, 1, 19, 28, 37, 46, 55, 3, 17, 24);
     }
+    @Test
+    public void RookOnEmptyBoard(){
+        Piece rook = Piece.of('R');
+        testSinglePiece(rook, 56, 48, 40, 32, 24, 16, 8, 0, 57, 58, 59, 60, 61, 62, 63);
+        testSinglePiece(rook, 7, 6, 5, 4, 3, 2, 1, 0, 15, 23, 31, 39, 47, 55, 63);
+        testSinglePiece(rook, 36, 28, 20, 12, 4, 44, 52, 60, 32, 33, 34, 35, 37, 38, 39);
+        testSinglePiece(rook, 25, 24, 26, 27, 28, 29, 30, 31, 1, 9, 17, 33, 41, 49, 57);
+        testSinglePiece(rook, 54, 6, 14, 22, 30, 38, 46, 62, 48, 49, 50, 51, 52, 53, 55);
+        testSinglePiece(rook, 1, 0, 2, 3, 4, 5, 6, 7, 9, 17, 25, 33, 41, 49, 57);
+    }
     public static void main(String[] args){
         MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
         tests.KnightOnEmptyBoard();
         tests.PawnOnEmptyBoard();
         tests.BishopOnEmptyBoard();
+        tests.RookOnEmptyBoard();
     }
 
     private void testSinglePiece(Piece piece, int tile, int... expected){
