@@ -88,6 +88,14 @@ class MoveGeneratorServiceImplTest {
         testSinglePiece(queen, 58, 50, 42, 34, 26, 18, 10, 2, 56, 57, 59, 60, 61, 62, 63,
                 40, 49, 23, 30, 37, 44, 51);
     }
+    @Test
+    public void KingOnEmptyBoard(){
+        Piece king = Piece.of('K');
+        testSinglePiece(king, 60, 51, 52, 53, 59, 61);
+        testSinglePiece(king, 27, 18, 19, 20, 26, 28, 34, 35, 36);
+        testSinglePiece(king, 39, 30, 31, 38, 46, 47);
+        testSinglePiece(king, 40, 32, 33, 41, 48, 49);
+    }
     public static void main(String[] args){
         MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
         tests.KnightOnEmptyBoard();
@@ -95,6 +103,7 @@ class MoveGeneratorServiceImplTest {
         tests.BishopOnEmptyBoard();
         tests.RookOnEmptyBoard();
         tests.QueenOnEmptyBoard();
+        tests.KingOnEmptyBoard();
     }
 
     private void testSinglePiece(Piece piece, int tile, int... expected){

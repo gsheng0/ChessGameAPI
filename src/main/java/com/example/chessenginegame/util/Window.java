@@ -7,17 +7,14 @@ import com.example.chessenginegame.service.MoveGeneratorService;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-public class Window extends JPanel implements MouseListener, KeyListener {
+public class Window extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
     //TODO: Add logging for games, translate to PGN with chatgpt, paste into analysis on lichess
     //TODO: Add feature to skip to next set of possible moves by either side eg: skip all boards where pawn a6 was played
     //use countMoves() to calculate how many to skip
@@ -210,5 +207,15 @@ public class Window extends JPanel implements MouseListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
     }
 }
