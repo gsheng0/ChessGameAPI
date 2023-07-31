@@ -37,6 +37,9 @@ public abstract class Piece implements Comparable<Piece>{
         return Integer.compare(this.getValue(), other.getValue());
     }
 
+    public static Piece of(String s){
+        return of(s.charAt(0));
+    }
     /**
      *
      * @param c character representation of a piece

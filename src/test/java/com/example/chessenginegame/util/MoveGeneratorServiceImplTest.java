@@ -31,69 +31,82 @@ class MoveGeneratorServiceImplTest {
     @Test
     public void PawnOnEmptyBoard(){
         Piece whitePawn = Piece.of('P');
-        testSinglePiece(whitePawn, 51, 43, 35);
-        testSinglePiece(whitePawn, 32, 24);
-        testSinglePiece(whitePawn, 55, 47, 39);
-        testSinglePiece(whitePawn, 35, 27);
+        testGenerateMoves(whitePawn, 51, 43, 35);
+        testGenerateMoves(whitePawn, 32, 24);
+        testGenerateMoves(whitePawn, 55, 47, 39);
+        testGenerateMoves(whitePawn, 35, 27);
 
         Piece blackPawn = Piece.of('p');
-        testSinglePiece(blackPawn, 8, 16, 24);
-        testSinglePiece(blackPawn, 15, 23, 31);
-        testSinglePiece(blackPawn, 20, 28);
-        testSinglePiece(blackPawn, 35, 43);
+        testGenerateMoves(blackPawn, 8, 16, 24);
+        testGenerateMoves(blackPawn, 15, 23, 31);
+        testGenerateMoves(blackPawn, 20, 28);
+        testGenerateMoves(blackPawn, 35, 43);
 
     }
     @Test
     public void KnightOnEmptyBoard(){
         Piece knight = Piece.of('N');
-        testSinglePiece(knight, 35, 18, 20, 25, 29, 41, 45, 50, 52);
-        testSinglePiece(knight, 49, 32, 34, 43, 59);
-        testSinglePiece(knight, 1, 11, 16, 18);
-        testSinglePiece(knight, 7, 13, 22);
-        testSinglePiece(knight, 39, 22, 29, 45, 54);
-        testSinglePiece(knight, 24, 9, 18, 34, 41);
-        testSinglePiece(knight, 61, 44, 46, 51, 55);
+        testGenerateMoves(knight, 35, 18, 20, 25, 29, 41, 45, 50, 52);
+        testGenerateMoves(knight, 49, 32, 34, 43, 59);
+        testGenerateMoves(knight, 1, 11, 16, 18);
+        testGenerateMoves(knight, 7, 13, 22);
+        testGenerateMoves(knight, 39, 22, 29, 45, 54);
+        testGenerateMoves(knight, 24, 9, 18, 34, 41);
+        testGenerateMoves(knight, 61, 44, 46, 51, 55);
     }
     @Test
     public void BishopOnEmptyBoard(){
         Piece bishop = Piece.of('B');
-        testSinglePiece(bishop, 56, 49, 42, 35, 28, 21, 14, 7);
-        testSinglePiece(bishop, 63, 54, 45, 36, 27, 18, 9, 0);
-        testSinglePiece(bishop, 35, 56, 49, 42, 28, 21, 14, 7, 8, 17, 26, 44, 53, 62);
-        testSinglePiece(bishop, 36, 57, 50, 43, 29, 22, 15, 0, 9, 18, 27, 45, 54, 63);
-        testSinglePiece(bishop, 10, 1, 19, 28, 37, 46, 55, 3, 17, 24);
+        testGenerateMoves(bishop, 56, 49, 42, 35, 28, 21, 14, 7);
+        testGenerateMoves(bishop, 63, 54, 45, 36, 27, 18, 9, 0);
+        testGenerateMoves(bishop, 35, 56, 49, 42, 28, 21, 14, 7, 8, 17, 26, 44, 53, 62);
+        testGenerateMoves(bishop, 36, 57, 50, 43, 29, 22, 15, 0, 9, 18, 27, 45, 54, 63);
+        testGenerateMoves(bishop, 10, 1, 19, 28, 37, 46, 55, 3, 17, 24);
     }
     @Test
     public void RookOnEmptyBoard(){
         Piece rook = Piece.of('R');
-        testSinglePiece(rook, 56, 48, 40, 32, 24, 16, 8, 0, 57, 58, 59, 60, 61, 62, 63);
-        testSinglePiece(rook, 7, 6, 5, 4, 3, 2, 1, 0, 15, 23, 31, 39, 47, 55, 63);
-        testSinglePiece(rook, 36, 28, 20, 12, 4, 44, 52, 60, 32, 33, 34, 35, 37, 38, 39);
-        testSinglePiece(rook, 25, 24, 26, 27, 28, 29, 30, 31, 1, 9, 17, 33, 41, 49, 57);
-        testSinglePiece(rook, 54, 6, 14, 22, 30, 38, 46, 62, 48, 49, 50, 51, 52, 53, 55);
-        testSinglePiece(rook, 1, 0, 2, 3, 4, 5, 6, 7, 9, 17, 25, 33, 41, 49, 57);
+        testGenerateMoves(rook, 56, 48, 40, 32, 24, 16, 8, 0, 57, 58, 59, 60, 61, 62, 63);
+        testGenerateMoves(rook, 7, 6, 5, 4, 3, 2, 1, 0, 15, 23, 31, 39, 47, 55, 63);
+        testGenerateMoves(rook, 36, 28, 20, 12, 4, 44, 52, 60, 32, 33, 34, 35, 37, 38, 39);
+        testGenerateMoves(rook, 25, 24, 26, 27, 28, 29, 30, 31, 1, 9, 17, 33, 41, 49, 57);
+        testGenerateMoves(rook, 54, 6, 14, 22, 30, 38, 46, 62, 48, 49, 50, 51, 52, 53, 55);
+        testGenerateMoves(rook, 1, 0, 2, 3, 4, 5, 6, 7, 9, 17, 25, 33, 41, 49, 57);
     }
     @Test
     public void QueenOnEmptyBoard(){
         Piece queen = Piece.of('Q');
-        testSinglePiece(queen, 56, 48, 40, 32, 24, 16, 8, 0, 57, 58, 59, 60, 61, 62, 63,
+        testGenerateMoves(queen, 56, 48, 40, 32, 24, 16, 8, 0, 57, 58, 59, 60, 61, 62, 63,
                 49, 42, 35, 28, 21, 14, 7);
-        testSinglePiece(queen, 36, 28, 20, 12, 4, 44, 52, 60, 32, 33, 34, 35, 37, 38, 39,
+        testGenerateMoves(queen, 36, 28, 20, 12, 4, 44, 52, 60, 32, 33, 34, 35, 37, 38, 39,
                 57, 50, 43, 29, 22, 15, 0, 9, 18, 27, 45, 54, 63);
-        testSinglePiece(queen, 62, 6, 14, 22, 30, 38, 46, 54, 56, 57, 58, 59, 60, 61, 63,
+        testGenerateMoves(queen, 62, 6, 14, 22, 30, 38, 46, 54, 56, 57, 58, 59, 60, 61, 63,
                 53, 44, 35, 26, 17, 8, 55);
-        testSinglePiece(queen, 11, 3, 19, 27, 35, 43, 51, 59, 8, 9, 10, 12, 13, 14, 15,
+        testGenerateMoves(queen, 11, 3, 19, 27, 35, 43, 51, 59, 8, 9, 10, 12, 13, 14, 15,
                 2, 20, 29, 38, 47, 4, 18, 25, 32);
-        testSinglePiece(queen, 58, 50, 42, 34, 26, 18, 10, 2, 56, 57, 59, 60, 61, 62, 63,
+        testGenerateMoves(queen, 58, 50, 42, 34, 26, 18, 10, 2, 56, 57, 59, 60, 61, 62, 63,
                 40, 49, 23, 30, 37, 44, 51);
     }
     @Test
     public void KingOnEmptyBoard(){
         Piece king = Piece.of('K');
-        testSinglePiece(king, 60, 51, 52, 53, 59, 61);
-        testSinglePiece(king, 27, 18, 19, 20, 26, 28, 34, 35, 36);
-        testSinglePiece(king, 39, 30, 31, 38, 46, 47);
-        testSinglePiece(king, 40, 32, 33, 41, 48, 49);
+        testGenerateMoves(king, 60, 51, 52, 53, 59, 61);
+        testGenerateMoves(king, 27, 18, 19, 20, 26, 28, 34, 35, 36);
+        testGenerateMoves(king, 39, 30, 31, 38, 46, 47);
+        testGenerateMoves(king, 40, 32, 33, 41, 48, 49);
+    }
+    @Test
+    public void SinglePieceChecks(){
+        testGetAttackerCount(60, "r", 56, 1);
+        testGetAttackerCount(10, "b", 55, 1);
+        testGetAttackerCount(34, "n", 44, 1);
+        testGetAttackerCount(54, "p", 45, 1);
+        testGetAttackerCount(35, "p", 28, 1);
+        testGetAttackerCount(18, "p", 11, 1);
+        testGetAttackerCount(4, "q", 32, 1);
+        testGetAttackerCount(9, "r", 57, 1);
+        testGetAttackerCount(7, "b", 56, 1);
+        testGetAttackerCount(32, "r", 39, 1);
     }
     public static void main(String[] args){
         MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
@@ -103,9 +116,10 @@ class MoveGeneratorServiceImplTest {
         tests.RookOnEmptyBoard();
         tests.QueenOnEmptyBoard();
         tests.KingOnEmptyBoard();
+        tests.SinglePieceChecks();
     }
 
-    private void testSinglePiece(Piece piece, int tile, int... expected){
+    private void testGenerateMoves(Piece piece, int tile, int... expected){
         Board board = boardBuilder.newBoard().withA(piece).onTile(tile).build();
         List<Move> expectedMoves = createMoveList(piece, tile, Arrays.stream(expected).boxed().toList());
         if(piece instanceof Pawn pawn){
@@ -117,6 +131,11 @@ class MoveGeneratorServiceImplTest {
         } else if(piece instanceof King king) {
             assertEquals(expectedMoves, moveGeneratorService.generateKingMoves1(king, tile, board));
         }
+    }
+    private void testGetAttackerCount(int kingTile, String p, int tile, int expected){
+        Piece piece = Piece.of(p);
+        Board board = boardBuilder.newBoard().withA(piece).onTile(tile).withA(Piece.of('K')).onTile(kingTile).build();
+        Assertions.assertEquals(expected, moveGeneratorService.getAttackersOnKingOfColor(board, Constants.WHITE).size());
     }
     private void assertEquals(List<Move> expected, List<Move> actual){
         expected = new ArrayList<>(expected);
