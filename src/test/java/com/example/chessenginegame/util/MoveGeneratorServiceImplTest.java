@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,36 +35,32 @@ class MoveGeneratorServiceImplTest {
     @Test
     public void GenerateKnightMoves_GivenKnightOnEmptyBoard_ReturnMoves(){
         Piece knight = new Knight(Constants.WHITE);
-        int currentTile = 35;
-        Board currentBoard = boardWith(Knight.class, currentTile);
-
-        assertEquals(createMoveList(knight, currentTile,
-                Arrays.asList(18, 20, 25, 29, 41, 45, 50, 52)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
-        currentTile = 49;
-        assertEquals(createMoveList(knight, currentTile,
-                Arrays.asList(32, 34, 43, 59)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
-        currentTile = 1;
-        assertEquals(createMoveList(knight, currentTile,
-                Arrays.asList(11, 16, 18)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
-        currentTile = 7;
-        assertEquals(createMoveList(knight, currentTile,
-                Arrays.asList(13, 22)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
-        currentTile = 39;
-        assertEquals(createMoveList(knight, currentTile,
-                Arrays.asList(22, 29, 45, 54)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
-        currentTile = 24;
-        assertEquals(createMoveList(knight, currentTile,
-                Arrays.asList(9, 18, 34, 41)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
-        currentTile = 61;
-        assertEquals(createMoveList(knight, currentTile,
-                Arrays.asList(44, 46, 51, 55)), moveGeneratorService.generateKnightMoves(knight, currentTile, currentBoard, null));
+        testSinglePiece(knight, 35, Arrays.asList(18, 20, 25, 29, 41, 45, 50, 52));
+        testSinglePiece(knight, 49, Arrays.asList(32, 34, 43, 59));
+        testSinglePiece(knight, 1, Arrays.asList(11, 16, 18));
+        testSinglePiece(knight, 7, Arrays.asList(13, 22));
+        testSinglePiece(knight, 39, Arrays.asList(22, 29, 45, 54));
+        testSinglePiece(knight, 24, Arrays.asList(9, 18, 34, 41));
+        testSinglePiece(knight, 61, Arrays.asList(44, 46, 51, 55));
     }
     public static void main(String[] args){
         MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
         tests.GenerateKnightMoves_GivenKnightOnEmptyBoard_ReturnMoves();
     }
 
-
+    private void testSinglePiece(Piece piece, int tile, List<Integer> expected){
+        Board board = boardBuilder.newBoard().withA(piece).onTile(tile).build();
+        List<Move> expectedMoves = createMoveList(piece, tile, expected);
+        if(piece instanceof Pawn pawn){
+            assertEquals(expectedMoves, moveGeneratorService.generatePawnMoves(pawn, tile, board, null));
+        } else if(piece instanceof Knight){
+            assertEquals(expectedMoves, moveGeneratorService.generateKnightMoves(piece, tile, board, null));
+        } else if(piece instanceof SlidingPiece slidingPiece){
+            assertEquals(expectedMoves, moveGeneratorService.generateSlidingPieceMoves(slidingPiece, tile, board, null));
+        } else if(piece instanceof King king) {
+            assertEquals(expectedMoves, moveGeneratorService.generateKingMoves1(king, tile, board));
+        }
+    }
     private List<Move> createMoveList(Piece piece, int startTile, List<Integer> endTiles){
         return endTiles.stream().map(endTile -> new Move(piece, startTile, endTile)).toList();
     }
