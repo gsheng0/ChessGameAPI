@@ -6,7 +6,7 @@ import com.example.chessenginegame.util.TileUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Move {
+public class Move implements Comparable<Move>{
     private int startTile, endTile;
     private Piece piece;
     public Move(Piece piece, int startTile, int endTile){
@@ -73,5 +73,14 @@ public class Move {
             board = board.apply(uci);
         }
         return moves;
+    }
+
+    @Override
+    public int compareTo(Move other) {
+        if(startTile != other.startTile){
+            return Integer.valueOf(startTile).compareTo(other.startTile);
+        } else if(endTile != other.endTile){
+            return Integer.valueOf(endTile).compareTo(other.endTile);
+        } else return this.getPiece().compareTo(other.getPiece());
     }
 }

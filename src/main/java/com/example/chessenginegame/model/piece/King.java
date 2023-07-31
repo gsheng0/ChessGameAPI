@@ -15,6 +15,11 @@ public class King extends Piece {
     public String getName() {
         return "King";
     }
+    @Override
+    public int getValue() {
+        return 10;
+    }
+
     public static List<Integer> moveShifts(int tile) {
         int file = TileUtil.getFile(tile);
         List<Integer> moveShifts = new ArrayList<>(Arrays.asList(-7, 7, -9, 9, -8, 8, -1, 1));

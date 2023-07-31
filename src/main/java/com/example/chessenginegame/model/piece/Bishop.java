@@ -14,6 +14,10 @@ public class Bishop extends SlidingPiece {
         return "Bishop";
     }
     @Override
+    public int getValue() {
+        return 3;
+    }
+    @Override
     public List<Integer> getMoveShifts() {
         return Bishop.moveShifts();
     }

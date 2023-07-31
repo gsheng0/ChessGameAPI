@@ -11,6 +11,12 @@ public class Rook extends SlidingPiece{
     public String getName() {
         return "Rook";
     }
+
+    @Override
+    public int getValue() {
+        return 5;
+    }
+
     @Override
     public List<Integer> getMoveShifts() {
         return Rook.moveShifts();

@@ -11,6 +11,12 @@ public class Queen extends SlidingPiece{
     public String getName() {
         return "Queen";
     }
+
+    @Override
+    public int getValue() {
+        return 9;
+    }
+
     @Override
     public List<Integer> getMoveShifts() {
         return Queen.moveShifts();

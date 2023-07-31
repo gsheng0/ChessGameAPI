@@ -15,6 +15,11 @@ public class Knight extends Piece {
     public String getName() {
         return "Knight";
     }
+    @Override
+    public int getValue() {
+        return 3;
+    }
+
     public static List<Integer> moveShifts(int tile) {
         return getMoveShiftsFromFile(TileUtil.getFile(tile));
     }

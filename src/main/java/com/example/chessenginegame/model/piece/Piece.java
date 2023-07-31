@@ -1,11 +1,8 @@
 package com.example.chessenginegame.model.piece;
 
-import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.util.Constants;
 
-import java.util.List;
-
-public abstract class Piece{
+public abstract class Piece implements Comparable<Piece>{
     private static int counter = 0;
     private String color;
     private int id;
@@ -20,6 +17,7 @@ public abstract class Piece{
     public int getId() { return id; }
     public boolean hasMoved() { return hasMoved; }
     public abstract String getName();
+    public abstract int getValue();
 
     @Override
     public int hashCode() {
@@ -31,6 +29,13 @@ public abstract class Piece{
 
         return result;
     }
+    @Override
+    public int compareTo(Piece other) {
+        if(!this.getColor().equals(other.getColor())){
+            return other.getColor().compareTo(this.getColor());
+        }
+        return Integer.compare(this.getValue(), other.getValue());
+    }
 
     /**
      *
@@ -38,7 +43,7 @@ public abstract class Piece{
      * @return a piece object
      * @throws IllegalArgumentException if character is not a valid piece
      */
-    public static Piece buildFromCharacter(char c){
+    public static Piece of(char c){
         PieceBuilder pieceBuilder = new PieceBuilder();
         if(c == 'p'){
             return pieceBuilder.black().pawn().build();

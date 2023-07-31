@@ -3,7 +3,6 @@ package com.example.chessenginegame.model;
 import com.example.chessenginegame.model.piece.King;
 import com.example.chessenginegame.model.piece.Piece;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -91,7 +90,7 @@ public class Board {
                 index += num;
             }
             else{
-                board.put(index, Piece.buildFromCharacter(current));
+                board.put(index, Piece.of(current));
                 index++;
             }
         }
