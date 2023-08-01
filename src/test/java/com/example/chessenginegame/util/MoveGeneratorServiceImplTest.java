@@ -96,6 +96,10 @@ class MoveGeneratorServiceImplTest {
         testGenerateMoves(king, 40, 32, 33, 41, 48, 49);
     }
     @Test
+    public void NoChecks(){
+
+    }
+    @Test
     public void SinglePieceChecks(){
         testGetAttackerCount(60, "r", 56, 1);
         testGetAttackerCount(10, "b", 55, 1);

@@ -41,8 +41,7 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
         moveGenerator = new MoveGeneratorServiceImpl();
         ChessGameTester tester = new ChessGameTester();
         board = Board.startingPosition().apply("b2b3").apply("e7e6").apply("a2a3");
-        moveGenerator.generateLegalMoves(board, Constants.BLACK).forEach(System.out::println);
-        game = tester.generateMoves(board, 0, 1);
+        game = tester.generateMoves(board, 0, 2);
         //board = new Board(map);
         frame = new JFrame();
         frame.add(this);

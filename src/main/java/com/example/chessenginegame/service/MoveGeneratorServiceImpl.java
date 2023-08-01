@@ -408,7 +408,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 continue;
             }
             Piece occupant = optionalOccupant.get();
-            if(occupant instanceof Pawn){
+            if(occupant instanceof Pawn && occupant.getColor().equals(color)){
                 defenders.add(Tuple.of(occupant, resultantTile));
             }
         }
