@@ -140,6 +140,16 @@ class MoveGeneratorServiceImplTest {
         testGetAttackerCount(41, "b", 13, "r", 46, 2);
         testGetAttackerCount(39, "n", 22, "q", 33, 2);
     }
+    @Test
+    public void BlockedSingleChecks(){
+        testGetAttackerCount(60, "r", 56, "p", 57, 0);
+        testGetAttackerCount(10, "b", 55, "n", 37, 0);
+        testGetAttackerCount(26, "q", 12, "r", 19, 0);
+        testGetAttackerCount(4, "q", 32, "n", 18, 0);
+        testGetAttackerCount(9, "r", 57, "b", 33, 0);
+        testGetAttackerCount(7, "b", 56, "r", 42, 0);
+        testGetAttackerCount(32, "r", 39, "n", 38, 0);
+    }
     public static void main(String[] args){
         MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
         tests.KnightOnEmptyBoard();
@@ -151,6 +161,7 @@ class MoveGeneratorServiceImplTest {
         tests.NoChecks();
         tests.SinglePieceChecks();
         tests.DoublePieceChecks();
+        tests.BlockedSingleChecks();
 
     }
 
