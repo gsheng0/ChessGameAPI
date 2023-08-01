@@ -97,7 +97,22 @@ class MoveGeneratorServiceImplTest {
     }
     @Test
     public void NoChecks(){
-
+        testGetAttackerCount(60, "r", 51 , 0);
+        testGetAttackerCount(60, "n", 51, 0);
+        testGetAttackerCount(43, "b", 35, 0);
+        testGetAttackerCount(43, "p", 35, 0);
+        testGetAttackerCount(43, "q", 43, 0);
+        testGetAttackerCount(9, "q", 3, 0);
+        testGetAttackerCount(6, "b", 14, 0);
+        testGetAttackerCount(15, "r", 20, 0);
+        testGetAttackerCount(19, "p", 18, 0);
+        testGetAttackerCount(39, "n", 24, 0);
+        testGetAttackerCount(32, "p", 23, 0);
+        testGetAttackerCount(48, "b", 39, 0);
+        testGetAttackerCount(48, "p", 39, 0);
+        testGetAttackerCount(8, "q", 25, 0);
+        testGetAttackerCount(5, "p", 14, 0);
+        testGetAttackerCount(0, "b", 7, 0);
     }
     @Test
     public void SinglePieceChecks(){
@@ -112,6 +127,19 @@ class MoveGeneratorServiceImplTest {
         testGetAttackerCount(7, "b", 56, 1);
         testGetAttackerCount(32, "r", 39, 1);
     }
+    @Test
+    public void DoublePieceChecks(){
+        testGetAttackerCount(27, "p", 18, "p", 20, 2);
+        testGetAttackerCount(2, "n", 17, "n", 19, 2);
+        testGetAttackerCount(30, "b", 23, "b", 51, 2);
+        testGetAttackerCount(53, "r", 5, "r", 48, 2);
+        testGetAttackerCount(57, "q", 15, "q", 25, 2);
+        testGetAttackerCount(62, "p", 55, "r", 14, 2);
+        testGetAttackerCount(16, "n", 26, "b", 52, 2);
+        testGetAttackerCount(25, "q", 4, "n", 8, 2);
+        testGetAttackerCount(41, "b", 13, "r", 46, 2);
+        testGetAttackerCount(39, "n", 22, "q", 33, 2);
+    }
     public static void main(String[] args){
         MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
         tests.KnightOnEmptyBoard();
@@ -120,7 +148,10 @@ class MoveGeneratorServiceImplTest {
         tests.RookOnEmptyBoard();
         tests.QueenOnEmptyBoard();
         tests.KingOnEmptyBoard();
+        tests.NoChecks();
         tests.SinglePieceChecks();
+        tests.DoublePieceChecks();
+
     }
 
     private void testGenerateMoves(Piece piece, int tile, int... expected){
@@ -139,6 +170,12 @@ class MoveGeneratorServiceImplTest {
     private void testGetAttackerCount(int kingTile, String p, int tile, int expected){
         Piece piece = Piece.of(p);
         Board board = boardBuilder.newBoard().withA(piece).onTile(tile).withA(Piece.of('K')).onTile(kingTile).build();
+        Assertions.assertEquals(expected, moveGeneratorService.getAttackersOnKingOfColor(board, Constants.WHITE).size());
+    }
+    private void testGetAttackerCount(int kingTile, String p1, int tile1, String p2, int tile2, int expected){
+        Piece piece1 = Piece.of(p1);
+        Piece piece2 = Piece.of(p2);
+        Board board = boardBuilder.newBoard().withA(piece1).onTile(tile1).withA(piece2).onTile(tile2).withA(Piece.of('K')).onTile(kingTile).build();
         Assertions.assertEquals(expected, moveGeneratorService.getAttackersOnKingOfColor(board, Constants.WHITE).size());
     }
     private void assertEquals(List<Move> expected, List<Move> actual){
