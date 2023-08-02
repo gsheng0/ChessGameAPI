@@ -159,6 +159,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             }
         } else if(slidingPiece.getMoveShifts().contains(pin.direction)) {
             moves.addAll(getMovesFromTileToEdgeOfBoard(slidingPiece, currentTile, board, pin.direction));
+            moves.addAll(getMovesFromTileToEdgeOfBoard(slidingPiece, currentTile, board, pin.direction * -1));
         }
         return moves;
     }
@@ -283,7 +284,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         for(int direction : directions){
             Piece prevEncountered = null;
 
-            for(int i = 1; i < TileUtil.tilesToEdgeOfBoard(kingTile, direction); i++){ //while the tile to check is still on the board
+            for(int i = 1; i <= TileUtil.tilesToEdgeOfBoard(kingTile, direction); i++){ //while the tile to check is still on the board
                 int currentTile = kingTile + direction * i;
                 Optional<Piece> tile = board.getPieceAt(currentTile);
                 if(tile.isEmpty()){
