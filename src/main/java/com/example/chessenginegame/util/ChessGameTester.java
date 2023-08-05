@@ -114,6 +114,7 @@ public class ChessGameTester {
         }
         return differences;
     }
+    //e8e7 -> missing move after "b2b3", "e7e6", "a2a3"
     public static void main(String[] args){
         ChessGameTester tester = new ChessGameTester();
         Board board = Board.startingPosition();

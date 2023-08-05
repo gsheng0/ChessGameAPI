@@ -35,7 +35,7 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
     private List<Integer> highlights;
     private Piece selected;
     private List<Board> game;
-    private int moveNumber = 0;//
+    private int moveNumber = 0;
     public Window(){
         highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorServiceImpl();
