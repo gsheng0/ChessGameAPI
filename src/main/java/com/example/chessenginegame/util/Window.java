@@ -8,6 +8,7 @@ import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,8 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
     private Piece selected;
     private List<Board> game;
     private int moveNumber = 0;
+    private static final HashMap<Character, Image> CHARACTER_IMAGE_HASH_MAP = new HashMap<>();
+
     public Window(){
         highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorServiceImpl();
@@ -127,7 +130,9 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
             g.setColor(Color.WHITE);
         }
         if(piece instanceof King){
+            System.out.println(x + " " + y);
             drawCharacter(g, "K" + piece.getId(), x, y);
+            g.drawImage(CHARACTER_IMAGE_HASH_MAP.get('k'), x * UNIT_WIDTH, y * UNIT_HEIGHT + 80,this);
         } else if(piece instanceof Queen){
             drawCharacter(g, "Q" + piece.getId(), x, y);
         } else if(piece instanceof Rook){
@@ -217,4 +222,9 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
     public void mouseMoved(MouseEvent e) {
 
     }
+    static {
+        Image BLACK_KING = Resources.getImageFromPath("/Users/gsheng/IdeaProjects/ChessEngineGame/src/main/resources/black_king.png");
+        CHARACTER_IMAGE_HASH_MAP.put('k', BLACK_KING);
+    }
+
 }

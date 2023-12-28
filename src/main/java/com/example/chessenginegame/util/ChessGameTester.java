@@ -118,7 +118,7 @@ public class ChessGameTester {
     public static void main(String[] args){
         ChessGameTester tester = new ChessGameTester();
         Board board = Board.startingPosition();
-        List<Move> moves = Move.listOf(board, "b2b3", "e7e6", "a2a3");
+        List<Move> moves = Move.listOf(board);
         board = board.apply(moves);
         HashMap<Move, Integer> perftResults = tester.doPerftFromPosition(board, 1, Constants.BLACK);
         HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, 1);
