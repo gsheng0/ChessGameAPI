@@ -19,7 +19,13 @@ public class Knight extends Piece {
     public int getValue() {
         return 3;
     }
-
+    @Override
+    public char toChar() {
+        if (getColor().equals(Constants.WHITE)) {
+            return 'N';
+        }
+        return 'n';
+    }
     public static List<Integer> moveShifts(int tile) {
         return getMoveShiftsFromFile(TileUtil.getFile(tile));
     }

@@ -130,9 +130,8 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
             g.setColor(Color.WHITE);
         }
         if(piece instanceof King){
-            System.out.println(x + " " + y);
             drawCharacter(g, "K" + piece.getId(), x, y);
-            g.drawImage(CHARACTER_IMAGE_HASH_MAP.get('k'), x * UNIT_WIDTH, y * UNIT_HEIGHT + 80,this);
+            g.drawImage(CHARACTER_IMAGE_HASH_MAP.get('k'), x * UNIT_WIDTH, y * UNIT_HEIGHT + 100, UNIT_WIDTH, UNIT_HEIGHT, this);
         } else if(piece instanceof Queen){
             drawCharacter(g, "Q" + piece.getId(), x, y);
         } else if(piece instanceof Rook){

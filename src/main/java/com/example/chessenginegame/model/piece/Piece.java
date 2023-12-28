@@ -1,6 +1,7 @@
 package com.example.chessenginegame.model.piece;
 
 import com.example.chessenginegame.util.Constants;
+import org.apache.tomcat.util.bcel.Const;
 
 public abstract class Piece implements Comparable<Piece>{
     private static int counter = 0;
@@ -36,6 +37,8 @@ public abstract class Piece implements Comparable<Piece>{
         }
         return Integer.compare(this.getValue(), other.getValue());
     }
+
+    public abstract char toChar();
 
     public static Piece of(String s){
         return of(s.charAt(0));

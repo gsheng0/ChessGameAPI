@@ -1,6 +1,7 @@
 package com.example.chessenginegame.model.piece;
 
 import com.example.chessenginegame.model.piece.Piece;
+import com.example.chessenginegame.util.Constants;
 import com.example.chessenginegame.util.TileUtil;
 
 import java.util.ArrayList;
@@ -19,7 +20,13 @@ public class King extends Piece {
     public int getValue() {
         return 10;
     }
-
+    @Override
+    public char toChar() {
+        if (getColor().equals(Constants.WHITE)) {
+            return 'K';
+        }
+        return 'k';
+    }
     public static List<Integer> moveShifts(int tile) {
         int file = TileUtil.getFile(tile);
         List<Integer> moveShifts = new ArrayList<>(Arrays.asList(-7, 7, -9, 9, -8, 8, -1, 1));

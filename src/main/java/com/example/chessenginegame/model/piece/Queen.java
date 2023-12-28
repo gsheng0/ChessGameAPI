@@ -1,5 +1,7 @@
 package com.example.chessenginegame.model.piece;
 
+import com.example.chessenginegame.util.Constants;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +18,13 @@ public class Queen extends SlidingPiece{
     public int getValue() {
         return 9;
     }
-
+    @Override
+    public char toChar() {
+        if (getColor().equals(Constants.WHITE)) {
+            return 'Q';
+        }
+        return 'q';
+    }
     @Override
     public List<Integer> getMoveShifts() {
         return Queen.moveShifts();
