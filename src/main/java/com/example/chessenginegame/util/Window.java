@@ -8,7 +8,6 @@ import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,27 +31,27 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
     private static final int HORIZONTAL_SHIFT = 1;
     private static final int VERTICAL_SHIFT = 29;
     private static MoveGeneratorService moveGenerator;
-    private Board board;
     private List<Integer> highlights;
     private Piece selected;
-    private List<Board> game;
+    private List<Board> boards;
     private int moveNumber = 0;
-    private static final HashMap<Character, Image> CHARACTER_IMAGE_HASH_MAP = new HashMap<>();
+    private static final HashMap<Character, Image> CHARACTER_IMAGE_HASH_MAP = Resources.getCharacterToImageHashMap();
 
     public Window(){
         highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorServiceImpl();
-        ChessGameTester tester = new ChessGameTester();
-        board = Board.startingPosition().apply("b2b3").apply("e7e6").apply("a2a3");
-        game = tester.generateMoves(board, 0, 2);
-        //board = new Board(map);
         frame = new JFrame();
         frame.add(this);
         frame.addMouseListener(this);
         frame.addKeyListener(this);
         frame.setSize(WINDOW_WIDTH + HORIZONTAL_SHIFT, WINDOW_HEIGHT + VERTICAL_SHIFT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+    public void show(){
         frame.setVisible(true);
+    }
+    public void setBoards(List<Board> boards){
+        this.boards = boards;
     }
     public List<Board> generateRandomGame(int moves){
         List<Board> game = new ArrayList<>();
@@ -77,7 +76,7 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
         List<Integer> tilesToHighlight = new ArrayList<>();
         if(selected != null) {
             tilesToHighlight = new ArrayList<>(
-                moveGenerator.generateLegalMoves(game.get(moveNumber), selected.getColor()).stream().
+                moveGenerator.generateLegalMoves(boards.get(moveNumber), selected.getColor()).stream().
                 filter(move -> move.getPiece().getId() == selected.getId()).
                 map(Move::getEndTile).
                 toList());
@@ -112,16 +111,19 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
 
             }
         }
-        Board board = game.get(moveNumber);
+        Board board = boards.get(moveNumber);
         for(int tile : board.getBoard().keySet()){
             int y = tile/8;
             int x = tile % 8;
-            drawPiece(g, board.getBoard().get(tile), x, y);
+            drawPieceImage(g, board.getBoard().get(tile), x, y);
         }
     }
     public void drawCharacter(Graphics g, String c, int x, int y){
         g.setFont(SQUARE_FONT);
         g.drawString(c, x * UNIT_WIDTH, y * UNIT_HEIGHT + 80);
+    }
+    public void drawPieceImage(Graphics g, Piece piece, int x, int y){
+        g.drawImage(CHARACTER_IMAGE_HASH_MAP.get(piece.toChar()), x * UNIT_WIDTH, y * UNIT_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT, this);
     }
     public void drawPiece(Graphics g, Piece piece, int x, int y){
         if (piece.getColor().equals(Constants.BLACK)) {
@@ -129,9 +131,9 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
         } else if (piece.getColor().equals(Constants.WHITE)) {
             g.setColor(Color.WHITE);
         }
+
         if(piece instanceof King){
             drawCharacter(g, "K" + piece.getId(), x, y);
-            g.drawImage(CHARACTER_IMAGE_HASH_MAP.get('k'), x * UNIT_WIDTH, y * UNIT_HEIGHT + 100, UNIT_WIDTH, UNIT_HEIGHT, this);
         } else if(piece instanceof Queen){
             drawCharacter(g, "Q" + piece.getId(), x, y);
         } else if(piece instanceof Rook){
@@ -144,16 +146,9 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
             drawCharacter(g, "P" + piece.getId(), x, y);
         }
     }
-    public static void main(String[] args){
-        Window window = new Window();
-
-    }
-
     @Override
     public void mouseClicked(MouseEvent e) {
-
     }
-
     @Override
     public void mousePressed(MouseEvent e) {
         Point point = e.getPoint();
@@ -161,7 +156,7 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
         int y = point.y - VERTICAL_SHIFT;
         tileNumber = x/UNIT_WIDTH + 8 * (y/UNIT_HEIGHT);
         if(e.getButton() == MouseEvent.BUTTON1){
-            selected = game.get(moveNumber).getPieceAt(tileNumber).orElse(null);
+            selected = boards.get(moveNumber).getPieceAt(tileNumber).orElse(null);
         }
         else{
             selected = null;
@@ -173,29 +168,22 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
         }
 
         repaint();
-
-
     }
-
     @Override
     public void mouseReleased(MouseEvent e) {
 
     }
-
     @Override
     public void mouseEntered(MouseEvent e) {
 
     }
-
     @Override
     public void mouseExited(MouseEvent e) {
 
     }
-
     @Override
     public void keyTyped(KeyEvent e) {
     }
-
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_LEFT){
@@ -203,27 +191,20 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
             repaint();
         }
         else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-            moveNumber = Math.min(moveNumber + 1, game.size() - 1);
+            moveNumber = Math.min(moveNumber + 1, boards.size() - 1);
             repaint();
         }
     }
-
     @Override
     public void keyReleased(KeyEvent e) {
     }
-
     @Override
     public void mouseDragged(MouseEvent e) {
 
     }
-
     @Override
     public void mouseMoved(MouseEvent e) {
 
-    }
-    static {
-        Image BLACK_KING = Resources.getImageFromPath("/Users/gsheng/IdeaProjects/ChessEngineGame/src/main/resources/black_king.png");
-        CHARACTER_IMAGE_HASH_MAP.put('k', BLACK_KING);
     }
 
 }

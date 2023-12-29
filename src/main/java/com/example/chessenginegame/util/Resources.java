@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.HashMap;
 
 public class Resources {
-    public static final String ABSOLUTE_PATH_PREFIX = "/Users/gsheng/IdeaProjects/ChessEngineGame/src/main/resources/";
+    public static final String ABSOLUTE_PATH_PREFIX = "/Users/gsheng/IdeaProjects/ChessEngineGame/src/main/resources";
 
     public static Image getImageFromPath(String path){
         File file = new File(path);
