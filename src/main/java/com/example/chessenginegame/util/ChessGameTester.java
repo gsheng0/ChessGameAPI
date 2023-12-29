@@ -122,10 +122,13 @@ public class ChessGameTester {
         board = board.apply(moves);
         HashMap<Move, Integer> perftResults = tester.doPerftFromPosition(board, 1, Constants.BLACK);
         HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, 1);
-        HashMap<Move, Integer> differences = tester.comparePerftResults(stockfishPerftResults, perftResults);
-        for(Move move : differences.keySet()){
-            System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move));
+        for(Move move : stockfishPerftResults.keySet()){
+            System.out.println(move.getUCINotation() + ": "  + stockfishPerftResults.get(move));
         }
+        HashMap<Move, Integer> differences = tester.comparePerftResults(stockfishPerftResults, perftResults);
+//        for(Move move : differences.keySet()){
+//            System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move));
+//        }
 //        List<Tuple<Board, List<Move>>> oneMove = tester.generateMovesWithHistory(board, 1, 2);
 //        int totalCount = 0;
 //        for(Tuple<Board, List<Move>> tuple : oneMove){
