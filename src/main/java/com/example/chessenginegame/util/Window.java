@@ -30,16 +30,15 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
     private static final int UNIT_WIDTH = WINDOW_WIDTH/8;
     private static final int HORIZONTAL_SHIFT = 1;
     private static final int VERTICAL_SHIFT = 29;
-    private static MoveGeneratorService moveGenerator;
     private List<Integer> highlights;
     private Piece selected;
     private List<Board> boards;
     private int moveNumber = 0;
     private static final HashMap<Character, Image> CHARACTER_IMAGE_HASH_MAP = Resources.getCharacterToImageHashMap();
-
+    private MoveGeneratorService moveGenerator;
     public Window(){
-        highlights = new ArrayList<>();
         moveGenerator = new MoveGeneratorServiceImpl();
+        highlights = new ArrayList<>();
         frame = new JFrame();
         frame.add(this);
         frame.addMouseListener(this);
@@ -52,22 +51,6 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
     }
     public void setBoards(List<Board> boards){
         this.boards = boards;
-    }
-    public List<Board> generateRandomGame(int moves){
-        List<Board> game = new ArrayList<>();
-        Board board = Board.startingPosition();
-        game.add(board);
-        for(int i = 0; i < moves; i++){
-            String color = i % 2 == 0 ? Constants.WHITE : Constants.BLACK;
-            List<Move> legalMoves = moveGenerator.generateLegalMoves(board, color);
-            if(legalMoves.size() == 0){
-                break;
-            }
-            int rand = (int)(Math.random() * legalMoves.size());
-            board = board.apply(legalMoves.get(rand));
-            game.add(board);
-        }
-        return game;
     }
     @Override
     public void paintComponent(Graphics g){
