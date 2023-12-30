@@ -17,6 +17,7 @@ import javax.swing.*;
 public class Window extends JPanel implements MouseListener, KeyListener, MouseMotionListener {
     //TODO: Add logging for games, translate to PGN with chatgpt, paste into analysis on lichess
     //TODO: Add feature to skip to next set of possible moves by either side eg: skip all boards where pawn a6 was played
+    //TODO: Add tile names
     //use countMoves() to calculate how many to skip
     private JFrame frame;
     private int tileNumber;

@@ -2,7 +2,6 @@ package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
 import com.example.chessenginegame.model.Move;
-import com.example.chessenginegame.model.piece.Piece;
 import com.example.chessenginegame.service.MoveGeneratorService;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
@@ -10,8 +9,10 @@ import java.util.*;
 
 public class ChessGameTester {
     //TODO: Make all methods static, refactor methods that have both a depth and limit parameter
+    //TODO: Make command line type program loop to navigate perft results and possibly rerun perfts
+    //TODO: Make perft detect which side is first to act
     static MoveGeneratorService moveGeneratorService = new MoveGeneratorServiceImpl();
-    public int countMoves(Board board, int depth, String startingColor){
+    public static int countMoves(Board board, int depth, String startingColor){
         if(depth == 0){
             return 1;
         }
@@ -38,7 +39,7 @@ public class ChessGameTester {
         }
         return count;
     }
-    public List<Board> generateMoves(Board board, int depth, int limit){
+    public static List<Board> generateMoves(Board board, int depth, int limit){
         if(depth == limit){
             return Collections.singletonList(board);
         }
@@ -73,9 +74,20 @@ public class ChessGameTester {
         }
         return output;
     }
-    public HashMap<Move, Integer> doPerftFromPosition(Board board, int depth, String startingColor){
+
+    /**
+     *
+     * @param board The starting position of the perft
+     * @param depth The depth to go to
+     * @param startingColor The side that goes first
+     * @return a hashmap mapping each first move to the number of possible positions to reach from that move
+     * A depth of 1 returns a hashmap mapping every starting move to the number 1, because at a depth of one, the perft stops
+     * at the starting move, eg: There is only one position possible from each starting move with one move allowed
+     */
+    public static HashMap<Move, Integer> doPerftFromPosition(Board board, int depth, String startingColor){
         HashMap<Move, Integer> perftResults = new HashMap<>();
         List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
+
         String oppositeColor = PieceUtil.getOppositeColor(startingColor);
         for(Move move : moves){
             Board currentBoard = board.apply(move);
@@ -92,7 +104,7 @@ public class ChessGameTester {
      * @return a hash map mapping moves and the difference in move counts between stockfish's and my results. If a move is mapped to plus one,
      * that means that my perft found an extra move, compared to stockfish's perft
      */
-    public HashMap<Move, Integer> comparePerftResults(HashMap<Move, Integer> stockfishResults, HashMap<Move, Integer> myResults){
+    public static HashMap<Move, Integer> comparePerftResults(HashMap<Move, Integer> stockfishResults, HashMap<Move, Integer> myResults){
         HashMap<Move, Integer> differences = new HashMap<>();
         Set<Move> moveSet = new HashSet<>(stockfishResults.keySet());
         moveSet.addAll(myResults.keySet());
@@ -115,20 +127,29 @@ public class ChessGameTester {
         return differences;
     }
     //e8e7 -> missing move after "b2b3", "e7e6", "a2a3"
-    public static void main(String[] args){
-        ChessGameTester tester = new ChessGameTester();
-        Board board = Board.startingPosition();
-        List<Move> moves = Move.listOf(board);
-        board = board.apply(moves);
-        HashMap<Move, Integer> perftResults = tester.doPerftFromPosition(board, 1, Constants.BLACK);
-        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, 1);
-        for(Move move : stockfishPerftResults.keySet()){
-            System.out.println(move.getUCINotation() + ": "  + stockfishPerftResults.get(move));
+    public static void printPerftResults(HashMap<Move, Integer> perftResults){
+        for(Move move : perftResults.keySet()){
+            System.out.println(move.getUCINotation() + ": " + perftResults.get(move));
         }
-        HashMap<Move, Integer> differences = tester.comparePerftResults(stockfishPerftResults, perftResults);
-//        for(Move move : differences.keySet()){
-//            System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move));
-//        }
+    }
+    public static void main(String[] args){
+        int depth = 3;
+        Board board = Board.startingPosition();
+        List<Move> moves = Move.listOf(board, "a2a3", "e7e6");
+        board = board.apply(moves);
+
+        HashMap<Move, Integer> perftResults = doPerftFromPosition(board, depth, Constants.WHITE);
+        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, depth);
+        HashMap<Move, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
+        for(Move move : differences.keySet()){
+            System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move) + " actual: " + perftResults.get(move));
+        }
+
+        Scanner reader = new Scanner(System.in);
+        while(true){
+
+
+        }
 //        List<Tuple<Board, List<Move>>> oneMove = tester.generateMovesWithHistory(board, 1, 2);
 //        int totalCount = 0;
 //        for(Tuple<Board, List<Move>> tuple : oneMove){

@@ -22,7 +22,7 @@ public class Board {
     /**
      *
      * @param move The move to be applied to the board
-     * @return a copy of the board, with the move appplied
+     * @return a copy of the board, with the move applied
      */
     public Board apply(Move move){
         if(!board.containsKey(move.getStartTile())){

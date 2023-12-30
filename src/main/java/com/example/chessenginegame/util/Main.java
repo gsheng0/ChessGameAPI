@@ -10,10 +10,9 @@ import java.util.List;
 
 public class Main {
     private static MoveGeneratorService moveGenerator = new MoveGeneratorServiceImpl();
-    private static ChessGameTester tester = new ChessGameTester();
     public static void main(String[] args){
         Window window = new Window();
-        List<Board> boards = tester.generateMoves(Board.startingPosition(), 0, 2);
+        List<Board> boards = ChessGameTester.generateMoves(Board.startingPosition(), 0, 2);
         window.setBoards(boards);
         window.show();
     }
