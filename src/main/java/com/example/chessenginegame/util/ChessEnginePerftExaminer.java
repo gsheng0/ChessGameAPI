@@ -11,12 +11,13 @@ public class ChessEnginePerftExaminer {
     private static final int STEP_INTO_MOVE = 5;
     private static final int SAVE_SESSION = 6;
     public static final String DIRECTIONS_MESSAGE =
-                    "1. Set starting position" +
-                    "2. Set depth" +
-                    "3. Show starting position" +
-                    "4. Run perft" +
-                    "5. Step into move" +
-                    "6. Save session to file";
+                    "0. End\n" +
+                    "1. Set starting position\n" +
+                    "2. Set depth\n" +
+                    "3. Show starting position\n" +
+                    "4. Run perft\n" +
+                    "5. Step into move\n" +
+                    "6. Save session to file\n";
     public static void main(String[] args){
         Scanner reader = new Scanner(System.in);
         PerftSettings perftRunner = new PerftSettings();
@@ -24,7 +25,7 @@ public class ChessEnginePerftExaminer {
             System.out.println(DIRECTIONS_MESSAGE);
             try{
                 int option = Integer.parseInt(reader.nextLine());
-                if(option < 1 || option > 5){
+                if(option < 0 || option > 6){
                     throw new RuntimeException(String.format("'%s' is not a valid option", option));
                 }
 
@@ -35,11 +36,14 @@ public class ChessEnginePerftExaminer {
                 } else if(option == SHOW_STARTING_POSITION){
                     showStartingPosition(perftRunner);
                 } else if(option == RUN_PERFT){
-
+                    System.out.println("running perf testing......\n");
                 } else if(option == STEP_INTO_MOVE){
-
+                    System.out.println("stepping into move.....\n.");
                 } else if(option == SAVE_SESSION){
-
+                    System.out.println("save session......\n");
+                }
+                else {
+                    break;
                 }
 
             } catch(Exception e){
