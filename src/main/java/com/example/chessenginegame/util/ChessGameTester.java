@@ -6,7 +6,7 @@ import com.example.chessenginegame.service.MoveGeneratorService;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
 import java.util.*;
-
+//
 public class ChessGameTester {
     //TODO: Make all methods static, refactor methods that have both a depth and limit parameter
     //TODO: Make command line type program loop to navigate perft results and possibly rerun perfts
@@ -133,9 +133,9 @@ public class ChessGameTester {
         }
     }
     public static void main(String[] args){
-        int depth = 3;
+        int depth = 1;
         Board board = Board.startingPosition();
-        List<Move> moves = Move.listOf(board, "a2a3", "e7e6");
+        List<Move> moves = Move.listOf(board);
         board = board.apply(moves);
 
         HashMap<Move, Integer> perftResults = doPerftFromPosition(board, depth, Constants.WHITE);
@@ -145,11 +145,11 @@ public class ChessGameTester {
             System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move) + " actual: " + perftResults.get(move));
         }
 
-        Scanner reader = new Scanner(System.in);
-        while(true){
-
-
-        }
+//        Scanner reader = new Scanner(System.in);
+//        while(true){
+//
+//
+//        }
 //        List<Tuple<Board, List<Move>>> oneMove = tester.generateMovesWithHistory(board, 1, 2);
 //        int totalCount = 0;
 //        for(Tuple<Board, List<Move>> tuple : oneMove){

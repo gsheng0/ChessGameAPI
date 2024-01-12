@@ -26,6 +26,13 @@ public class Queen extends SlidingPiece{
         return 'q';
     }
     @Override
+    public String toAbv() {
+        if (getColor().equals(Constants.WHITE)) {
+            return "wQ";
+        }
+        return "bQ";
+    }
+    @Override
     public List<Integer> getMoveShifts() {
         return Queen.moveShifts();
     }

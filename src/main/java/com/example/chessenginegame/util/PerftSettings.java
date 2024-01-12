@@ -1,6 +1,7 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
+import com.example.chessenginegame.model.Move;
 
 public class PerftSettings {
     private Board boardState;
@@ -16,7 +17,10 @@ public class PerftSettings {
         boardState = Board.startingPosition();
     }
     public void applyMoveToBoardState(String move){
-        boardState.apply(move);
+        boardState = boardState.apply(move);
+    }
+    public void applyMoveToBoardState(Move move){
+        boardState = boardState.apply(move);
     }
     public void setBoardState(String FEN){
         boardState = Board.createFromFEN(FEN);

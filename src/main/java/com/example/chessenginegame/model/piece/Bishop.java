@@ -24,6 +24,13 @@ public class Bishop extends SlidingPiece {
         }
         return 'b';
     }
+    @Override
+    public String toAbv() {
+        if(getColor().equals(Constants.WHITE)){
+            return "wB";
+        }
+        return "bB";
+    }
 
     @Override
     public List<Integer> getMoveShifts() {

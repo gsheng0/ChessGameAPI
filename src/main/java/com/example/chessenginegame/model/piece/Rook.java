@@ -24,7 +24,13 @@ public class Rook extends SlidingPiece{
         }
         return 'r';
     }
-
+    @Override
+    public String toAbv() {
+        if (getColor().equals(Constants.WHITE)) {
+            return "wR";
+        }
+        return "bR";
+    }
     @Override
     public List<Integer> getMoveShifts() {
         return Rook.moveShifts();

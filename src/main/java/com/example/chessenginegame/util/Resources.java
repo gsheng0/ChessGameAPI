@@ -6,7 +6,8 @@ import java.io.File;
 import java.util.HashMap;
 
 public class Resources {
-    public static final String ABSOLUTE_PATH_PREFIX = "/Users/gsheng/IdeaProjects/ChessEngineGame/src/main/resources";
+    public static final String ABSOLUTE_PATH_PREFIX1 = "ChessEngineAPI/src/main/resources";
+    public static final String ABSOLUTE_PATH_PREFIX = "c:\\_app\\ChessGameAPI\\src\\main\\resources";
 
     public static Image getImageFromPath(String path){
         File file = new File(path);
@@ -18,7 +19,7 @@ public class Resources {
     }
     public static HashMap<Character, Image> getCharacterToImageHashMap(){
         HashMap<Character, Image> characterImageHashMap = new HashMap<>();
-        Image BLACK_KING = getImageFromPath(String.format("%s/black_king.png", ABSOLUTE_PATH_PREFIX));
+        Image BLACK_KING = getImageFromPath(String.format("%s\\black_king.png", ABSOLUTE_PATH_PREFIX));
         Image WHITE_KING = getImageFromPath(String.format("%s/white_king.png", ABSOLUTE_PATH_PREFIX));
         Image BLACK_QUEEN = getImageFromPath(String.format("%s/black_queen.png", ABSOLUTE_PATH_PREFIX));
         Image WHITE_QUEEN = getImageFromPath(String.format("%s/white_queen.png", ABSOLUTE_PATH_PREFIX));

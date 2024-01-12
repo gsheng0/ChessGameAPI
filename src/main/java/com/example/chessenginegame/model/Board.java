@@ -10,6 +10,10 @@ import java.util.Optional;
 public class Board {
     private HashMap<Integer, Piece> board;
     private Move previousMove;
+    public static Integer MIN_TILE = 0;
+    public static Integer MAX_TILE = 63;
+    public static Integer LENGTH = 8;
+
     public Board(){}
     public Board(HashMap<Integer, Piece> board){
         this.board = board;
@@ -19,8 +23,29 @@ public class Board {
         this.previousMove = previousMove;
     }
 
+    public void printBoardMatrix() {
+        String[][] boardMatrix = getBoardAsMatrix();
+        for (int r=0; r<LENGTH; r++) {
+            for (int c=0; c<LENGTH; c++) {
+                System.out.print((boardMatrix[r][c] == null ? "()" : boardMatrix[r][c])  + "  ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public String[][] getBoardAsMatrix() {
+        String[][] boardMatrix = new String[LENGTH][LENGTH];
+        for (Integer key : board.keySet()) {
+            int row = key / LENGTH ;
+            int col = key % LENGTH ;
+            Piece piece = board.get(key);
+            boardMatrix[row][col] = piece.toAbv();
+        }
+        return boardMatrix;
+    }
+
     /**
-     *
      * @param move The move to be applied to the board
      * @return a copy of the board, with the move applied
      */
@@ -78,7 +103,7 @@ public class Board {
         HashMap<Integer, Piece> board = new HashMap<>();
         int index = 0;
         for(int i = 0; i < FEN.length(); i++){
-            if(index > 63){
+            if(index > MAX_TILE){
                 break;
             }
             char current = FEN.charAt(i);

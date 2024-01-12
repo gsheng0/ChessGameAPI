@@ -39,6 +39,7 @@ public abstract class Piece implements Comparable<Piece>{
     }
 
     public abstract char toChar();
+    public abstract String toAbv(); // return lowerCaseColor-UpperCaseChar
 
     public static Piece of(String s){
         return of(s.charAt(0));

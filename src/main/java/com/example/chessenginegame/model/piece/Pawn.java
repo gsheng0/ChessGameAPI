@@ -26,6 +26,13 @@ public class Pawn extends Piece{
         }
         return 'p';
     }
+    @Override
+    public String toAbv() {
+        if (getColor().equals(Constants.WHITE)) {
+            return "wP";
+        }
+        return "bP";
+    }
     public static List<Integer> captureDirections(int tile, String color){
         int multiplier = getDirectionMultiplier(color);
         List<Integer> moveShifts = new ArrayList<>(Arrays.asList(multiplier * 7, multiplier * 9));

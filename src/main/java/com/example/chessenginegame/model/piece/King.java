@@ -27,6 +27,13 @@ public class King extends Piece {
         }
         return 'k';
     }
+    @Override
+    public String toAbv() {
+        if (getColor().equals(Constants.WHITE)) {
+            return "wK";
+        }
+        return "bK";
+    }
     public static List<Integer> moveShifts(int tile) {
         int file = TileUtil.getFile(tile);
         List<Integer> moveShifts = new ArrayList<>(Arrays.asList(-7, 7, -9, 9, -8, 8, -1, 1));
