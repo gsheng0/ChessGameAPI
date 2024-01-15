@@ -79,6 +79,7 @@ public class Board {
         return board.keySet().stream().filter(tile -> board.get(tile).getColor().equals(color)).toList();
     }
     public Optional<Integer> getTileOfKing(String color){
+        //TODO: optional needed? as it's over if the king not there
         for(int tile : board.keySet()){
             Piece piece = board.get(tile);
             if(!(piece instanceof King)){

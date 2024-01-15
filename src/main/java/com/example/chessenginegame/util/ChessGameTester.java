@@ -1,7 +1,9 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
+import com.example.chessenginegame.model.Constants;
 import com.example.chessenginegame.model.Move;
+import com.example.chessenginegame.model.piece.Piece;
 import com.example.chessenginegame.service.MoveGeneratorService;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 
@@ -16,7 +18,7 @@ public class ChessGameTester {
         if(depth == 0){
             return 1;
         }
-        String oppositeSide = PieceUtil.getOppositeColor(startingColor);
+        String oppositeSide = Piece.getOppositeColor(startingColor);
         List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
         int count = 0;
         for(Move move : moves){
@@ -55,20 +57,20 @@ public class ChessGameTester {
         return output;
     }
 
-    public List<Tuple<Board, List<Move>>> generateMovesWithHistory(Board board, int depth, int limit){
+    public List<Pair<Board, List<Move>>> generateMovesWithHistory(Board board, int depth, int limit){
         if(depth == limit){
-            return Collections.singletonList(Tuple.of(board, new ArrayList<>()));
+            return Collections.singletonList(Pair.of(board, new ArrayList<>()));
         }
-        List<Tuple<Board, List<Move>>> output = new ArrayList<>();
+        List<Pair<Board, List<Move>>> output = new ArrayList<>();
         String color = Constants.WHITE;
         if(depth % 2 == 1){
             color = Constants.BLACK;
         }
         List<Move> moves = moveGeneratorService.generateLegalMoves(board, color);
         for(Move move : moves){
-            List<Tuple<Board, List<Move>>> result = generateMovesWithHistory(board.apply(move), depth + 1, limit);
-            for(Tuple<Board, List<Move>> tuple : result){
-                tuple.getSecond().add(0, move);
+            List<Pair<Board, List<Move>>> result = generateMovesWithHistory(board.apply(move), depth + 1, limit);
+            for(Pair<Board, List<Move>> pair : result){
+                pair.right().add(0, move);
             }
             output.addAll(result);
         }
@@ -88,7 +90,7 @@ public class ChessGameTester {
         HashMap<Move, Integer> perftResults = new HashMap<>();
         List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
 
-        String oppositeColor = PieceUtil.getOppositeColor(startingColor);
+        String oppositeColor = Piece.getOppositeColor(startingColor);
         for(Move move : moves){
             Board currentBoard = board.apply(move);
             int moveCount = countMoves(currentBoard, depth - 1, oppositeColor);

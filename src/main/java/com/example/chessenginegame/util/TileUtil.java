@@ -1,7 +1,7 @@
 package com.example.chessenginegame.util;
 
+import com.example.chessenginegame.model.Constants;
 import com.example.chessenginegame.model.piece.Queen;
-import org.apache.tomcat.util.bcel.Const;
 
 import java.util.HashMap;
 import java.util.List;

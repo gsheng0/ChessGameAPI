@@ -1,6 +1,7 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
+import com.example.chessenginegame.model.Constants;
 import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.service.MoveGeneratorService;

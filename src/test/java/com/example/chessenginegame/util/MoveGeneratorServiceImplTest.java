@@ -1,11 +1,11 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
+import com.example.chessenginegame.model.Constants;
 import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 import junit.framework.AssertionFailedError;
-import org.apache.tomcat.util.bcel.Const;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

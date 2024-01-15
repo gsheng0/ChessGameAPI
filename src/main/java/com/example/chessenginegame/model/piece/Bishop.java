@@ -1,7 +1,10 @@
 package com.example.chessenginegame.model.piece;
 
-import com.example.chessenginegame.util.Constants;
+import com.example.chessenginegame.model.Board;
+import com.example.chessenginegame.model.Constants;
+import com.example.chessenginegame.util.TileUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,8 +36,7 @@ public class Bishop extends SlidingPiece {
     }
 
     @Override
-    public List<Integer> getMoveShifts() {
-        return Bishop.moveShifts();
+    public List<Integer> moveShifts(int tile){
+        return diagMove(tile);
     }
-    public static List<Integer> moveShifts(){return Arrays.asList(-7, 7, -9, 9); }
 }

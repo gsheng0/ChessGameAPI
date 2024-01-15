@@ -1,8 +1,7 @@
 package com.example.chessenginegame.model.piece;
 
-import com.example.chessenginegame.util.Constants;
+import com.example.chessenginegame.model.Constants;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Queen extends SlidingPiece{
@@ -33,8 +32,9 @@ public class Queen extends SlidingPiece{
         return "bQ";
     }
     @Override
-    public List<Integer> getMoveShifts() {
-        return Queen.moveShifts();
+    public List<Integer> moveShifts(int tile) {
+        List<Integer> ms =  straightMoveShifts(tile);
+        ms.addAll(diagMoveShifts(tile));
+        return ms;
     }
-    public static List<Integer> moveShifts() { return Arrays.asList(-7, 7, -9, 9, -8, 8, -1, 1);}
 }

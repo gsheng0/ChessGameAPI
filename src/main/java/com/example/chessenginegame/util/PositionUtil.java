@@ -2,12 +2,12 @@ package com.example.chessenginegame.util;
 
 import java.util.ArrayList;
 
-import static com.example.chessenginegame.util.PieceUtil.*;
+import com.example.chessenginegame.model.piece.Piece;
 
 public class PositionUtil {
 
     private int[] board;
-    private int turn = WHITE;
+    private int turn = Piece.WHITE;
     private boolean whiteKingSideCastle;
     private boolean whiteQueenSideCastle;
     private boolean blackKingSideCastle;
@@ -99,7 +99,7 @@ public class PositionUtil {
                 index += num;
             }
             else{
-                board[index] = convertCharPieceToIntegerPiece(current);
+                board[index] = Piece.convertCharPieceToIntegerPiece(current);
                 index++;
             }
         }
@@ -116,10 +116,10 @@ public class PositionUtil {
         int turn = 0;
         turnString = turnString.toLowerCase();
         if(turnString.charAt(0) == 'w'){
-            turn = WHITE;
+            turn = Piece.WHITE;
         }
         else if(turnString.charAt(0) == 'b'){
-            turn = BLACK;
+            turn = Piece.BLACK;
         }
         else{
             throw new IllegalArgumentException("Invalid turn string: " + turnString);
@@ -141,7 +141,7 @@ public class PositionUtil {
                 builder.append("_ ");
             }
             else{
-                builder.append(convertIntegerPieceToCharacterPiece(board[i]));
+                builder.append(Piece.convertIntegerPieceToCharacterPiece(board[i]));
                 builder.append(" ");
             }
         }
@@ -158,7 +158,7 @@ public class PositionUtil {
                 System.out.print("_ ");
             }
             else{
-                System.out.print(convertIntegerPieceToCharacterPiece(pos.board[i]) + " ");
+                System.out.print(Piece.convertIntegerPieceToCharacterPiece(pos.board[i]) + " ");
             }
         }
     }

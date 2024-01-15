@@ -6,5 +6,7 @@ public abstract class SlidingPiece extends Piece{
     public SlidingPiece(String color){
         super(color);
     }
-    public abstract List<Integer> getMoveShifts();
+
+    @Override
+    public abstract List<Integer> moveShifts(int tile);
 }
