@@ -31,10 +31,14 @@ public class Queen extends SlidingPiece{
         }
         return "bQ";
     }
+//    public List<Integer> moveShifts(int tile) {
+//        List<Integer> ms =  straightMoveShifts(tile);
+//        ms.addAll(diagMoveShifts(tile));
+//        return ms;
+//    }
     @Override
-    public List<Integer> moveShifts(int tile) {
-        List<Integer> ms =  straightMoveShifts(tile);
-        ms.addAll(diagMoveShifts(tile));
-        return ms;
+    public List<Integer> getMoveShifts() {
+        return getAllMoveShifts();
     }
+
 }

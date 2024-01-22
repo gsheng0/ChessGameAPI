@@ -6,7 +6,7 @@ import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.model.piece.*;
 import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 import junit.framework.AssertionFailedError;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -254,20 +254,20 @@ class MoveGeneratorServiceImplTest {
         testPinnedPieceMoveGeneration(60, "p", 52, "R", 4, 44, 36);
         testPinnedPieceMoveGeneration(60, "b", 52, "Q", 20);
     }
-    public static void main(String[] args){
-        MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
-        tests.KnightOnEmptyBoard();
-        tests.PawnOnEmptyBoard();
-        tests.BishopOnEmptyBoard();
-        tests.RookOnEmptyBoard();
-        tests.QueenOnEmptyBoard();
-        tests.KingOnEmptyBoard();
-        tests.NoChecks();
-        tests.SinglePieceChecks();
-        tests.DoublePieceChecks();
-        tests.BlockedSingleChecks();
-        tests.PinnedPiece();
-    }
+//    public static void main(String[] args){
+//        MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
+//        tests.KnightOnEmptyBoard();
+//        tests.PawnOnEmptyBoard();
+//        tests.BishopOnEmptyBoard();
+//        tests.RookOnEmptyBoard();
+//        tests.QueenOnEmptyBoard();
+//        tests.KingOnEmptyBoard();
+//        tests.NoChecks();
+//        tests.SinglePieceChecks();
+//        tests.DoublePieceChecks();
+//        tests.BlockedSingleChecks();
+//        tests.PinnedPiece();
+//    }
     private void testPinnedPieceMoveGeneration(int kingTile, String pinned, int pinnedTile, String pinning, int pinningTile, int... expected){
         Piece pinnedPiece = Piece.of(pinned);
         Piece pinningPiece = Piece.of(pinning);
@@ -283,7 +283,7 @@ class MoveGeneratorServiceImplTest {
         if(piece instanceof Pawn pawn){
             assertEquals(expectedMoves, moveGeneratorService.generatePawnMoves(pawn, tile, board, null));
         } else if(piece instanceof Knight){
-            assertEquals(expectedMoves, moveGeneratorService.generateKnightMoves(piece, tile, board, null));
+            assertEquals(expectedMoves, moveGeneratorService.generateKnightMoves((Knight)piece, tile, board, null));
         } else if(piece instanceof SlidingPiece slidingPiece){
             assertEquals(expectedMoves, moveGeneratorService.generateSlidingPieceMoves(slidingPiece, tile, board, null));
         } else if(piece instanceof King king) {

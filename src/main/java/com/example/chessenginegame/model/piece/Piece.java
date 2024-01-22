@@ -36,7 +36,12 @@ public abstract class Piece implements Comparable<Piece>{
     public boolean hasMoved() { return hasMoved; }
     public abstract String getName();
     public abstract int getValue();
-    public abstract List<Integer> moveShifts(int tile);
+//    public abstract List<Integer> moveShifts(int tile);
+
+    @Override
+    public String toString() {
+        return color + " " + getName();
+    }
 
     @Override
     public int hashCode() {

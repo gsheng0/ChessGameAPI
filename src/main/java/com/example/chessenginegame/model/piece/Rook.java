@@ -30,8 +30,13 @@ public class Rook extends SlidingPiece{
         }
         return "bR";
     }
+
+//    public List<Integer> moveShifts(int tile) {
+//        return straightMoveShifts(tile);
+//    }
+
     @Override
-    public List<Integer> moveShifts(int tile) {
-        return straightMoveShifts(tile);
-    }
+    public List<Integer> getMoveShifts() { return getStraightMoveShifts(); }
+
+
 }

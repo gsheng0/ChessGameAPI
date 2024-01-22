@@ -72,7 +72,7 @@ public class Move implements Comparable<Move>{
         List<Move> moves = new ArrayList<>();
         for(String uci : uciArr){
             moves.add(Move.parseUCIMove(board, uci));
-            board = board.apply(uci);
+            //board = board.apply(uci);
         }
         return moves;
     }

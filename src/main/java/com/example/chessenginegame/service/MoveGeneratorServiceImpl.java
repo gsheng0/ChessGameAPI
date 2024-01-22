@@ -2,7 +2,6 @@ package com.example.chessenginegame.service;
 
 import com.example.chessenginegame.model.*;
 import com.example.chessenginegame.model.piece.*;
-import com.example.chessenginegame.util.PieceUtil;
 import com.example.chessenginegame.util.TileUtil;
 import com.example.chessenginegame.util.Pair;
 
@@ -95,10 +94,8 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      */
     public List<Move> generatePawnMoves(Pawn pawn, int currentTile, Board board, Pin pin){
         List<Move> moves = new ArrayList<>();
-        int directionMultiplier = pawn.getDirectionMultiplier();
-
-        List<Integer> captureDirections = Pawn.moveShifts(currentTile, pawn.getColor());
-        int pushDirection = 8 * directionMultiplier;
+        List<Integer> captureDirections = Pawn.captureMoveShifts(currentTile, pawn.getColor());
+        int pushDirection = pawn.getDirectionMultiplier() * Board.LENGTH;
         for(int captureDirection : captureDirections){
             if(isDiagonalCaptureValid(pawn, currentTile, board, pin, captureDirection)){
                 moves.add(new PawnMove(pawn, currentTile, currentTile + captureDirection, true));
@@ -217,8 +214,6 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                                 !occupant.getColor().equals(king.getColor())).
                         orElse(true)).
                 filter(tile -> !isTileProtectedBy(board, tile, oppositeColor)).toList());
-
-
         return possibleEndTiles.stream().map(endTile -> new Move(king, currentTile, endTile)).toList();
     }
 
@@ -278,7 +273,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             return Collections.emptyList();
         }
         int kingTile = optionalKingTile.get();
-        List<Integer> directions = Queen.moveShifts();
+        List<Integer> directions = SlidingPiece.getAllMoveShifts();
         List<Pin> pins = new ArrayList<>();
         for(int direction : directions){
             Piece prevEncountered = null;
@@ -309,13 +304,13 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
 
     /**
      *
-     * @param piece The pawn being checked
+     * @param pawn The pawn being checked
      * @param board The current board state
      * @param pin The pin involving the current pawn, if exists
      * @param direction The direction of the capture
      * @return true of the capture is valid
      */
-    public boolean isDiagonalCaptureValid(Piece piece, int currentTile, Board board, Pin pin, int direction){
+    public boolean isDiagonalCaptureValid(Pawn pawn, int currentTile, Board board, Pin pin, int direction){
         int resultantTile = currentTile + direction;
         Optional<Piece> endTile = board.getPieceAt(currentTile + direction);
         if(pin != null && pin.direction != direction){//if pin exists and directions do not match, then pawn cannot move
@@ -327,7 +322,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             if(optionalMove.isEmpty()){ //no previous move
                 return false;
             }
-            if(!TileUtil.isOnRankForEnPassant(currentTile, piece.getColor())){ //not on right rank for en passant
+            if(!TileUtil.isOnRankForEnPassant(currentTile, pawn.getColor())){ //not on right rank for en passant
                 return false;
             }
             Move previousMove = optionalMove.get();
@@ -335,10 +330,10 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 return false;
             }
             //if the previous move involves a pawn ending up on the tile behind the resultant tile
-            return previousMove.getEndTile() == resultantTile + (-8 * Pawn.getDirectionMultiplier(piece.getColor()));
+            return previousMove.getEndTile() == resultantTile + (-8 * pawn.getDirectionMultiplier());
         }
         Piece occupant = endTile.get();
-        return !occupant.getColor().equals(piece.getColor());
+        return !occupant.getColor().equals(pawn.getColor());
     }
 
     /**
@@ -366,7 +361,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         List<Pair<Piece, Integer>> defenders = new ArrayList<>();
 
         //checking for knights
-        List<Integer> moveShifts = Knight.moveShifts(tile);
+        List<Integer> moveShifts = Knight.getMoveShifts(tile);
         for(int moveShift : moveShifts){
             int resultantTile = moveShift + tile;
             Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
@@ -378,8 +373,9 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 defenders.add(Pair.of(occupant, resultantTile));
             }
         }
+
         //checking for sliding pieces
-        moveShifts = Queen.moveShifts();
+        moveShifts = SlidingPiece.getAllMoveShifts();
         for(int direction : moveShifts){
             int tilesInDirection = TileUtil.tilesToEdgeOfBoard(tile, direction);
             int resultantTile = tile;
@@ -400,7 +396,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
 
         //check for pawns
-        List<Integer> captureDirections = Pawn.moveShifts(tile, PieceUtil.getOppositeColor(color));
+        List<Integer> captureDirections = Pawn.captureMoveShifts(tile, Piece.getOppositeColor(color));
         for(int captureDirection : captureDirections){
             int resultantTile = captureDirection + tile;
             Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
@@ -416,7 +412,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         if(includePinnedPieces){
             HashMap<Integer, Pin> pieceIdToPinMap = getPieceIdToPinMap(board, color);
             return defenders.stream().
-                    filter(defenderInfo -> !pieceIdToPinMap.containsKey(defenderInfo.getFirst().getId())).toList();
+                    filter(defenderInfo -> !pieceIdToPinMap.containsKey(defenderInfo.left().getId())).toList();
         }
         return defenders;
     }
@@ -430,7 +426,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      */
     public boolean isTileProtectedBy(Board board, int tile, String color){
         //checking for knights
-        List<Integer> moveShifts = Knight.moveShifts(tile);
+        List<Integer> moveShifts = Knight.getMoveShifts(tile);
 
         for(int moveShift : moveShifts){
             int resultantTile = moveShift + tile;
@@ -439,12 +435,13 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 continue;
             }
             Piece occupant = optionalOccupant.get();
-            if(occupant instanceof Knight){
+            if(occupant instanceof Knight && occupant.getColor().equals(color)){
                 return true;
             }
         }
         //checking for sliding pieces
-        moveShifts = Queen.moveShifts();
+        //TODO:  revisit logic, as not woking
+        moveShifts = SlidingPiece.getAllMoveShifts();
         for(int direction : moveShifts){
             int tilesInDirection = TileUtil.tilesToEdgeOfBoard(tile, direction);
             int resultantTile = tile;
@@ -463,7 +460,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
 
         //check for pawns
-        List<Integer> captureDirections = Pawn.moveShifts(tile, color);
+        List<Integer> captureDirections = Pawn.captureMoveShifts(tile, color);
         for(int captureDirection : captureDirections){
             int resultantTile = captureDirection + tile;
             Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
@@ -509,26 +506,26 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             return moves;
         }
         Pair<Piece, Integer> attackerInfo = attackers.get(0);
-        Piece attacker = attackerInfo.getFirst();
+        Piece attacker = attackerInfo.left();
         if(attacker instanceof Knight || attacker instanceof Pawn){
-            int attackerTile = attackerInfo.getSecond();
+            int attackerTile = attackerInfo.right();
 
            List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, attackerTile, color, false);
            for(Pair<Piece, Integer> defenderInfo : defendersInfo){
-               moves.add(new Move(defenderInfo.getFirst(), defenderInfo.getSecond(), attackerTile));
+               moves.add(new Move(defenderInfo.left(), defenderInfo.right(), attackerTile));
            }
 
            return moves;
         }
         else if(attacker instanceof SlidingPiece){
-            int attackerTile = attackerInfo.getSecond();
+            int attackerTile = attackerInfo.right();
             int attackerDirection = TileUtil.getSlidingDirection(attackerTile, kingTile);
             int distance = (kingTile - attackerTile)/attackerDirection;
             for(int i = 0; i < distance + 1; i++){
                 int currentTile = attackerTile + i * attackerDirection;
                 List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, currentTile, color, false);
                 for(Pair<Piece, Integer> defenderInfo : defendersInfo){
-                    moves.add(new Move(defenderInfo.getFirst(), defenderInfo.getSecond(), attackerTile));
+                    moves.add(new Move(defenderInfo.left(), defenderInfo.right(), attackerTile));
                 }
             }
             return moves;

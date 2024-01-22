@@ -1,7 +1,8 @@
 package com.example.chessenginegame.util;
 
+import com.example.chessenginegame.model.Board;
 import com.example.chessenginegame.model.Constants;
-import com.example.chessenginegame.model.piece.Queen;
+import com.example.chessenginegame.model.piece.SlidingPiece;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,7 @@ public class TileUtil {
      * @return true if the tile exists within the board
      */
     public static boolean isInBoard(int tile){
-        return tile >= 0 && tile < 64;
+        return tile >= Board.MIN_TILE && tile <= Board.MAX_TILE;
     }
 
     /**
@@ -24,7 +25,7 @@ public class TileUtil {
      * @return the file that the tile is in
      */
     public static int getFile(int tile){
-        return tile % 8;
+        return tile % Board.LENGTH;
     }
 
     /**
@@ -33,7 +34,7 @@ public class TileUtil {
      * @return the rank that the tile is in
      */
     public static int getRank(int tile){
-        return tile / 8;
+        return tile / Board.LENGTH;
     }
 
     /**
@@ -53,7 +54,7 @@ public class TileUtil {
      */
     public static int getSlidingDirection(int from, int to){
         //TODO: Remove negative directions from usage in this method
-        List<Integer> moveShifts = Queen.moveShifts();
+        List<Integer> moveShifts = SlidingPiece.getAllMoveShifts();
         int difference = to - from;
         for(int moveShift : moveShifts){
             int multiplier = Math.abs(difference)/difference;

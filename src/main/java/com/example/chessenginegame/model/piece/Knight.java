@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.chessenginegame.model.Board.LENGTH;
+
 public class Knight extends Piece {
     public Knight(String color) {
         super(color);
@@ -33,8 +35,12 @@ public class Knight extends Piece {
         }
         return "bN";
     }
-    @Override
+
     public List<Integer> moveShifts(int tile) {
+        return getMoveShifts(tile);
+    }
+
+    public static List<Integer> getMoveShifts(int tile) {
         int file = TileUtil.getFile(tile);
         int rank = TileUtil.getRank(tile);
         List<Integer> ms = new ArrayList<>(Arrays.asList(
@@ -46,7 +52,7 @@ public class Knight extends Piece {
                 Constants.RIGHT_DOWN2,
                 Constants.RIGHT2_UP,
                 Constants.RIGHT_UP2
-                ));
+        ));
         if(file == 0) {
             ms.remove(Constants.LEFT2_DOWN);
             ms.remove(Constants.LEFT2_UP);
@@ -55,30 +61,30 @@ public class Knight extends Piece {
         } else if(file == 1){
             ms.remove(Constants.LEFT2_DOWN);
             ms.remove(Constants.LEFT2_UP);
-        } else if(file == 6){
+        } else if(file == LENGTH - 2){
             ms.remove(Constants.RIGHT2_DOWN);
             ms.remove(Constants.RIGHT2_UP);
-        } else if(file == 7){
+        } else if(file == LENGTH - 1){
             ms.remove(Constants.RIGHT2_DOWN);
             ms.remove(Constants.RIGHT2_UP);
-            ms.remove(Constants.RIGHT_DOWN);
-            ms.remove(Constants.RIGHT_UP);
+            ms.remove(Constants.RIGHT_DOWN2);
+            ms.remove(Constants.RIGHT_UP2);
         }
         if (rank == 0) {
-            ms.remove(Constants.LEFT_DOWN);
             ms.remove(Constants.LEFT_DOWN2);
-            ms.remove(Constants.RIGHT_DOWN);
+            ms.remove(Constants.LEFT2_DOWN);
             ms.remove(Constants.RIGHT_DOWN2);
+            ms.remove(Constants.RIGHT2_DOWN);
         } else if (rank == 1) {
             ms.remove(Constants.LEFT_DOWN2);
             ms.remove(Constants.RIGHT_DOWN2);
-        } else if (rank == 6) {
+        } else if (rank == LENGTH - 2) {
             ms.remove(Constants.LEFT_UP2);
             ms.remove(Constants.RIGHT_UP2);
-        } else if (rank == 7) {
-            ms.remove(Constants.LEFT_UP);
+        } else if (rank == LENGTH - 1) {
+            ms.remove(Constants.LEFT2_UP);
             ms.remove(Constants.LEFT_UP2);
-            ms.remove(Constants.RIGHT_UP);
+            ms.remove(Constants.RIGHT2_UP);
             ms.remove(Constants.RIGHT_UP2);
         }
         return ms;

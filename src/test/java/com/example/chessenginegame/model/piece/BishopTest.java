@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class BishopTest {
 
     @Test
-    void moveShifts() {
+    void testDiagMoveShifts_OK() {
         Piece bishop = (Bishop)new Piece.PieceBuilder().bishop().black().build();
-        List<Integer> moveShifts = bishop.moveShifts(19);
+        List<Integer> moveShifts = bishop.diagMoveShifts(19);
         assertTrue(moveShifts.contains(28));
     }
 }

@@ -12,19 +12,20 @@ public class Pawn extends Piece {
 
     public Pawn(String color) {
         super(color);
-        directionMultiplier =  color.equals(Constants.WHITE) ? -1 : 1;
+        directionMultiplier =  getDirectionMultiplier(color);
     }
-
     public int getDirectionMultiplier() { return directionMultiplier; }
 
     @Override
     public String getName() {
         return "Pawn";
     }
+
     @Override
     public int getValue() {
         return 1;
     }
+
     @Override
     public char toChar() {
         if (getColor().equals(Constants.WHITE)) {
@@ -32,6 +33,7 @@ public class Pawn extends Piece {
         }
         return 'p';
     }
+
     @Override
     public String toAbv() {
         if (getColor().equals(Constants.WHITE)) {
@@ -40,16 +42,9 @@ public class Pawn extends Piece {
         return "bP";
     }
 
-    @Override
-    public List<Integer> moveShifts(int tile){
-        List<Integer> moveShifts = new ArrayList<>();
-        moveShifts.add(Constants.LEFT_UP * directionMultiplier);
-        moveShifts.add(Constants.RIGHT_UP * directionMultiplier);
-        if (hasMoved()) {
-            moveShifts.add(Constants.UP * directionMultiplier);
-        } else {
-            moveShifts.add(Constants.UP * directionMultiplier * 2);
-        }
+    public static List<Integer> captureMoveShifts(int tile, String color) {
+        int multiplier = getDirectionMultiplier(color);
+        List<Integer> moveShifts = new ArrayList<>(Arrays.asList(Constants.LEFT_UP * multiplier, Constants.RIGHT_UP * multiplier));
         int file = TileUtil.getFile(tile);
         if(file == 0){
             moveShifts.remove(Constants.LEFT_DOWN);
@@ -59,5 +54,8 @@ public class Pawn extends Piece {
             moveShifts.remove(Constants.RIGHT_UP);
         }
         return moveShifts;
+    }
+    private static int getDirectionMultiplier(String color) {
+        return color.equals(Constants.WHITE) ? -1 : 1;
     }
 }

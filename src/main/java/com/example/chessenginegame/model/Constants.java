@@ -1,7 +1,6 @@
 package com.example.chessenginegame.model;
 
 public class Constants {
-
     public final static Integer         UP  =  8;
     public final static Integer       DOWN  = -8;
     public final static Integer       LEFT  = -1;
@@ -16,12 +15,10 @@ public class Constants {
     public final static Integer   LEFT2_UP  =   6;
     public final static Integer   LEFT_UP2  =  15;
 
-    public final static Integer RIGHT2_DOWN  = -6;
-    public final static Integer RIGHT_DOWN2  = -17;
+    public final static Integer RIGHT2_DOWN  = - 6;
+    public final static Integer RIGHT_DOWN2  = -15;
     public final static Integer   RIGHT2_UP  =  10;
     public final static Integer   RIGHT_UP2  =  17;
-
-
 
     public static final String WHITE = "WHITE";
     public static final String BLACK = "BLACK";
@@ -30,4 +27,3 @@ public class Constants {
     public static final int CHECK = 2;
     public static int DOUBLE_CHECK;
 }
-//TODO: move to individual class

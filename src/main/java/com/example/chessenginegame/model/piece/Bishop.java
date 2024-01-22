@@ -35,8 +35,12 @@ public class Bishop extends SlidingPiece {
         return "bB";
     }
 
+//    public List<Integer> moveShifts(int tile){
+//        return diagMoveShifts(tile);
+//    }
+
     @Override
-    public List<Integer> moveShifts(int tile){
-        return diagMove(tile);
+    public List<Integer> getMoveShifts() {
+        return getDiagMoveShifts();
     }
 }

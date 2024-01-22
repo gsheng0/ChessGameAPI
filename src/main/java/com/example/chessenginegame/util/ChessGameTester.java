@@ -137,9 +137,9 @@ public class ChessGameTester {
     public static void main(String[] args){
         int depth = 1;
         Board board = Board.startingPosition();
-        List<Move> moves = Move.listOf(board);
+        List<Move> moves = Move.listOf(board, "e2e4", "g7g6");
         board = board.apply(moves);
-
+    //TODO: check king move logic
         HashMap<Move, Integer> perftResults = doPerftFromPosition(board, depth, Constants.WHITE);
         HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, depth);
         HashMap<Move, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
