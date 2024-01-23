@@ -25,7 +25,7 @@ public class Board {
 
     public void printBoardMatrix() {
         String[][] boardMatrix = getBoardAsMatrix();
-        for (int r=LENGTH-1; r>=0; r--) {
+        for (int r=0; r<LENGTH; r++) {
             for (int c=0; c<LENGTH; c++) {
                 System.out.print((boardMatrix[r][c] == null ? "()" : boardMatrix[r][c])  + "  ");
             }

@@ -150,10 +150,10 @@ public class ChessEnginePerftExaminer {
     }
 
     public static void showStartingPosition(PerftSettings perftRunner) {
-//        Window window = new Window();
-//        window.setBoards(Collections.singletonList(perftRunner.getBoardState()));
-//        window.show();
-        perftRunner.getBoardState().printBoardMatrix();
+        Window window = new Window();
+        window.setBoards(Collections.singletonList(perftRunner.getBoardState()));
+        window.show();
+//        perftRunner.getBoardState().printBoardMatrix();
     }
 
     public static void runPerft(PerftSettings perfRunner) {
