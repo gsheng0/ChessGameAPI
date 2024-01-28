@@ -71,21 +71,21 @@ public class Knight extends Piece {
             ms.remove(Constants.RIGHT_UP2);
         }
         if (rank == 0) {
-            ms.remove(Constants.LEFT_DOWN2);
-            ms.remove(Constants.LEFT2_DOWN);
-            ms.remove(Constants.RIGHT_DOWN2);
-            ms.remove(Constants.RIGHT2_DOWN);
-        } else if (rank == 1) {
-            ms.remove(Constants.LEFT_DOWN2);
-            ms.remove(Constants.RIGHT_DOWN2);
-        } else if (rank == LENGTH - 2) {
-            ms.remove(Constants.LEFT_UP2);
-            ms.remove(Constants.RIGHT_UP2);
-        } else if (rank == LENGTH - 1) {
             ms.remove(Constants.LEFT2_UP);
             ms.remove(Constants.LEFT_UP2);
             ms.remove(Constants.RIGHT2_UP);
             ms.remove(Constants.RIGHT_UP2);
+        } else if (rank == 1) {
+            ms.remove(Constants.LEFT_UP2);
+            ms.remove(Constants.RIGHT_UP2);
+        } else if (rank == LENGTH - 2) {
+            ms.remove(Constants.LEFT_DOWN2);
+            ms.remove(Constants.RIGHT_DOWN2);
+        } else if (rank == LENGTH - 1) {
+            ms.remove(Constants.LEFT_DOWN2);
+            ms.remove(Constants.LEFT2_DOWN);
+            ms.remove(Constants.RIGHT_DOWN2);
+            ms.remove(Constants.RIGHT2_DOWN);
         }
         return ms;
     }

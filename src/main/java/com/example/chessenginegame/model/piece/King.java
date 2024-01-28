@@ -49,13 +49,13 @@ public class King extends Piece {
             moveShifts.remove(Constants.RIGHT_UP);
         }
         if (rank == 0) {
-            moveShifts.remove(Constants.DOWN);
-            moveShifts.remove(Constants.LEFT_DOWN);
-            moveShifts.remove(Constants.RIGHT_DOWN);
-        } else if (rank ==  Board.LENGTH - 1) {
             moveShifts.remove(Constants.UP);
             moveShifts.remove(Constants.LEFT_UP);
             moveShifts.remove(Constants.RIGHT_UP);
+        } else if (rank ==  Board.LENGTH - 1) {
+            moveShifts.remove(Constants.DOWN);
+            moveShifts.remove(Constants.LEFT_DOWN);
+            moveShifts.remove(Constants.RIGHT_DOWN);
         }
         return moveShifts;
     }
