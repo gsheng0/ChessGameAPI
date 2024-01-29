@@ -694,23 +694,8 @@ class MoveGeneratorServiceImplTest {
     }
     @Test
     public void PinnedPiece_10(){
-        testPinnedPieceMoveGeneration(60, "p", 52, "R", 4, 44, 36);
+        testPinnedPieceMoveGeneration(60, "p", 52, "R", 4);
     }
-
-//    public static void main(String[] args){
-//        MoveGeneratorServiceImplTest tests = new MoveGeneratorServiceImplTest();
-//        tests.KnightOnEmptyBoard();
-//        tests.PawnOnEmptyBoard();
-//        tests.BishopOnEmptyBoard();
-//        tests.RookOnEmptyBoard();
-//        tests.QueenOnEmptyBoard();
-//        tests.KingOnEmptyBoard();
-//        tests.NoChecks();
-//        tests.SinglePieceChecks();
-//        tests.DoublePieceChecks();
-//        tests.BlockedSingleChecks();
-//        tests.PinnedPiece();
-//    }
 
     private void testPinnedPieceMoveGeneration(int kingTile, String pinned, int pinnedTile, String pinning, int pinningTile, int... expected){
         Piece pinnedPiece = Piece.of(pinned);

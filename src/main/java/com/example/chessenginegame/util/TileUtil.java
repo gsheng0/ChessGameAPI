@@ -125,7 +125,7 @@ public class TileUtil {
         int file = getFile(tileIndex);
         int rank = getRank(tileIndex);
         char letter = (char)('a' + file);
-        int number = 8 - rank;
+        int number = rank + 1;
         return "" + letter + number;
     }
 

@@ -44,7 +44,7 @@ public class Pawn extends Piece {
 
     public static List<Integer> captureMoveShifts(int tile, String color) {
         int multiplier = getDirectionMultiplier(color);
-        List<Integer> moveShifts = new ArrayList<>(Arrays.asList(Constants.LEFT_UP * multiplier, Constants.RIGHT_UP * multiplier));
+        List<Integer> moveShifts = new ArrayList<>(Arrays.asList(Constants.LEFT_DOWN * multiplier, Constants.RIGHT_DOWN * multiplier));
         int file = TileUtil.getFile(tile);
         if(file == 0){
             moveShifts.remove(Constants.LEFT_DOWN);
