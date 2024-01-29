@@ -30,8 +30,6 @@ public class StockfishRunner {
      */
     public static HashMap<Move, Integer> getStockfishPerftNumbers(List<Move> moves, int depth){
         HashMap<Move, Integer> perftNumbers = new HashMap<>();
-        MoveGeneratorService moveGeneratorService = new MoveGeneratorServiceImpl();
-
         try {
             Process stockfishProcess = new ProcessBuilder(STOCKFISH_START_COMMAND).start();
             BufferedReader stockfishInput = new BufferedReader(new InputStreamReader(stockfishProcess.getInputStream()));

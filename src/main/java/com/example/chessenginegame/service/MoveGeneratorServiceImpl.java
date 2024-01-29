@@ -18,6 +18,7 @@ If double check:
 1. Move king to unprotected square
 
  */
+
 public class MoveGeneratorServiceImpl implements MoveGeneratorService {
 
     //TODO: Look into attack/defend maps

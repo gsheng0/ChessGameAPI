@@ -1,10 +1,9 @@
-package com.example.chessenginegame.util;
+package com.example.chessenginegame.service;
 
 import com.example.chessenginegame.model.Board;
 import com.example.chessenginegame.model.Constants;
 import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.model.piece.*;
-import com.example.chessenginegame.service.MoveGeneratorServiceImpl;
 import junit.framework.AssertionFailedError;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -14,21 +13,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MoveGeneratorServiceImplTest {
-    private MoveGeneratorServiceImpl moveGeneratorService;
-    private BoardBuilder boardBuilder;
-    private PieceBuilder pieceBuilder;
-    @BeforeEach
-    public void setUp(){
-        moveGeneratorService = new MoveGeneratorServiceImpl();
-        boardBuilder = BoardBuilder.getInstance();
-        pieceBuilder = PieceBuilder.getInstance();
-    }
-    public MoveGeneratorServiceImplTest(){
-        moveGeneratorService = new MoveGeneratorServiceImpl();
-        boardBuilder = BoardBuilder.getInstance();
-        pieceBuilder = PieceBuilder.getInstance();
-    }
+class MoveGeneratorServiceImplUnitTest extends MoveGeneratorServiceImplTest {
     @Test
     public void PawnOnEmptyBoard_1() {
         Piece whitePawn = Piece.of('P');
@@ -556,7 +541,17 @@ class MoveGeneratorServiceImplTest {
     }
     @Test
     public void SinglePieceChecks_20(){
-        testGetAttackerCount(Constants.BLACK, 32, "R", 39, 1);
+/*
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+bK  ()  ()  ()  ()  ()  ()  wR
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+ */
+        testGetAttackerCount(Constants.BLACK, 32, "R", 39, 1).printBoardMatrix();
     }
     @Test
     public void DoublePieceChecks_1() {
@@ -636,7 +631,17 @@ class MoveGeneratorServiceImplTest {
     }
     @Test
     public void DoublePieceChecks_20() {
-        testGetAttackerCount(Constants.BLACK, 39, "N", 22, "Q", 33, 2);
+/*
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  wN  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  wQ  ()  ()  ()  ()  ()  bK
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+ */
+        testGetAttackerCount(Constants.BLACK, 39, "N", 22, "Q", 33, 2).printBoardMatrix();
     }
     @Test
     public void BlockedSingleChecks(){
@@ -686,18 +691,48 @@ class MoveGeneratorServiceImplTest {
     }
     @Test
     public void PinnedPiece_8() {
-        testPinnedPieceMoveGeneration(60, "r", 36, "R", 12, 44, 52, 28, 20, 12);
+/*
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  wR  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  bR  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  bK  ()  ()  ()
+ */
+        testPinnedPieceMoveGeneration(60, "r", 36, "R", 12, 44, 52, 28, 20, 12).printBoardMatrix();
     }
     @Test
     public void PinnedPiece_9() {
-        testPinnedPieceMoveGeneration(60, "b", 52, "Q", 20);
+/*
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  wQ  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  bB  ()  ()  ()
+()  ()  ()  ()  bK  ()  ()  ()
+ */
+        testPinnedPieceMoveGeneration(60, "b", 52, "Q", 20).printBoardMatrix();
     }
     @Test
     public void PinnedPiece_10(){
-        testPinnedPieceMoveGeneration(60, "p", 52, "R", 4, 44, 36);
+/*
+()  ()  ()  ()  wR  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  ()  ()  ()  ()
+()  ()  ()  ()  bP  ()  ()  ()
+()  ()  ()  ()  bK  ()  ()  ()
+*/
+        testPinnedPieceMoveGeneration(60, "p", 52, "R", 4).printBoardMatrix();
     }
 
-    private void testPinnedPieceMoveGeneration(int kingTile, String pinned, int pinnedTile, String pinning, int pinningTile, int... expected){
+    private Board testPinnedPieceMoveGeneration(int kingTile, String pinned, int pinnedTile, String pinning, int pinningTile, int... expected){
         Piece pinnedPiece = Piece.of(pinned);
         Piece pinningPiece = Piece.of(pinning);
         King king = new King(pinnedPiece.getColor());
@@ -705,6 +740,7 @@ class MoveGeneratorServiceImplTest {
         List<Move> expectedMoves = createMoveList(pinnedPiece, pinnedTile, Arrays.stream(expected).boxed().toList());
         List<Move> generatedMoves = moveGeneratorService.generateLegalMoves(board, pinnedPiece.getColor()).stream().filter(move -> move.getPiece().equals(pinnedPiece)).toList();
         assertEquals(expectedMoves, generatedMoves);
+        return board;
     }
     private void testSinglePieceMoveGeneration(Piece piece, int tile, int... expected){
         Board board = boardBuilder.newBoard().withA(piece).onTile(tile).build();
@@ -719,18 +755,20 @@ class MoveGeneratorServiceImplTest {
             assertEquals(expectedMoves, moveGeneratorService.generateKingMoves1(king, tile, board));
         }
     }
-    private void testGetAttackerCount(String color, int kingTile, String p, int tile, int expected){
+    private Board testGetAttackerCount(String color, int kingTile, String p, int tile, int expected){
         Piece piece = Piece.of(p);
         King king = new King(color);
         Board board = boardBuilder.newBoard().withA(piece).onTile(tile).withA(king).onTile(kingTile).build();
         Assertions.assertEquals(expected, moveGeneratorService.getAttackersOnKingOfColor(board, color).size());
+        return board;
     }
-    private void testGetAttackerCount(String color, int kingTile, String p1, int tile1, String p2, int tile2, int expected){
+    private Board testGetAttackerCount(String color, int kingTile, String p1, int tile1, String p2, int tile2, int expected){
         King king = new King(color);
         Piece piece1 = Piece.of(p1);
         Piece piece2 = Piece.of(p2);
         Board board = boardBuilder.newBoard().withA(piece1).onTile(tile1).withA(piece2).onTile(tile2).withA(king).onTile(kingTile).build();
         Assertions.assertEquals(expected, moveGeneratorService.getAttackersOnKingOfColor(board, color).size());
+        return board;
     }
     private void assertEquals(List<Move> expected, List<Move> actual){
         expected = new ArrayList<>(expected);
@@ -748,107 +786,6 @@ class MoveGeneratorServiceImplTest {
             actual.stream().filter(actualMove -> !expectedMoveSet.contains(actualMove)).forEach(System.out::println);
             throw new AssertionFailedError("Assertion failed!");
 
-        }
-
-    }
-    private List<Move> createMoveList(Piece piece, int startTile, List<Integer> endTiles){
-        return endTiles.stream().map(endTile -> new Move(piece, startTile, endTile)).toList();
-    }
-    private static class BoardBuilder{
-        private Piece piece = null;
-        private int tile = -1;
-        private static BoardBuilder boardBuilder = null;
-        private HashMap<Integer, Piece> map;
-
-        private BoardBuilder() {}
-        public static BoardBuilder getInstance(){
-            if(boardBuilder == null){
-                boardBuilder = new BoardBuilder();
-            }
-            return boardBuilder;
-        }
-        public BoardBuilder newBoard(){
-            map = new HashMap<>();
-            return this;
-        }
-        public BoardBuilder withA(Piece piece){
-            this.piece = piece;
-            if(tile != -1){
-                add();
-            }
-            return this;
-        }
-        public BoardBuilder onTile(int tile){
-            this.tile = tile;
-            if(piece != null){
-                add();
-            }
-            return this;
-        }
-        public BoardBuilder add(){
-            map.put(tile, piece);
-            tile = -1;
-            piece = null;
-            return this;
-        }
-        public Board build(){
-            return new Board(map);
-        }
-
-    }
-    private static class PieceBuilder{
-        private String color = null;
-        private static PieceBuilder pieceBuilder = null;
-        private PieceBuilder() {}
-        public static PieceBuilder getInstance(){
-            if(pieceBuilder == null){
-                pieceBuilder = new PieceBuilder();
-            }
-            return pieceBuilder;
-        }
-        public PieceBuilder black(){
-            this.color = Constants.BLACK;
-            return this;
-        }
-        public PieceBuilder white(){
-            this.color = Constants.WHITE;
-            return this;
-        }
-        public Piece pawn(){
-            if(this.color == null){
-                white();
-            }
-            return new Pawn(color);
-        }
-        public Piece knight(){
-            if(this.color == null){
-                white();
-            }
-            return new Knight(color);
-        }
-        public Piece bishop(){
-            if(this.color == null){
-                white();
-            }
-            return new Bishop(color);
-        }
-        public Piece rook(){
-            if(this.color == null){
-                white();
-            }
-            return new Rook(color);
-        }
-        public Piece queen(){
-            if(this.color == null){
-                white();
-            }
-            return new Queen(color);
-        }
-        public Piece king(){
-            if(this.color == null){
-                white();
-            }
-            return new King(color);
         }
     }
 }
