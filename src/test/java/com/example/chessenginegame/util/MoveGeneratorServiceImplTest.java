@@ -694,7 +694,7 @@ class MoveGeneratorServiceImplTest {
     }
     @Test
     public void PinnedPiece_10(){
-        testPinnedPieceMoveGeneration(60, "p", 52, "R", 4);
+        testPinnedPieceMoveGeneration(60, "p", 52, "R", 4, 44, 36);
     }
 
     private void testPinnedPieceMoveGeneration(int kingTile, String pinned, int pinnedTile, String pinning, int pinningTile, int... expected){
