@@ -65,9 +65,11 @@ public class Move implements Comparable<Move>{
         Piece piece = board.getPieceAt(startTile).orElseThrow(() -> new IllegalStateException("No piece exists on that start tile"));
         return new Move(piece, startTile, endTile);
     }
+
     public static Move of(Piece piece, int startTile, int endTile){
         return new Move(piece, startTile, endTile);
     }
+
     public static List<Move> listOf(Board board, String... uciArr){
         List<Move> moves = new ArrayList<>();
         for(String uci : uciArr){

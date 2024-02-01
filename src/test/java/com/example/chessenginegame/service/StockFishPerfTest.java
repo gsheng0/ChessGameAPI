@@ -4,59 +4,49 @@ import com.example.chessenginegame.model.Board;
 import com.example.chessenginegame.model.Constants;
 import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.model.piece.Piece;
-;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.example.chessenginegame.util.StockfishRunner;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class StockFishCompareTest extends MoveGeneratorServiceImplTest {
+import java.util.*;
 
+class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     @Test
     public void test_ok() {
-        assertEquals(1, 1);
+        Assertions.assertEquals(1, 1);
     }
 
     @Test
     public void test_1() {
-        int depth = 3;
-        Board board = Board.startingPosition();
-        List<Move> moves = Move.listOf(board); //, "e2e4", "g7g6");
-        board = board.apply(moves);
-        //TODO: check king move logic
-        HashMap<Move, Integer> perftResults = doPerftFromPosition(board, depth, Constants.WHITE);
-        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, depth);
-        HashMap<Move, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
-        for (Move move : differences.keySet()) {
-            System.out.println(move.getUCINotation() + ": " + differences.get(move) +
-                    " expected: " + stockfishPerftResults.get(move) +
-                    " actual: "  + perftResults.get(move));
-        }
+        int depth = 1;
+        List<String> uciMoves = Arrays.asList("e2e4", "g7g6");
+        HashMap<String, Integer> perftResults = doPerftFromPosition(uciMoves, depth);
+        HashMap<String, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(uciMoves, depth);
+        HashMap<String, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
+        printDiff(perftResults, stockfishPerftResults, differences);
     }
 
     /**
-     *
-     * @param board The starting position of the perft
+     * @param uciMoves starting moves in UCI notation
      * @param depth The depth to go to
-     * @param startingColor The side that goes first
      * @return a hashmap mapping each first move to the number of possible positions to reach from that move
      * A depth of 1 returns a hashmap mapping every starting move to the number 1, because at a depth of one, the perft stops
      * at the starting move, eg: There is only one position possible from each starting move with one move allowed
      */
-     protected HashMap<Move, Integer> doPerftFromPosition(Board board, int depth, String startingColor){
-        HashMap<Move, Integer> perftResults = new HashMap<>();
+    protected HashMap<String, Integer> doPerftFromPosition(List<String> uciMoves, int depth) {
+        HashMap<String, Integer> perftResults = new HashMap<>();
+        Board board = Board.startingPosition();
+        String startingColor = Constants.WHITE;
+        for (String uciMove : uciMoves) {
+            board = board.apply(Move.parseUCIMove(board, uciMove));
+            startingColor = Piece.getOppositeColor(startingColor);
+        }
         List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
-
         String oppositeColor = Piece.getOppositeColor(startingColor);
         for(Move move : moves){
             Board currentBoard = board.apply(move);
             int moveCount = countMoves(currentBoard, depth - 1, oppositeColor);
-            perftResults.put(move, moveCount);
+            perftResults.put(move.getUCINotation(), moveCount);
         }
         return perftResults;
     }
@@ -90,12 +80,12 @@ class StockFishCompareTest extends MoveGeneratorServiceImplTest {
         return count;
     }
 
-    public HashMap<Move, Integer> comparePerftResults(HashMap<Move, Integer> stockfishResults, HashMap<Move, Integer> myResults){
-        HashMap<Move, Integer> differences = new HashMap<>();
-        Set<Move> moveSet = new HashSet<>(stockfishResults.keySet());
+    public HashMap<String, Integer> comparePerftResults(HashMap<String, Integer> stockfishResults, HashMap<String, Integer> myResults){
+        HashMap<String, Integer> differences = new HashMap<>();
+        Set<String> moveSet = new HashSet<>(stockfishResults.keySet());
         moveSet.addAll(myResults.keySet());
 
-        for(Move move : moveSet){
+        for(String move : moveSet){
             if(!myResults.containsKey(move)){
                 differences.put(move, -1 * stockfishResults.get(move));
             }
@@ -113,9 +103,10 @@ class StockFishCompareTest extends MoveGeneratorServiceImplTest {
         return differences;
     }
 
-    public void printPerftResults(HashMap<Move, Integer> perftResults){
-        for(Move move : perftResults.keySet()){
-            System.out.println(move.getUCINotation() + ": " + perftResults.get(move));
+    public void printPerftResults(HashMap<String, Integer> perftResults){
+        for(String uciMove : perftResults.keySet()){
+            System.out.println(uciMove + ": " + perftResults.get(uciMove));
         }
     }
+
 }

@@ -113,7 +113,8 @@ public class TileUtil {
         if(number < 1 || number > 8 || letter < 0 || letter > 7){
             throw new IllegalArgumentException("Invalid input: " + coordinates);
         }
-        return letter + 8 * (8 - number);
+//        return letter + 8 * (8 - number);
+        return 8 * (number - 1) + letter ;
     }
 
     /**

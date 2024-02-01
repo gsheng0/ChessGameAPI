@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,14 +23,14 @@ public class StockfishRunner {
     private static final String STOCKFISH_START_COMMAND = "stockfish";
     private static final String STOCKFISH_UCI_COMMAND = "uci";
     /**
-     * @param moves list of moves to apply as the starting point
+     * @param uciMoves list of moves in UCI notation to apply as the starting point
      * @param depth the depth to go to
      * @return a hashmap mapping each first move to the number of possible positions to reach from that move
      * A depth of 1 returns a hashmap mapping every starting move to the number 1, because at a depth of one, the perft stops
      * at the starting move, eg: There is only one position possible from each starting move with one move allowed
      */
-    public static HashMap<Move, Integer> getStockfishPerftNumbers(List<Move> moves, int depth){
-        HashMap<Move, Integer> perftNumbers = new HashMap<>();
+    public static HashMap<String, Integer> getStockfishPerftNumbers(List<String> uciMoves, int depth){
+        HashMap<String, Integer> perftNumbers = new HashMap<>();
         try {
             Process stockfishProcess = new ProcessBuilder(STOCKFISH_START_COMMAND).start();
             BufferedReader stockfishInput = new BufferedReader(new InputStreamReader(stockfishProcess.getInputStream()));
@@ -50,7 +51,7 @@ public class StockfishRunner {
             // Build the position by appending the moves in UCI notation
             StringBuilder setPositionString = new StringBuilder();
             setPositionString.append(SET_POSITION_PREFIX);
-            moves.stream().map(Move::getUCINotation).forEach(moveString -> {
+            uciMoves.forEach(moveString -> {
                 setPositionString.append(moveString);
                 setPositionString.append(" ");
             });
@@ -62,14 +63,13 @@ public class StockfishRunner {
                 stockfishOutput.flush();
             }
 
-            Board board = Board.startingPosition().apply(moves);
             // Read Stockfish output to collect perft numbers for each move
             while ((response = stockfishInput.readLine()) != null) {
                 if(response.equals("")){
                     break;
                 }
                 String[] split = response.split(":");
-                perftNumbers.put(Move.parseUCIMove(board, split[0]), Integer.parseInt(split[1].substring(1)));
+                perftNumbers.put(split[0], Integer.parseInt(split[1].substring(1)));
             }
             stockfishProcess.destroy();
         } catch (IOException e) {
@@ -79,10 +79,10 @@ public class StockfishRunner {
     }
 
     public static void main(String[] args) {
-        Move firstMove = Move.parseUCIMove(Board.startingPosition(), "b2b3");
-        HashMap<Move, Integer> perftNumbers = getStockfishPerftNumbers(Collections.singletonList(firstMove), 2);
-        for(Move move : perftNumbers.keySet()){
-            System.out.println(move.getUCINotation() + ": " + perftNumbers.get(move));
+        List<String> uciMoves = Arrays.asList("b2b3");
+        HashMap<String, Integer> perftNumbers = getStockfishPerftNumbers(uciMoves, 2);
+        for(String uciMove : perftNumbers.keySet()){
+            System.out.println(uciMoves + ": " + perftNumbers.get(uciMove));
         }
     }
 }

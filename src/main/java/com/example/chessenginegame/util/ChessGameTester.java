@@ -135,17 +135,17 @@ public class ChessGameTester {
         }
     }
     public static void main(String[] args){
-        int depth = 1;
-        Board board = Board.startingPosition();
-        List<Move> moves = Move.listOf(board, "e2e4", "g7g6");
-        board = board.apply(moves);
-    //TODO: check king move logic
-        HashMap<Move, Integer> perftResults = doPerftFromPosition(board, depth, Constants.WHITE);
-        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, depth);
-        HashMap<Move, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
-        for(Move move : differences.keySet()){
-            System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move) + " actual: " + perftResults.get(move));
-        }
+//        int depth = 1;
+//        Board board = Board.startingPosition();
+//        List<Move> moves = Move.listOf(board, "e2e4", "g7g6");
+//        board = board.apply(moves);
+//    //TODO: check king move logic
+//        HashMap<Move, Integer> perftResults = doPerftFromPosition(board, depth, Constants.WHITE);
+//        HashMap<Move, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(moves, depth);
+//        HashMap<Move, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
+//        for(Move move : differences.keySet()){
+//            System.out.println(move.getUCINotation() + ": " + differences.get(move) + " expected: " + stockfishPerftResults.get(move) + " actual: " + perftResults.get(move));
+//        }
 
 //        Scanner reader = new Scanner(System.in);
 //        while(true){

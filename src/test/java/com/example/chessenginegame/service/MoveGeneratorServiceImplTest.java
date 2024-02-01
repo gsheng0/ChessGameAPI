@@ -22,7 +22,14 @@ class MoveGeneratorServiceImplTest {
         boardBuilder = BoardBuilder.getInstance();
         pieceBuilder = PieceBuilder.getInstance();
     }
-        private void assertEquals(List<Move> expected, List<Move> actual){
+    protected void printDiff (Map<String, Integer> myResults, Map<String, Integer> stockfishResults, Map<String, Integer> differences) {
+        for (String uciMove : differences.keySet()) {
+            System.out.println(uciMove + ": " + differences.get(uciMove) +
+                    ", expected: " + stockfishResults.get(uciMove) +
+                    ", actual: " + myResults.get(uciMove));
+        }
+    }
+    protected void assertMoveEquals(List<Move> expected, List<Move> actual){
         expected = new ArrayList<>(expected);
         actual = new ArrayList<>(actual);
         Collections.sort(expected);
