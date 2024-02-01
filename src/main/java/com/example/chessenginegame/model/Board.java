@@ -24,26 +24,32 @@ public class Board {
     }
 
     public void printBoardMatrix() {
+        System.out.println();
+        System.out.println("F |  0   1   2   3   4   5   6   7  |");
+        System.out.println("---------------------------------------");
         String[][] boardMatrix = getBoardAsMatrix();
         for (int r=0; r<LENGTH; r++) {
+            System.out.print(r + " | ");
             for (int c=0; c<LENGTH; c++) {
                 System.out.print((boardMatrix[r][c] == null ? "()" : boardMatrix[r][c])  + "  ");
             }
-            System.out.println();
+            System.out.println("| " + (LENGTH-r));
         }
+        System.out.println("---------------------------------------");
+        System.out.println("R |  a   b   c   d   e   f   g   h  |");
         System.out.println();
     }
 
     public static void printBoard() {
         System.out.println();
         System.out.println("  F|  0  1  2  3  4  5  6  7 |");
-        System.out.println("---------------------------------");
+        System.out.println("--------------------------------");
         for (int r=0; r<LENGTH; r++) {
             System.out.print(r + "  |");
             for (int c=0; c<LENGTH; c++) {
                 System.out.printf(" %2s", String.valueOf(r * 8 + c));
             }
-            System.out.println(" |  " + (r+1));
+            System.out.println(" |  " + (LENGTH-r));
         }
         System.out.println("---------------------------------");
         System.out.println("R  |  a  b  c  d  e  f  g  h |");

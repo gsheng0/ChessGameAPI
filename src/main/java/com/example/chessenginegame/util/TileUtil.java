@@ -113,8 +113,7 @@ public class TileUtil {
         if(number < 1 || number > 8 || letter < 0 || letter > 7){
             throw new IllegalArgumentException("Invalid input: " + coordinates);
         }
-//        return letter + 8 * (8 - number);
-        return 8 * (number - 1) + letter ;
+        return letter + 8 * (8 - number);
     }
 
     /**
@@ -126,7 +125,7 @@ public class TileUtil {
         int file = getFile(tileIndex);
         int rank = getRank(tileIndex);
         char letter = (char)('a' + file);
-        int number = rank + 1;
+        int number = 8 - rank;
         return "" + letter + number;
     }
 
