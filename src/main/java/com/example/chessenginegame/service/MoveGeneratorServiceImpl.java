@@ -453,7 +453,10 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                     continue;
                 }
                 Piece occupant = optionalOccupant.get();
-                if(occupant instanceof SlidingPiece slidingPiece && slidingPiece.getMoveShifts().contains(-1 * direction)){
+                if(occupant.getColor().equals(color)
+                        && occupant instanceof SlidingPiece slidingPiece
+                        && slidingPiece.getMoveShifts().contains(-1 * direction)
+                ){
                     return true;
                 }
                 break;

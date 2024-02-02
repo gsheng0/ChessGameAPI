@@ -18,8 +18,8 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
 
     @Test
     public void test_1() {
-        int depth = 1;
-        List<String> uciMoves = Arrays.asList("e2e4", "g7g6");
+        int depth = 3;
+        List<String> uciMoves = Arrays.asList();//"e2e4"); //, "g7g6");
         HashMap<String, Integer> perftResults = doPerftFromPosition(uciMoves, depth);
         HashMap<String, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(uciMoves, depth);
         HashMap<String, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
