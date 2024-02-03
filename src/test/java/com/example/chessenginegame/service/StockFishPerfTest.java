@@ -3,6 +3,7 @@ package com.example.chessenginegame.service;
 import com.example.chessenginegame.model.Board;
 import com.example.chessenginegame.model.Constants;
 import com.example.chessenginegame.model.Move;
+import com.example.chessenginegame.model.MoveTreeNode;
 import com.example.chessenginegame.model.piece.Piece;
 import com.example.chessenginegame.util.StockfishRunner;
 import org.junit.jupiter.api.Assertions;
@@ -18,12 +19,21 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
 
     @Test
     public void test_1() {
-        int depth = 3;
+        int depth = 4;
         List<String> uciMoves = Arrays.asList();//"e2e4"); //, "g7g6");
         HashMap<String, Integer> perftResults = doPerftFromPosition(uciMoves, depth);
         HashMap<String, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(uciMoves, depth);
         HashMap<String, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
         printDiff(perftResults, stockfishPerftResults, differences);
+    }
+
+    @Test
+    public void test_2() {
+        List<String> uciMoves = Collections.EMPTY_LIST;
+        Board board = Board.startingPosition();
+        MoveTreeNode root = moveGeneratorService.generateLegalMovesTree(
+                        null, board, Constants.WHITE, 4);
+        System.out.println(root.getKids().size());
     }
 
     /**

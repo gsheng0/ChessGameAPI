@@ -22,6 +22,29 @@ If double check:
 public class MoveGeneratorServiceImpl implements MoveGeneratorService {
 
     //TODO: Look into attack/defend maps
+    /**
+     * @param board The current board state
+     * @param color The side to generate moves for
+     * @param depth The depth to gnereate
+     * @return the root MoveTreeNode, which has null move and null dad and only kids
+     */
+    public MoveTreeNode generateLegalMovesTree(MoveTreeNode root, Board board, String color, int depth) {
+        if (depth == 0) {
+            return root;
+        }
+        if (root == null) {
+            root = new MoveTreeNode();
+        }
+        List<Move> moves = generateLegalMoves(board, color);
+        String oppositeColor = Piece.getOppositeColor(color);
+        for (Move move : moves) {
+            Board currBoard = board.apply(move);
+            MoveTreeNode kid = new MoveTreeNode(move, root);
+            root.addKid(kid);
+            generateLegalMovesTree(kid, currBoard, oppositeColor, depth - 1);
+        }
+        return root;
+    }
 
     /**
      * @param board The current board state
