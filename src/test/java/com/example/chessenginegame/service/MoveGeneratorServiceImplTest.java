@@ -7,18 +7,17 @@ import com.example.chessenginegame.model.piece.*;
 import junit.framework.AssertionFailedError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 class MoveGeneratorServiceImplTest {
-    protected MoveGeneratorServiceImpl moveGeneratorService;
+    protected MoveGeneratorServiceImpl moveGenerator;
     protected BoardBuilder boardBuilder;
     protected PieceBuilder pieceBuilder;
 
     @BeforeEach
     public void setUp(){
-        moveGeneratorService = new MoveGeneratorServiceImpl();
+        moveGenerator = new MoveGeneratorServiceImpl();
         boardBuilder = BoardBuilder.getInstance();
         pieceBuilder = PieceBuilder.getInstance();
     }

@@ -21,19 +21,29 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     public void test_1() {
         int depth = 4;
         List<String> uciMoves = Arrays.asList();//"e2e4"); //, "g7g6");
-        HashMap<String, Integer> perftResults = doPerftFromPosition(uciMoves, depth);
-        HashMap<String, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(uciMoves, depth);
-        HashMap<String, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
+        Map<String, Integer> perftResults = doPerftFromPosition(uciMoves, depth);
+        Map<String, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(uciMoves, depth);
+        Map<String, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
         printDiff(perftResults, stockfishPerftResults, differences);
     }
 
     @Test
     public void test_2() {
         List<String> uciMoves = Collections.EMPTY_LIST;
+        int depth = 4;
         Board board = Board.startingPosition();
-        MoveTreeNode root = moveGeneratorService.generateLegalMovesTree(
-                        null, board, Constants.WHITE, 4);
-        System.out.println(root.getKids().size());
+        MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, Constants.WHITE, depth);
+        Map<String, Integer> myPerft = root.getLeafNodeCounts();
+        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(uciMoves, depth);
+        Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
+        printDiff(myPerft, stockfishPerft, differences);
+        for (String uciMove : differences.keySet()) {
+            for (MoveTreeNode diffMoveNode : root.findMoveNodes(uciMove, 1)) {
+                List<List<String>> uciMovesList = root.getUciMovePathToLeafNode(diffMoveNode);
+                break;
+            }
+            break;
+        }
     }
 
     /**
@@ -51,7 +61,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
             board = board.apply(Move.parseUCIMove(board, uciMove));
             startingColor = Piece.getOppositeColor(startingColor);
         }
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
+        List<Move> moves = moveGenerator.generateLegalMoves(board, startingColor);
         String oppositeColor = Piece.getOppositeColor(startingColor);
         for(Move move : moves){
             Board currentBoard = board.apply(move);
@@ -66,7 +76,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
             return 1;
         }
         String oppositeSide = Piece.getOppositeColor(startingColor);
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
+        List<Move> moves = moveGenerator.generateLegalMoves(board, startingColor);
         int count = 0;
         for(Move move : moves){
             count += countMoves(board.apply(move), depth - 1, oppositeSide);
@@ -82,7 +92,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         if(depth % 2 == 1){
             color = Constants.BLACK;
         }
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, color);
+        List<Move> moves = moveGenerator.generateLegalMoves(board, color);
         int count = 0;
         for(Move move : moves){
             count += countMoves(board.apply(move), depth + 1, limit);
@@ -90,7 +100,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         return count;
     }
 
-    public HashMap<String, Integer> comparePerftResults(HashMap<String, Integer> stockfishResults, HashMap<String, Integer> myResults){
+    public Map<String, Integer> comparePerftResults(Map<String, Integer> stockfishResults, Map<String, Integer> myResults){
         HashMap<String, Integer> differences = new HashMap<>();
         Set<String> moveSet = new HashSet<>(stockfishResults.keySet());
         moveSet.addAll(myResults.keySet());

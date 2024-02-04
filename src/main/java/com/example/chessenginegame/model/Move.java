@@ -19,7 +19,7 @@ public class Move implements Comparable<Move>{
     public int getEndTile() { return endTile; }
     public String toString(){
         return piece.getColor() + " " + piece.getName() + " "
-                + TileUtil.getNamedTileFromIndex(startTile) + " => "
+                + TileUtil.getNamedTileFromIndex(startTile)
                 + TileUtil.getNamedTileFromIndex(endTile);
     }
     public String getSimpleName(){

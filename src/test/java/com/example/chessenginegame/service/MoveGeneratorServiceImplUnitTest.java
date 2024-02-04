@@ -7,7 +7,6 @@ import com.example.chessenginegame.model.piece.*;
 import junit.framework.AssertionFailedError;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.util.*;
 
@@ -738,7 +737,7 @@ bK  ()  ()  ()  ()  ()  ()  wR
         King king = new King(pinnedPiece.getColor());
         Board board = boardBuilder.newBoard().withA(pinnedPiece).onTile(pinnedTile).withA(pinningPiece).onTile(pinningTile).withA(king).onTile(kingTile).build();
         List<Move> expectedMoves = createMoveList(pinnedPiece, pinnedTile, Arrays.stream(expected).boxed().toList());
-        List<Move> generatedMoves = moveGeneratorService.generateLegalMoves(board, pinnedPiece.getColor()).stream().filter(move -> move.getPiece().equals(pinnedPiece)).toList();
+        List<Move> generatedMoves = moveGenerator.generateLegalMoves(board, pinnedPiece.getColor()).stream().filter(move -> move.getPiece().equals(pinnedPiece)).toList();
         assertEquals(expectedMoves, generatedMoves);
         return board;
     }
@@ -746,20 +745,20 @@ bK  ()  ()  ()  ()  ()  ()  wR
         Board board = boardBuilder.newBoard().withA(piece).onTile(tile).build();
         List<Move> expectedMoves = createMoveList(piece, tile, Arrays.stream(expected).boxed().toList());
         if(piece instanceof Pawn pawn){
-            assertEquals(expectedMoves, moveGeneratorService.generatePawnMoves(pawn, tile, board, null));
+            assertEquals(expectedMoves, moveGenerator.generatePawnMoves(pawn, tile, board, null));
         } else if(piece instanceof Knight){
-            assertEquals(expectedMoves, moveGeneratorService.generateKnightMoves((Knight)piece, tile, board, null));
+            assertEquals(expectedMoves, moveGenerator.generateKnightMoves((Knight)piece, tile, board, null));
         } else if(piece instanceof SlidingPiece slidingPiece){
-            assertEquals(expectedMoves, moveGeneratorService.generateSlidingPieceMoves(slidingPiece, tile, board, null));
+            assertEquals(expectedMoves, moveGenerator.generateSlidingPieceMoves(slidingPiece, tile, board, null));
         } else if(piece instanceof King king) {
-            assertEquals(expectedMoves, moveGeneratorService.generateKingMoves1(king, tile, board));
+            assertEquals(expectedMoves, moveGenerator.generateKingMoves1(king, tile, board));
         }
     }
     private Board testGetAttackerCount(String color, int kingTile, String p, int tile, int expected){
         Piece piece = Piece.of(p);
         King king = new King(color);
         Board board = boardBuilder.newBoard().withA(piece).onTile(tile).withA(king).onTile(kingTile).build();
-        Assertions.assertEquals(expected, moveGeneratorService.getAttackersOnKingOfColor(board, color).size());
+        Assertions.assertEquals(expected, moveGenerator.getAttackersOnKingOfColor(board, color).size());
         return board;
     }
     private Board testGetAttackerCount(String color, int kingTile, String p1, int tile1, String p2, int tile2, int expected){
@@ -767,7 +766,7 @@ bK  ()  ()  ()  ()  ()  ()  wR
         Piece piece1 = Piece.of(p1);
         Piece piece2 = Piece.of(p2);
         Board board = boardBuilder.newBoard().withA(piece1).onTile(tile1).withA(piece2).onTile(tile2).withA(king).onTile(kingTile).build();
-        Assertions.assertEquals(expected, moveGeneratorService.getAttackersOnKingOfColor(board, color).size());
+        Assertions.assertEquals(expected, moveGenerator.getAttackersOnKingOfColor(board, color).size());
         return board;
     }
     private void assertEquals(List<Move> expected, List<Move> actual){
