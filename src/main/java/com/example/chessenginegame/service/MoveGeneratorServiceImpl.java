@@ -76,7 +76,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             Piece piece = board.getPieceAt(tile).orElseThrow(() -> new RuntimeException("Piece does not exist on tile " + tile));
             if(!(piece instanceof King)){
                 if(piece.getColor().equals(color)) {
-                    moves.addAll(generateMovesFor(piece, tile, board, pieceIdToPinMap.get(piece.getId())));
+                    moves.addAll(generateMovesFor(piece, tile, board, pieceIdToPinMap.get(piece.getId())));  //TODO: pin logic error
                 }
                 else{
                     opposingMoves.addAll(generateMovesFor(piece, tile, board, null));
@@ -317,8 +317,12 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 } else { //second piece
                     if(encountered instanceof SlidingPiece slidingPiece &&
                             slidingPiece.getMoveShifts().contains(-1 * direction) &&
-                            !slidingPiece.getColor().equals(color)){
+                            !slidingPiece.getColor().equals(color)
+                    ){
                         pins.add(new Pin(prevEncountered, encountered, direction));
+                    }
+                    else if (encountered.getColor().equals(color)) { // 2 of same color protecting, none will be pinned in this direction
+                        break;
                     }
                 }
             }

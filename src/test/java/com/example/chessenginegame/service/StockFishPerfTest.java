@@ -19,8 +19,8 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
 
     @Test
     public void test_1() {
-        int depth = 4;
-        List<String> uciMoves = Arrays.asList();//"e2e4"); //, "g7g6");
+        int depth = 1;
+        List<String> uciMoves = Arrays.asList("c2c3", "d7d5", "d1a4");
         Map<String, Integer> perftResults = doPerftFromPosition(uciMoves, depth);
         Map<String, Integer> stockfishPerftResults = StockfishRunner.getStockfishPerftNumbers(uciMoves, depth);
         Map<String, Integer> differences = comparePerftResults(stockfishPerftResults, perftResults);
@@ -28,22 +28,71 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     }
 
     @Test
+    public void test_4() { validateUciMoves(Arrays.asList("c2c3", "d7d5", "d1a4")); }
+
+    @Test
     public void test_2() {
-        List<String> uciMoves = Collections.EMPTY_LIST;
+        List<String> startingUciMoves = Collections.EMPTY_LIST;
         int depth = 4;
         Board board = Board.startingPosition();
         MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, Constants.WHITE, depth);
         Map<String, Integer> myPerft = root.getLeafNodeCounts();
-        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(uciMoves, depth);
+        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depth);
         Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
         printDiff(myPerft, stockfishPerft, differences);
+        int maxCount = 10; // max # of examples
+        System.out.println("\nExample (max " + maxCount + " per starting move):\n");
         for (String uciMove : differences.keySet()) {
-            for (MoveTreeNode diffMoveNode : root.findMoveNodes(uciMove, 1)) {
+            System.out.println("mismatch count of starting uciMove: " + uciMove);
+            int cnt = 0;
+            for (MoveTreeNode diffMoveNode : root.findMoveNodes(uciMove, 1)) { // only 1
                 List<List<String>> uciMovesList = root.getUciMovePathToLeafNode(diffMoveNode);
-                break;
+                System.out.println(uciMove + ": " + uciMovesList.size());
+//                for (List<String> uciMoves : uciMovesList) {
+//                    System.out.print(uciMoves + " ");
+//                    if (!validateUciMoves(uciMoves)) {
+//                        if (++cnt >= maxCount)
+//                            break;
+//                    }
+//                }
             }
-            break;
         }
+    }
+
+    @Test
+    public void test_3() {
+        validateUciMoves(Arrays.asList("c2c3", "b8c6", "d1a4"));
+    }
+
+    @Test
+    public void test_getPins() {
+        Board board = Board.startingPosition();
+        String oppositeColor = Constants.WHITE;
+        for (String uciMove : Arrays.asList("c2c3", "b8c6", "d1a4")) {
+            board = board.apply(uciMove);
+            oppositeColor = Piece.getOppositeColor(oppositeColor);
+        }
+        Assertions.assertEquals(Collections.EMPTY_LIST, moveGenerator.getPins(board, Constants.BLACK));
+    }
+
+    public boolean validateUciMoves(List<String> uciMoves) {
+        Board board = Board.startingPosition();
+        String oppositeColor = Constants.WHITE;
+        for (String uciMove : uciMoves) {
+            board = board.apply(uciMove);
+            oppositeColor = Piece.getOppositeColor(oppositeColor);
+        }
+        MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, oppositeColor, 1);
+        Map<String, Integer> myPerft = root.getLeafNodeCounts();
+        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(uciMoves, 1);
+        Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
+        if (differences.size() > 0) {
+            System.out.println("Starting moves: " + uciMoves);
+            System.out.print(", stockfish: " + stockfishPerft.size() + ", actual: " + myPerft.size());
+            System.out.print(", delta: " + (myPerft.size() - stockfishPerft.size()));
+            board.printBoardMatrix();
+        }
+        return differences.size() == 0;
     }
 
     /**

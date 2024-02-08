@@ -9,4 +9,10 @@ class BoardTest {
   public void test_printBoard() {
     Board.printBoard();
   }
+
+  @Test
+  public void test_printBoardMatrix() {
+    Board board = Board.startingPosition();
+    board.printBoardMatrix();
+  }
 }

@@ -73,6 +73,7 @@ public class MoveTreeNode {
 
     private boolean getUciMovePathToLeafNode(MoveTreeNode node, Stack<String> pathStack, List<List<String>> pathList) {
         if (node.getKids().size() == 0) {
+            pathStack.pop();
             pathList.add(getListFromStack(pathStack));
             return true;
         }
@@ -80,7 +81,8 @@ public class MoveTreeNode {
             pathStack.push(kid.move.getUCINotation());
             if (getUciMovePathToLeafNode(kid, pathStack, pathList)) {
                 break;
-            };
+            }
+            pathStack.pop();
         }
         return false;
     }
