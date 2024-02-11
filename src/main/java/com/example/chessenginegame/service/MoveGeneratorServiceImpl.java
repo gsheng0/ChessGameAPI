@@ -375,7 +375,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             return Collections.emptyList();
         }
         int kingTile = optionalKingTile.get();
-        return getPiecesProtectingSquare(board, kingTile, Piece.getOppositeColor(color), true);
+        return getPiecesProtectingSquare(board, kingTile, Piece.getOppositeColor(color), false, true);
     }
 
     /**
@@ -385,7 +385,9 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @param color The color of the pieces to look for
      * @return a list of tuples containing the pieces protecting given tile and their tile numbers
      */
-    public List<Pair<Piece, Integer>> getPiecesProtectingSquare(Board board, int tile, String color, boolean includePinnedPieces){
+    public List<Pair<Piece, Integer>> getPiecesProtectingSquare(
+            Board board, int tile, String color, boolean toBlockAttacker, boolean includePinnedPieces
+    ){
         List<Pair<Piece, Integer>> defenders = new ArrayList<>();
 
         //checking for knights
@@ -424,9 +426,11 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         }
 
         //check for pawns
-        List<Integer> captureDirections = Pawn.captureMoveShifts(tile, Piece.getOppositeColor(color));
-        for(int captureDirection : captureDirections){
-            int resultantTile = captureDirection + tile;
+        List<Integer> moveDirections = (toBlockAttacker) ?
+                Arrays.asList(-8, -16) :
+                Pawn.captureMoveShifts(tile, Piece.getOppositeColor(color));
+        for(int moveDirection : moveDirections){
+            int resultantTile = moveDirection + tile;
             Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
             if(optionalOccupant.isEmpty()){
                 continue;
@@ -525,10 +529,11 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         List<Integer> moveShifts = king.moveShifts(kingTile);
         for(int moveShift : moveShifts){
             int resultantTile = moveShift + kingTile;
-            if(isTileProtectedBy(board, resultantTile, oppositeColor)){
+            if(board.getPieceAt(resultantTile).isPresent() && board.getPieceAt(resultantTile).get().getColor().equals(color)){
                 continue;
             }
-            if(board.getPieceAt(resultantTile).isPresent() && board.getPieceAt(resultantTile).get().getColor().equals(color)){
+            if(isTileProtectedBy(board, resultantTile, oppositeColor)
+            ){
                 continue;
             }
             moves.add(new Move(king, kingTile, resultantTile));
@@ -541,7 +546,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         if(attacker instanceof Knight || attacker instanceof Pawn){
             int attackerTile = attackerInfo.right();
 
-           List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, attackerTile, color, false);
+           List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, attackerTile, color, true,false);
            for(Pair<Piece, Integer> defenderInfo : defendersInfo){
                moves.add(new Move(defenderInfo.left(), defenderInfo.right(), attackerTile));
            }
@@ -551,12 +556,12 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         else if(attacker instanceof SlidingPiece){
             int attackerTile = attackerInfo.right();
             int attackerDirection = TileUtil.getSlidingDirection(attackerTile, kingTile);
-            int distance = (kingTile - attackerTile)/attackerDirection;
-            for(int i = 0; i < distance + 1; i++){
+            int distance = Math.abs((attackerTile - kingTile)/attackerDirection );
+            for(int i = 1; i < distance; i++){
                 int currentTile = attackerTile + i * attackerDirection;
-                List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, currentTile, color, false);
+                List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, currentTile, color, true, false);
                 for(Pair<Piece, Integer> defenderInfo : defendersInfo){
-                    moves.add(new Move(defenderInfo.left(), defenderInfo.right(), attackerTile));
+                    moves.add(new Move(defenderInfo.left(), defenderInfo.right(), currentTile));
                 }
             }
             return moves;

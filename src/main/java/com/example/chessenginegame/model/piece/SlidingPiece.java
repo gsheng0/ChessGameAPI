@@ -33,8 +33,8 @@ public abstract class SlidingPiece extends Piece{
     }
 
     public static List<Integer> getAllMoveShifts() {
-        List<Integer> sms = getStraightMoveShifts();
-        sms.addAll(getDiagMoveShifts());
+        List<Integer> sms = getDiagMoveShifts();
+        sms.addAll(getStraightMoveShifts());
         return sms;
     }
 

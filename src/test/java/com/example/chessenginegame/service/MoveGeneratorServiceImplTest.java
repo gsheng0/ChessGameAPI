@@ -21,7 +21,7 @@ class MoveGeneratorServiceImplTest {
         boardBuilder = BoardBuilder.getInstance();
         pieceBuilder = PieceBuilder.getInstance();
     }
-    protected void printDiff (Map<String, Integer> myResults, Map<String, Integer> stockfishResults, Map<String, Integer> differences) {
+    protected void printDiff (Map<String, Integer> stockfishResults, Map<String, Integer> myResults, Map<String, Integer> differences) {
         for (String uciMove : differences.keySet()) {
             System.out.println(uciMove + ": " + differences.get(uciMove) +
                     ", expected: " + stockfishResults.get(uciMove) +
