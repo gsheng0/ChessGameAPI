@@ -84,7 +84,7 @@ public class Board {
         newBoard.put(move.getEndTile(), piece);
         return new Board(newBoard, move);
     }
-    public Board apply(List<Move> moves){
+    public Board apply(List<Move> moves) {
         Board current = this;
         for(Move move : moves){
             current = current.apply(move);
@@ -94,6 +94,15 @@ public class Board {
     }
     public Board apply(String uci){
         return apply(Move.parseUCIMove(this, uci));
+    }
+    public static Board boardWithStartingUciMoves(List<String> uciMoves) {
+        Board current = startingPosition();
+        String oppositeColor = Constants.WHITE;
+        for (String uciMove : uciMoves) {
+            current = current.apply(uciMove);
+            oppositeColor = Piece.getOppositeColor(oppositeColor);
+        }
+        return current;
     }
     public Optional<Piece> getPieceAt(int tile){
         if(!board.containsKey(tile)){

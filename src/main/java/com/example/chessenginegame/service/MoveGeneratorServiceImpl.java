@@ -86,7 +86,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             }
         }
         if(kingPair != null){
-            moves.addAll(generateKingMoves1(kingPair.left(), kingPair.right(), board));//, opposingMoves));
+            moves.addAll(generateKingMoves(kingPair.left(), kingPair.right(), board, opposingMoves));
         }
         return moves;
     }
@@ -427,7 +427,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
 
         //check for pawns
         List<Integer> moveDirections = (toBlockAttacker) ?
-                Arrays.asList(-8, -16) :
+                Arrays.asList(-8, -16, 8, 16) :
                 Pawn.captureMoveShifts(tile, Piece.getOppositeColor(color));
         for(int moveDirection : moveDirections){
             int resultantTile = moveDirection + tile;
@@ -436,7 +436,10 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 continue;
             }
             Piece occupant = optionalOccupant.get();
-            if(occupant instanceof Pawn && occupant.getColor().equals(color)){
+            if(occupant instanceof Pawn
+                    && occupant.getColor().equals(color)
+                    && ((Pawn)occupant).getDirectionMultiplier() * (tile - resultantTile) > 0
+            ){
                 defenders.add(Pair.of(occupant, resultantTile));
             }
         }
