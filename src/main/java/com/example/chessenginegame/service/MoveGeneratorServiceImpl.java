@@ -225,8 +225,10 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                 }
             }
         }
-
-        return possibleEndTiles.stream().map(endTile -> new Move(king, currentTile, endTile)).toList();
+        return possibleEndTiles.stream()
+                .filter(endTile -> !isTileProtectedBy(board, endTile, Piece.getOppositeColor(king.getColor())))
+                .map(endTile -> new Move(king, currentTile, endTile))
+                .toList();
     }
     public List<Move> generateKingMoves1(King king, int currentTile, Board board){
         String oppositeColor = Piece.getOppositeColor(king.getColor());

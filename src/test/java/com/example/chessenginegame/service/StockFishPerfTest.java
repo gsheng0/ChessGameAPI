@@ -60,6 +60,8 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     public void test_validate_d2d3_g7g5_e1d2_a7a5 () { validateUciMoves(Arrays.asList("d2d3", "g7g5", "e1d2", "a7a5")); }
     @Test
     public void test_validate_f2f3_e7e6_a2a4_d8h4 () { validateUciMoves(Arrays.asList("f2f3", "e7e6", "a2a4", "d8h4")); }
+    @Test
+    public void test_validate_d2d4_g8f6_g2g3_f6e4 () { validateUciMoves(Arrays.asList("d2d4", "g8f6", "g2g3", "f6e4")); }
     @Test  // use this test to find bug
     public void test_validateRandomUciMovesUntilFailOrMaxIterations() {
         int maxIterations = 10, depth = 4, total = 100;
