@@ -502,13 +502,13 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         //check for pawns
         List<Integer> captureDirections = Pawn.captureMoveShifts(tile, color);
         for(int captureDirection : captureDirections){
-            int resultantTile = captureDirection + tile;
+            int resultantTile = tile - captureDirection;
             Optional<Piece> optionalOccupant = board.getPieceAt(resultantTile);
             if(optionalOccupant.isEmpty()){
                 continue;
             }
             Piece occupant = optionalOccupant.get();
-            if(occupant instanceof Pawn){
+            if(occupant instanceof Pawn && occupant.getColor().equals(color)){
                 return true;
             }
         }
