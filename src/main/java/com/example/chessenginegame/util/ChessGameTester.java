@@ -19,7 +19,7 @@ public class ChessGameTester {
             return 1;
         }
         String oppositeSide = Piece.getOppositeColor(startingColor);
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
+        List<Move> moves = moveGeneratorService.generateLegalMoves(board);
         int count = 0;
         for(Move move : moves){
             count += countMoves(board.apply(move), depth - 1, oppositeSide);
@@ -34,7 +34,7 @@ public class ChessGameTester {
         if(depth % 2 == 1){
             color = Constants.BLACK;
         }
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, color);
+        List<Move> moves = moveGeneratorService.generateLegalMoves(board);
         int count = 0;
         for(Move move : moves){
             count += countMoves(board.apply(move), depth + 1, limit);
@@ -50,7 +50,7 @@ public class ChessGameTester {
         if(depth % 2 == 1){
             color = Constants.BLACK;
         }
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, color);
+        List<Move> moves = moveGeneratorService.generateLegalMoves(board);
         for(Move move : moves){
             output.addAll(generateMoves(board.apply(move), depth + 1, limit));
         }
@@ -66,7 +66,7 @@ public class ChessGameTester {
         if(depth % 2 == 1){
             color = Constants.BLACK;
         }
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, color);
+        List<Move> moves = moveGeneratorService.generateLegalMoves(board);
         for(Move move : moves){
             List<Pair<Board, List<Move>>> result = generateMovesWithHistory(board.apply(move), depth + 1, limit);
             for(Pair<Board, List<Move>> pair : result){
@@ -88,7 +88,7 @@ public class ChessGameTester {
      */
     public static HashMap<Move, Integer> doPerftFromPosition(Board board, int depth, String startingColor){
         HashMap<Move, Integer> perftResults = new HashMap<>();
-        List<Move> moves = moveGeneratorService.generateLegalMoves(board, startingColor);
+        List<Move> moves = moveGeneratorService.generateLegalMoves(board);
 
         String oppositeColor = Piece.getOppositeColor(startingColor);
         for(Move move : moves){

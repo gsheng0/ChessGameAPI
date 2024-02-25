@@ -48,7 +48,8 @@ class MoveGeneratorServiceImplTest {
         private Piece piece = null;
         private int tile = -1;
         private static BoardBuilder boardBuilder = null;
-        private HashMap<Integer, Piece> map;
+        private Map<Integer, Piece> map;
+        private String nextMoveColor;
 
         private BoardBuilder() {}
         public static BoardBuilder getInstance(){
@@ -75,14 +76,17 @@ class MoveGeneratorServiceImplTest {
             }
             return this;
         }
-        public BoardBuilder add(){
+        public void add(){
             map.put(tile, piece);
             tile = -1;
             piece = null;
+        }
+        public BoardBuilder nextMoveColor(String color) {
+            nextMoveColor = color;
             return this;
         }
         public Board build(){
-            return new Board(map);
+            return new Board(map, nextMoveColor == null ? Constants.WHITE : nextMoveColor);
         }
     }
 

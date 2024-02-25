@@ -2,6 +2,7 @@ package com.example.chessenginegame.service;
 
 import com.example.chessenginegame.model.Board;
 import com.example.chessenginegame.model.Constants;
+import com.example.chessenginegame.model.Move;
 import com.example.chessenginegame.model.MoveTreeNode;
 import com.example.chessenginegame.model.piece.Piece;
 import com.example.chessenginegame.util.StockfishRunner;
@@ -12,32 +13,9 @@ import java.util.*;
 
 class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     @Test
-    public void test_noStartMovePerftDepth_4() {
-        List<String> startingUciMoves = Collections.EMPTY_LIST;
-        int depth = 4;
-        Board board = Board.startingPosition();
-        MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, Constants.WHITE, depth);
-        Map<String, Integer> myPerft = root.getLeafNodeCounts();
-        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depth);
-        Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
-        printDiff(myPerft, stockfishPerft, differences);
-        int maxCount = 10; // max # of examples
-        System.out.println("\nExample (max " + maxCount + " per starting move):\n");
-        for (String uciMove : differences.keySet()) {
-            System.out.println("mismatch count of starting uciMove: " + uciMove);
-            int cnt = 0;
-            for (MoveTreeNode diffMoveNode : root.findMoveNodes(uciMove, 1)) { // only 1
-                List<List<String>> uciMovesList = root.getUciMovePathToLeafNode(diffMoveNode);
-                System.out.println(uciMove + ": " + uciMovesList.size());
-            }
-        }
-    }
-    @Test
     public void test_whenWhiteKingCheckedByBlackQueen() { validateUciMoves(Arrays.asList("c2c3", "d7d5", "d1a4")); }
     @Test
-    public void test_noDiffWithStartPos_c2c3_b8c6_d1a4() {
-        Assertions.assertTrue(validateUciMoves(Arrays.asList("c2c3", "b8c6", "d1a4")));
-    }
+    public void test_noDiffWithStartPos_c2c3_b8c6_d1a4() {Assertions.assertTrue(validateUciMoves(Arrays.asList("c2c3", "b8c6", "d1a4")));}
     @Test
     public void test_noPinsWithStartPos_c2c3_b8c6_d1a4() {
         Board board = Board.startingPosition();
@@ -64,7 +42,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     public void test_validate_d2d4_g8f6_g2g3_f6e4 () { validateUciMoves(Arrays.asList("d2d4", "g8f6", "g2g3", "f6e4")); }
     @Test
     public void test_validate_f2f4_a7a6_e1f2_d7d5() { validateUciMoves(Arrays.asList("f2f4", "a7a6", "e1f2", "d7d5")); }
-    @Test  // use this test to find bug
+//    @Test  // use this test to find bug
     public void test_validateRandomUciMovesUntilFailOrMaxIterations() {
         int maxIterations = 10, depth = 4, total = 100;
         int count = 0;
@@ -136,6 +114,51 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
             printDiff(stockfishPerft, myPerft, differences);
         }
         return differences.size() == 0;
+    }
+
+//    @Test
+    public void countOnlyTest() {
+        int depth = 4;
+        List<String> startingUciMoves = Collections.EMPTY_LIST;
+        Board board = Board.startingPosition();
+        Map<String, Integer> myPerft = countMoves(startingUciMoves, 4);
+        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depth);
+        Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
+        printDiff(myPerft, stockfishPerft, differences);
+    }
+
+    private Map<String, Integer> countMoves(List<String> startingUciMoves, int depth) {
+        Board board = Board.startingPosition().applyUciMoves(startingUciMoves);
+        List<Move> moves = moveGenerator.generateLegalMoves(board);
+        return null;
+    }
+
+    private int countMoves(Board board, int depth, String startingColor){
+        if(depth == 0){
+            return 1;
+        }
+        String oppositeSide = Piece.getOppositeColor(startingColor);
+        List<Move> moves = moveGenerator.generateLegalMoves(board);
+        int count = 0;
+        for(Move move : moves){
+            count += countMoves(board.apply(move), depth - 1, oppositeSide);
+        }
+        return count;
+    }
+    private int countMoves(Board board, int depth, int limit){
+        if(depth == limit){
+            return 1;
+        }
+        String color = Constants.WHITE;
+        if(depth % 2 == 1){
+            color = Constants.BLACK;
+        }
+        List<Move> moves = moveGenerator.generateLegalMoves(board);
+        int count = 0;
+        for(Move move : moves){
+            count += countMoves(board.apply(move), depth + 1, limit);
+        }
+        return count;
     }
     /**
      *

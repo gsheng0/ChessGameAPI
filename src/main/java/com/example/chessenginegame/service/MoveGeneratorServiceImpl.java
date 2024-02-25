@@ -35,7 +35,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         if (root == null) {
             root = new MoveTreeNode();
         }
-        List<Move> moves = generateLegalMoves(board, color);
+        List<Move> moves = generateLegalMoves(board);
         String oppositeColor = Piece.getOppositeColor(color);
         for (Move move : moves) {
             Board currBoard = board.apply(move);
@@ -48,40 +48,38 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
 
     /**
      * @param board The current board state
-     * @param color The color to generate moves for
      * @return a list of legal moves
      */
     @Override
-    public List<Move> generateLegalMoves(Board board, String color){
-        List<Pair<Piece, Integer>> attackers = getAttackersOnKingOfColor(board, color);
+    public List<Move> generateLegalMoves(Board board){
+        List<Pair<Piece, Integer>> attackers = getAttackersOnKingOfColor(board);
         if(attackers.size() == 0){
-            return generateLegalMovesNotInCheck(board, color);
+            return generateLegalMovesNotInCheck(board);
         }
         else{
-            return generateLegalMovesInCheck(board, attackers, color);
+            return generateLegalMovesInCheck(board, attackers);
         }
     }
     /**
      * @param board The current board state
-     * @param color The side to generate moves for
      * @return A list of legal moves, disregarding check
      */
-    public List<Move> generateLegalMovesNotInCheck(Board board, String color){
+    public List<Move> generateLegalMovesNotInCheck(Board board){
         List<Move> moves = new ArrayList<>();
         List<Move> opposingMoves = new ArrayList<>();
-        List<Integer> pieceTiles = board.getPieceTiles(color);
-        HashMap<Integer, Pin> pieceIdToPinMap = getPieceIdToPinMap(board, color);
+        List<Integer> pieceTiles = board.getPieceTiles(board.getNextMoveColor());
+        HashMap<Integer, Pin> pieceIdToPinMap = getPieceIdToPinMap(board, board.getNextMoveColor());
         Pair<King, Integer> kingPair = null;
         for(int tile : pieceTiles){
             Piece piece = board.getPieceAt(tile).orElseThrow(() -> new RuntimeException("Piece does not exist on tile " + tile));
             if(!(piece instanceof King)){
-                if(piece.getColor().equals(color)) {
+                if(piece.getColor().equals(board.getNextMoveColor())) {
                     moves.addAll(generateMovesFor(piece, tile, board, pieceIdToPinMap.get(piece.getId())));  //TODO: pin logic error
                 }
                 else{
                     opposingMoves.addAll(generateMovesFor(piece, tile, board, null));
                 }
-            } else if(piece.getColor().equals(color)){
+            } else if(piece.getColor().equals(board.getNextMoveColor())){
                 kingPair = Pair.of((King)piece, tile);
             }
         }
@@ -368,16 +366,15 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
 
     /**
      * @param board the current board state
-     * @param color the color of the side to be checking
      * @return a list of attackers on the king
      */
-    public List<Pair<Piece, Integer>> getAttackersOnKingOfColor(Board board, String color){
-        Optional<Integer> optionalKingTile = board.getTileOfKing(color);
+    public List<Pair<Piece, Integer>> getAttackersOnKingOfColor(Board board){
+        Optional<Integer> optionalKingTile = board.getTileOfKing(board.getNextMoveColor());
         if(optionalKingTile.isEmpty()){
             return Collections.emptyList();
         }
         int kingTile = optionalKingTile.get();
-        return getPiecesProtectingSquare(board, kingTile, Piece.getOppositeColor(color), false, true);
+        return getPiecesProtectingSquare(board, kingTile, Piece.getOppositeColor(board.getNextMoveColor()), false, true);
     }
 
     /**
@@ -518,23 +515,22 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
     /**
      * @param board the current board state
      * @param attackers list of pieces threatening the king and their tile numbers
-     * @param color the color of the king being threatened
      * @return a list of legal moves for defending the king from the check
      */
-    public List<Move> generateLegalMovesInCheck(Board board, List<Pair<Piece, Integer>> attackers, String color){
+    public List<Move> generateLegalMovesInCheck(Board board, List<Pair<Piece, Integer>> attackers){
         List<Move> moves = new ArrayList<>();
-        String oppositeColor = Piece.getOppositeColor(color);
-        Optional<Integer> optionalKingTile = board.getTileOfKing(color);
+        String oppositeColor = Piece.getOppositeColor(board.getNextMoveColor());
+        Optional<Integer> optionalKingTile = board.getTileOfKing(board.getNextMoveColor());
         if(optionalKingTile.isEmpty()){
-            throw new IllegalStateException(color + " does not have a king");
+            throw new IllegalStateException(board.getNextMoveColor() + " does not have a king");
         }
         int kingTile = optionalKingTile.get();
-        King king = (King)board.getBoard().get(kingTile);
+        King king = (King)board.getIndexPieceMap().get(kingTile);
         //generate legal king moves first
         List<Integer> moveShifts = king.moveShifts(kingTile);
         for(int moveShift : moveShifts){
             int resultantTile = moveShift + kingTile;
-            if(board.getPieceAt(resultantTile).isPresent() && board.getPieceAt(resultantTile).get().getColor().equals(color)){
+            if(board.getPieceAt(resultantTile).isPresent() && board.getPieceAt(resultantTile).get().getColor().equals(board.getNextMoveColor())){
                 continue;
             }
             if(isTileProtectedBy(board, resultantTile, oppositeColor)
@@ -551,7 +547,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
         if(attacker instanceof Knight || attacker instanceof Pawn){
             int attackerTile = attackerInfo.right();
 
-           List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, attackerTile, color, true,false);
+           List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, attackerTile, board.getNextMoveColor(), true,false);
            for(Pair<Piece, Integer> defenderInfo : defendersInfo){
                moves.add(new Move(defenderInfo.left(), defenderInfo.right(), attackerTile));
            }
@@ -564,7 +560,7 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             int distance = Math.abs((attackerTile - kingTile)/attackerDirection );
             for(int i = 1; i < distance; i++){
                 int currentTile = attackerTile + i * attackerDirection;
-                List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, currentTile, color, true, false);
+                List<Pair<Piece, Integer>> defendersInfo = getPiecesProtectingSquare(board, currentTile, board.getNextMoveColor(), true, false);
                 for(Pair<Piece, Integer> defenderInfo : defendersInfo){
                     moves.add(new Move(defenderInfo.left(), defenderInfo.right(), currentTile));
                 }

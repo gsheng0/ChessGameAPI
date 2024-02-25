@@ -2,27 +2,34 @@ package com.example.chessenginegame.model;
 
 import com.example.chessenginegame.model.piece.King;
 import com.example.chessenginegame.model.piece.Piece;
+import org.springframework.lang.NonNull;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class Board {
-    private HashMap<Integer, Piece> board;
+    private Map<Integer, Piece> indexPieceMap;
+    private String nextMoveColor;
     private Move previousMove;
     public static Integer MIN_TILE = 0;
     public static Integer MAX_TILE = 63;
     public static Integer LENGTH = 8;
 
-    public Board(){}
-    public Board(HashMap<Integer, Piece> board){
-        this.board = board;
+//    public Board(){  }
+//    public Board(Map<Integer, Piece> indexPieceMap){
+//        this.indexPieceMap = indexPieceMap;
+//    }
+    public Board(Map<Integer, Piece> indexPieceMap, @NonNull String nextMoveColor){
+        this.indexPieceMap = indexPieceMap;
+        this.nextMoveColor = nextMoveColor;
     }
-    public Board(HashMap<Integer, Piece> board, Move previousMove){
-        this.board = board;
+    public Board(Map<Integer, Piece> indexPieceMap, Move previousMove){
+        this.indexPieceMap = indexPieceMap;
         this.previousMove = previousMove;
+        this.nextMoveColor = Piece.getOppositeColor(this.previousMove.getPiece().getColor());
     }
-
     public void printBoardMatrix() {
         System.out.println();
         System.out.println("F |  0     1     2     3     4     5     6     7    |");
@@ -43,7 +50,6 @@ public class Board {
         System.out.println("R |  a     b     c     d     e     f     g     h    |");
         System.out.println();
     }
-
     public static void printBoard() {
         System.out.println();
         System.out.println("  F|  0  1  2  3  4  5  6  7 |");
@@ -59,27 +65,25 @@ public class Board {
         System.out.println("R  |  a  b  c  d  e  f  g  h |");
         System.out.println();
     }
-
     public String[][] getBoardAsMatrix() {
         String[][] boardMatrix = new String[LENGTH][LENGTH];
-        for (Integer key : board.keySet()) {
+        for (Integer key : indexPieceMap.keySet()) {
             int row = key / LENGTH ;
             int col = key % LENGTH ;
-            Piece piece = board.get(key);
+            Piece piece = indexPieceMap.get(key);
             boardMatrix[row][col] = piece.toAbv();
         }
         return boardMatrix;
     }
-
     /**
      * @param move The move to be applied to the board
      * @return a copy of the board, with the move applied
      */
     public Board apply(Move move){
-        if(!board.containsKey(move.getStartTile())){
+        if(!indexPieceMap.containsKey(move.getStartTile())){
             throw new IllegalArgumentException("Move not applicable to board: missing piece on start tile");
         }
-        HashMap<Integer, Piece> newBoard = copyBoard(board);
+        Map<Integer, Piece> newBoard = copyBoard(indexPieceMap);
         Piece piece = newBoard.remove(move.getStartTile());
         newBoard.put(move.getEndTile(), piece);
         return new Board(newBoard, move);
@@ -89,34 +93,31 @@ public class Board {
         for(Move move : moves){
             current = current.apply(move);
         }
-        //TODO:
         return current;
     }
     public Board apply(String uci){
         return apply(Move.parseUCIMove(this, uci));
     }
-    public static Board boardWithStartingUciMoves(List<String> uciMoves) {
-        Board current = startingPosition();
-        String oppositeColor = Constants.WHITE;
+    public Board applyUciMoves(List<String> uciMoves) {
+        Board current = this;
         for (String uciMove : uciMoves) {
             current = current.apply(uciMove);
-            oppositeColor = Piece.getOppositeColor(oppositeColor);
         }
         return current;
     }
     public Optional<Piece> getPieceAt(int tile){
-        if(!board.containsKey(tile)){
+        if(!indexPieceMap.containsKey(tile)){
             return Optional.empty();
         }
-        return Optional.of(board.get(tile));
+        return Optional.of(indexPieceMap.get(tile));
     }
     public List<Integer> getPieceTiles(String color){
-        return board.keySet().stream().filter(tile -> board.get(tile).getColor().equals(color)).toList();
+        return indexPieceMap.keySet().stream().filter(tile -> indexPieceMap.get(tile).getColor().equals(color)).toList();
     }
     public Optional<Integer> getTileOfKing(String color){
         //TODO: optional needed? as it's over if the king not there
-        for(int tile : board.keySet()){
-            Piece piece = board.get(tile);
+        for(int tile : indexPieceMap.keySet()){
+            Piece piece = indexPieceMap.get(tile);
             if(!(piece instanceof King)){
                 continue;
             }
@@ -127,16 +128,17 @@ public class Board {
         return Optional.empty();
     }
     public static Board startingPosition() {
-        return Board.createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        return new Board(Board.createFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"), Constants.WHITE);
     }
     public Optional<Move> getPreviousMove(){
         return Optional.ofNullable(previousMove);
     }
-    public HashMap<Integer, Piece> getBoard(){
-        return board;
+    public String getNextMoveColor() { return nextMoveColor; }
+    public Map<Integer, Piece> getIndexPieceMap(){
+        return indexPieceMap;
     }
-    public static Board createFromFEN(String FEN){
-        HashMap<Integer, Piece> board = new HashMap<>();
+    public static Map<Integer, Piece> createFromFEN(String FEN){
+        Map<Integer, Piece> indPieceMap = new HashMap<>();
         int index = 0;
         for(int i = 0; i < FEN.length(); i++){
             if(index > MAX_TILE){
@@ -151,17 +153,15 @@ public class Board {
                 index += num;
             }
             else{
-                board.put(index, Piece.of(current));
+                indPieceMap.put(index, Piece.of(current));
                 index++;
             }
         }
-        return new Board(board);
+        return indPieceMap;
     }
-    private static HashMap<Integer, Piece> copyBoard(HashMap<Integer, Piece> board){
-        HashMap<Integer, Piece> copy = new HashMap<>();
-        for(int tile : board.keySet()){
-            copy.put(tile, board.get(tile));
-        }
+    private static Map<Integer, Piece> copyBoard(Map<Integer, Piece> board){
+        Map<Integer, Piece> copy = new HashMap<>();
+        board.keySet().forEach(tile->copy.put(tile, board.get(tile)));
         return copy;
     }
 

@@ -23,7 +23,7 @@ public class Main {
         game.add(board);
         for(int i = 0; i < moves; i++){
             String color = i % 2 == 0 ? Constants.WHITE : Constants.BLACK;
-            List<Move> legalMoves = moveGenerator.generateLegalMoves(board, color);
+            List<Move> legalMoves = moveGenerator.generateLegalMoves(board);
             if(legalMoves.size() == 0){
                 break;
             }

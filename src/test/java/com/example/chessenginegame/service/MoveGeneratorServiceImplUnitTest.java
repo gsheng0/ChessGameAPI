@@ -735,9 +735,9 @@ bK  ()  ()  ()  ()  ()  ()  wR
         Piece pinnedPiece = Piece.of(pinned);
         Piece pinningPiece = Piece.of(pinning);
         King king = new King(pinnedPiece.getColor());
-        Board board = boardBuilder.newBoard().withA(pinnedPiece).onTile(pinnedTile).withA(pinningPiece).onTile(pinningTile).withA(king).onTile(kingTile).build();
+        Board board = boardBuilder.newBoard().withA(pinnedPiece).onTile(pinnedTile).withA(pinningPiece).onTile(pinningTile).withA(king).onTile(kingTile).nextMoveColor(pinnedPiece.getColor()).build();
         List<Move> expectedMoves = createMoveList(pinnedPiece, pinnedTile, Arrays.stream(expected).boxed().toList());
-        List<Move> generatedMoves = moveGenerator.generateLegalMoves(board, pinnedPiece.getColor()).stream().filter(move -> move.getPiece().equals(pinnedPiece)).toList();
+        List<Move> generatedMoves = moveGenerator.generateLegalMoves(board).stream().filter(move -> move.getPiece().equals(pinnedPiece)).toList();
         assertEquals(expectedMoves, generatedMoves);
         return board;
     }
@@ -757,16 +757,16 @@ bK  ()  ()  ()  ()  ()  ()  wR
     private Board testGetAttackerCount(String color, int kingTile, String p, int tile, int expected){
         Piece piece = Piece.of(p);
         King king = new King(color);
-        Board board = boardBuilder.newBoard().withA(piece).onTile(tile).withA(king).onTile(kingTile).build();
-        Assertions.assertEquals(expected, moveGenerator.getAttackersOnKingOfColor(board, color).size());
+        Board board = boardBuilder.newBoard().withA(piece).onTile(tile).withA(king).onTile(kingTile).nextMoveColor(color).build();
+        Assertions.assertEquals(expected, moveGenerator.getAttackersOnKingOfColor(board).size());
         return board;
     }
     private Board testGetAttackerCount(String color, int kingTile, String p1, int tile1, String p2, int tile2, int expected){
         King king = new King(color);
         Piece piece1 = Piece.of(p1);
         Piece piece2 = Piece.of(p2);
-        Board board = boardBuilder.newBoard().withA(piece1).onTile(tile1).withA(piece2).onTile(tile2).withA(king).onTile(kingTile).build();
-        Assertions.assertEquals(expected, moveGenerator.getAttackersOnKingOfColor(board, color).size());
+        Board board = boardBuilder.newBoard().withA(piece1).onTile(tile1).withA(piece2).onTile(tile2).withA(king).onTile(kingTile).nextMoveColor(color).build();
+        Assertions.assertEquals(expected, moveGenerator.getAttackersOnKingOfColor(board).size());
         return board;
     }
     private void assertEquals(List<Move> expected, List<Move> actual){

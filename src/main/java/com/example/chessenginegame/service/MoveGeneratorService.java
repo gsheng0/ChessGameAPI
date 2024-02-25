@@ -7,6 +7,6 @@ import com.example.chessenginegame.model.MoveTreeNode;
 import java.util.List;
 
 public interface MoveGeneratorService {
-    List<Move> generateLegalMoves(Board board, String color);
+    List<Move> generateLegalMoves(Board board);
     MoveTreeNode generateLegalMovesTree(MoveTreeNode root, Board board, String color, int depth);
 }

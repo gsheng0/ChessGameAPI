@@ -1,6 +1,7 @@
 package com.example.chessenginegame.util;
 
 import com.example.chessenginegame.model.Board;
+import com.example.chessenginegame.model.Constants;
 import com.example.chessenginegame.model.Move;
 
 public class PerftSettings {
@@ -23,7 +24,7 @@ public class PerftSettings {
         boardState = boardState.apply(move);
     }
     public void setBoardState(String FEN){
-        boardState = Board.createFromFEN(FEN);
+       boardState = new Board(Board.createFromFEN(FEN), Constants.WHITE);
     }
     public Board getBoardState(){
         return boardState;

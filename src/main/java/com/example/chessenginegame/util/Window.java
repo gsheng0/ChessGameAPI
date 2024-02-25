@@ -61,7 +61,7 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
         List<Integer> tilesToHighlight = new ArrayList<>();
         if(selected != null) {
             tilesToHighlight = new ArrayList<>(
-                moveGenerator.generateLegalMoves(boards.get(moveNumber), selected.getColor()).stream().
+                moveGenerator.generateLegalMoves(boards.get(moveNumber)).stream().
                 filter(move -> move.getPiece().getId() == selected.getId()).
                 map(Move::getEndTile).
                 toList());
@@ -97,10 +97,10 @@ public class Window extends JPanel implements MouseListener, KeyListener, MouseM
             }
         }
         Board board = boards.get(moveNumber);
-        for(int tile : board.getBoard().keySet()){
+        for(int tile : board.getIndexPieceMap().keySet()){
             int y = tile/8;
             int x = tile % 8;
-            drawPieceImage(g, board.getBoard().get(tile), x, y);
+            drawPieceImage(g, board.getIndexPieceMap().get(tile), x, y);
         }
     }
     public void drawCharacter(Graphics g, String c, int x, int y){
