@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 
 class StockFishPerfTest extends MoveGeneratorServiceImplTest {
+    // passed tests for caught paths with non-matched leaf node count
     @Test
     public void test_whenWhiteKingCheckedByBlackQueen() { validateUciMoves(Arrays.asList("c2c3", "d7d5", "d1a4")); }
     @Test
@@ -42,7 +43,17 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     public void test_validate_d2d4_g8f6_g2g3_f6e4 () { validateUciMoves(Arrays.asList("d2d4", "g8f6", "g2g3", "f6e4")); }
     @Test
     public void test_validate_f2f4_a7a6_e1f2_d7d5() { validateUciMoves(Arrays.asList("f2f4", "a7a6", "e1f2", "d7d5")); }
-    @Test  // use this test to find bug
+
+    @Test  // use this to see the number differences
+    public void perfTest() {
+        List<String> startingUciMoves = Collections.EMPTY_LIST;
+        int depth = 5;
+        Map<String, Integer> myPerft = countLeafNodes(startingUciMoves, depth);
+        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depth);
+        Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
+        printDiff(stockfishPerft, myPerft, differences);
+    }
+    @Test  // use this test to find path that doesn't match
     public void test_validateRandomUciMovesUntilFailOrMaxIterations() {
         int maxIterations = 10, depth = 4, total = 100;
         int count = 0;
@@ -113,24 +124,18 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         }
         return differences.size() == 0;
     }
-
-    @Test
-    public void countOnlyTest() {
-        int depth = 3;
-        List<String> startingUciMoves = Collections.EMPTY_LIST;
-        Board board = Board.startingPosition();
-        Map<String, Integer> myPerft = countMoves(startingUciMoves, depth);
-        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depth);
-        Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
-        printDiff(stockfishPerft, myPerft, differences);
-    }
-
-    private Map<String, Integer> countMoves(List<String> startingUciMoves, int depth) {
+    /**
+     *
+     * @param startingUciMoves
+     * @param depth
+     * @return
+     */
+    private Map<String, Integer> countLeafNodes(List<String> startingUciMoves, int depth) {
         Board board = Board.startingPosition().applyUciMoves(startingUciMoves);
         List<Move> moves = moveGenerator.generateLegalMoves(board);
         Map<String, Integer> perft = new HashMap<>();
         for(Move move : moves) {
-            int count = countMoves(board, depth - 1);
+            int count = countMoves(board.apply(move), depth - 1);
             perft.put(move.getUCINotation(), count);
         }
         return perft;
