@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface MoveGeneratorService {
     List<Move> generateLegalMoves(Board board);
-    MoveTreeNode generateLegalMovesTree(MoveTreeNode root, Board board, String color, int depth);
+    MoveTreeNode generateLegalMovesTree(MoveTreeNode root, Board board, int depth);
 }

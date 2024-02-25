@@ -17,10 +17,6 @@ public class Board {
     public static Integer MAX_TILE = 63;
     public static Integer LENGTH = 8;
 
-//    public Board(){  }
-//    public Board(Map<Integer, Piece> indexPieceMap){
-//        this.indexPieceMap = indexPieceMap;
-//    }
     public Board(Map<Integer, Piece> indexPieceMap, @NonNull String nextMoveColor){
         this.indexPieceMap = indexPieceMap;
         this.nextMoveColor = nextMoveColor;

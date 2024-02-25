@@ -42,7 +42,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     public void test_validate_d2d4_g8f6_g2g3_f6e4 () { validateUciMoves(Arrays.asList("d2d4", "g8f6", "g2g3", "f6e4")); }
     @Test
     public void test_validate_f2f4_a7a6_e1f2_d7d5() { validateUciMoves(Arrays.asList("f2f4", "a7a6", "e1f2", "d7d5")); }
-//    @Test  // use this test to find bug
+    @Test  // use this test to find bug
     public void test_validateRandomUciMovesUntilFailOrMaxIterations() {
         int maxIterations = 10, depth = 4, total = 100;
         int count = 0;
@@ -77,7 +77,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         }
         List<List<String>> startingPaths = new ArrayList<>();
         Board board = Board.startingPosition();
-        MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, Constants.WHITE, depth);
+        MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, depth);
         for (int i=0; i<total; i++) {
             List<String> uciMoves = new ArrayList<>();
             MoveTreeNode currNode = root;
@@ -97,12 +97,10 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
      */
     private boolean validateUciMoves(List<String> uciMoves) {
         Board board = Board.startingPosition();
-        String oppositeColor = Constants.WHITE;
         for (String uciMove : uciMoves) {
             board = board.apply(uciMove);
-            oppositeColor = Piece.getOppositeColor(oppositeColor);
         }
-        MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, oppositeColor, 1);
+        MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, 1);
         Map<String, Integer> myPerft = root.getLeafNodeCounts();
         Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(uciMoves, 1);
         Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
@@ -116,47 +114,35 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         return differences.size() == 0;
     }
 
-//    @Test
+    @Test
     public void countOnlyTest() {
-        int depth = 4;
+        int depth = 3;
         List<String> startingUciMoves = Collections.EMPTY_LIST;
         Board board = Board.startingPosition();
-        Map<String, Integer> myPerft = countMoves(startingUciMoves, 4);
+        Map<String, Integer> myPerft = countMoves(startingUciMoves, depth);
         Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depth);
         Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
-        printDiff(myPerft, stockfishPerft, differences);
+        printDiff(stockfishPerft, myPerft, differences);
     }
 
     private Map<String, Integer> countMoves(List<String> startingUciMoves, int depth) {
         Board board = Board.startingPosition().applyUciMoves(startingUciMoves);
         List<Move> moves = moveGenerator.generateLegalMoves(board);
-        return null;
+        Map<String, Integer> perft = new HashMap<>();
+        for(Move move : moves) {
+            int count = countMoves(board, depth - 1);
+            perft.put(move.getUCINotation(), count);
+        }
+        return perft;
     }
-
-    private int countMoves(Board board, int depth, String startingColor){
+    private int countMoves(Board board, int depth){
         if(depth == 0){
             return 1;
         }
-        String oppositeSide = Piece.getOppositeColor(startingColor);
         List<Move> moves = moveGenerator.generateLegalMoves(board);
         int count = 0;
         for(Move move : moves){
-            count += countMoves(board.apply(move), depth - 1, oppositeSide);
-        }
-        return count;
-    }
-    private int countMoves(Board board, int depth, int limit){
-        if(depth == limit){
-            return 1;
-        }
-        String color = Constants.WHITE;
-        if(depth % 2 == 1){
-            color = Constants.BLACK;
-        }
-        List<Move> moves = moveGenerator.generateLegalMoves(board);
-        int count = 0;
-        for(Move move : moves){
-            count += countMoves(board.apply(move), depth + 1, limit);
+            count += countMoves(board.apply(move), depth - 1);
         }
         return count;
     }
