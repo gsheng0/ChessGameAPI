@@ -321,7 +321,8 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
                     ){
                         pins.add(new Pin(prevEncountered, encountered, direction));
                     }
-                    else if (encountered.getColor().equals(color)) { // 2 of same color protecting, none will be pinned in this direction
+                    else { // 2 of same color protecting, none will be pinned in this direction
+                           // 1 color protecting, and opposite color not sliding, no pings
                         break;
                     }
                 }

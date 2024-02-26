@@ -43,6 +43,8 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     public void test_validate_d2d4_g8f6_g2g3_f6e4 () { validateUciMoves(Arrays.asList("d2d4", "g8f6", "g2g3", "f6e4")); }
     @Test
     public void test_validate_f2f4_a7a6_e1f2_d7d5() { validateUciMoves(Arrays.asList("f2f4", "a7a6", "e1f2", "d7d5")); }
+    @Test
+    public void test_validate_d2d4_g7g6_e1d2_c7c5() { validateUciMoves(Arrays.asList("d2d4", "g7g6", "e1d2", "c7c5")); }
 
     @Test  // use this to see the number differences
     public void perfTest() {
@@ -75,6 +77,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
             }
         }
     }
+
 
     /**
      *
