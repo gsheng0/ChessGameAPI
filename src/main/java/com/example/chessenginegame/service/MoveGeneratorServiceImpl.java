@@ -397,13 +397,14 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
      * @return true of the capture is valid
      */
     public boolean isDiagonalCaptureValid(Pawn pawn, int currentTile, Board board, Pin pin, int direction){
-        int resultantTile = currentTile + direction;
-        Optional<Piece> endTile = board.getPieceAt(currentTile + direction);
         if(pin != null && pin.direction != direction){//if pin exists and directions do not match, then pawn cannot move
             return false;
         }
-
-        if(endTile.isEmpty()){ //no piece on the resultant tile
+        int resultantTile = currentTile + direction;
+        Optional<Piece> resultantPiece = board.getPieceAt(resultantTile);
+        if(resultantPiece.isEmpty()){ //no piece on the resultant tile
+            return false;
+            /*  why are below logic needed? shouldn't it be as simple as "if empty then it can't capture"
             Optional<Move> optionalMove = board.getPreviousMove();
             if(optionalMove.isEmpty()){ //no previous move
                 return false;
@@ -417,8 +418,9 @@ public class MoveGeneratorServiceImpl implements MoveGeneratorService {
             }
             //if the previous move involves a pawn ending up on the tile behind the resultant tile
             return previousMove.getEndTile() == resultantTile + (-8 * pawn.getDirectionMultiplier());
+            */
         }
-        Piece occupant = endTile.get();
+        Piece occupant = resultantPiece.get();
         return !occupant.getColor().equals(pawn.getColor());
     }
 

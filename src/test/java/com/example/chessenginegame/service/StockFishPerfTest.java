@@ -45,23 +45,23 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     public void test_validate_f2f4_a7a6_e1f2_d7d5() { validateUciMoves(Arrays.asList("f2f4", "a7a6", "e1f2", "d7d5")); }
     @Test
     public void test_validate_d2d4_g7g6_e1d2_c7c5() { validateUciMoves(Arrays.asList("d2d4", "g7g6", "e1d2", "c7c5")); }
-
-
     @Test
     public void test_validate_d2d4_c7c6_d1d3_f7f6_d3g6() { validateUciMoves(Arrays.asList("d2d4", "c7c6", "d1d3", "f7f6", "d3g6")); }
 
-    private final List<String> startingUciMoves = Arrays.asList("d2d4", "c7c6", "d1d3", "f7f6", "d3g6");
-    private final int depthForSummaryReport = 2, maxIterations = 1, depthToFindThePath = 4, maxPathToCheck = 1000;
+    @Test
+    public void test_validate_d2d4_c7c6_d1d3_f7f6_d3g6_h7g6_d4d5_a7a6_b2b3_c6c5() { validateUciMoves(Arrays.asList("d2d4","c7c6","d1d3","f7f6","d3g6","h7g6","d4d5","a7a6","b2b3","c6c5")); }
 
-    @Test  // print a summary of  number differences
+    private final List<String> startingUciMoves = Arrays.asList("d2d4", "c7c6", "d1d3", "f7f6", "d3g6", "h7g6");
+    private final int depthForSummaryReport = 4, maxIterations = 1, depthToFindThePath = 4, maxPathToCheck = 1000;
+
+//    @Test  // print a summary of  number differences
     public void test_getSummary() {
-        int depthForSummaryReport = 2;
         Map<String, Integer> myPerft = countLeafNodes(startingUciMoves, depthForSummaryReport);
         Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depthForSummaryReport);
         Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
         printDiff(stockfishPerft, myPerft, differences);
     }
-    @Test  // print a path that generates missing steps; paths are randomly selected to check
+//    @Test  // print a path that generates missing steps; paths are randomly selected to check
     public void test_findFirstPath() {
         int count = 0;
         while (count < maxIterations) {
@@ -124,6 +124,10 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         if (differences.size() > 0) {
             System.out.print("\nStarting moves: " + uciMoves);
             System.out.println(" ---> " + (uciMoves.size()%2 == 0 ? "White" : "Black"));
+            uciMoves.forEach(e->System.out.print("_" + e));
+            System.out.println();
+            uciMoves.forEach(e->System.out.print(",\"" + e + "\""));
+            System.out.println();
             System.out.print("stockfish: " + stockfishPerft.size() + ", actual: " + myPerft.size());
             System.out.print(", delta: " + (myPerft.size() - stockfishPerft.size()));
             board.printBoardMatrix();
