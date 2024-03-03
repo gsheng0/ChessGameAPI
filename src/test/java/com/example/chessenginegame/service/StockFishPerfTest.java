@@ -29,7 +29,7 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     }
     @Test
     public void test_getRandomUciMove_depth_4_total_2() {
-        List<List<String>> paths = getRandomStartingPaths(4, 2);
+        List<List<String>> paths = getRandomStartingPaths(Collections.emptyList(), 4, 2);
         for(List<String> path : paths) {
             System.out.println(path);
         }
@@ -46,23 +46,28 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     @Test
     public void test_validate_d2d4_g7g6_e1d2_c7c5() { validateUciMoves(Arrays.asList("d2d4", "g7g6", "e1d2", "c7c5")); }
 
-    @Test  // use this to see the number differences
-    public void perfTest() {
-        List<String> startingUciMoves = Collections.EMPTY_LIST;
-        int depth = 5;
-        Map<String, Integer> myPerft = countLeafNodes(startingUciMoves, depth);
-        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depth);
+
+    @Test
+    public void test_validate_d2d4_c7c6_d1d3_f7f6_d3g6() { validateUciMoves(Arrays.asList("d2d4", "c7c6", "d1d3", "f7f6", "d3g6")); }
+
+    private final List<String> startingUciMoves = Arrays.asList("d2d4", "c7c6", "d1d3", "f7f6", "d3g6");
+    private final int depthForSummaryReport = 2, maxIterations = 1, depthToFindThePath = 4, maxPathToCheck = 1000;
+
+    @Test  // print a summary of  number differences
+    public void test_getSummary() {
+        int depthForSummaryReport = 2;
+        Map<String, Integer> myPerft = countLeafNodes(startingUciMoves, depthForSummaryReport);
+        Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(startingUciMoves, depthForSummaryReport);
         Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
         printDiff(stockfishPerft, myPerft, differences);
     }
-    @Test  // use this test to find path that doesn't match
-    public void test_validateRandomUciMovesUntilFailOrMaxIterations() {
-        int maxIterations = 10, depth = 4, total = 100;
+    @Test  // print a path that generates missing steps; paths are randomly selected to check
+    public void test_findFirstPath() {
         int count = 0;
         while (count < maxIterations) {
             count ++;
-            System.out.println(count + "). Generating " + total + " paths of depth " + depth);
-            List<List<String>> paths = getRandomStartingPaths(depth, total);
+            System.out.println(count + "). Generating " + maxPathToCheck + " paths of depth " + depthToFindThePath);
+            List<List<String>> paths = getRandomStartingPaths(startingUciMoves, depthToFindThePath, maxPathToCheck);
             int pathCnt = 0;
             for (List<String> path : paths) {
                 pathCnt ++;
@@ -71,29 +76,27 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
                     System.out.println("valid.");
                 } else {
                     System.out.println();
-                    count = maxIterations;
+                    count = maxIterations; // stop after finding any
                     break;
                 }
             }
         }
     }
-
-
     /**
-     *
-     * @param depth number of moves forming the starting position
+     * Return a list of randomly selected path to check
+     * @param depth number of moves from the starting position
      * @param total number of starting positions
      * @return list of [total] list of [depth] uciMoves
      */
-    private List<List<String>> getRandomStartingPaths(int depth, int total) {
+    private List<List<String>> getRandomStartingPaths(List<String> startFromUciMoves, int depth, int total) {
         if (depth < 1) {
             return Collections.emptyList();
         }
         List<List<String>> startingPaths = new ArrayList<>();
-        Board board = Board.startingPosition();
+        Board board = Board.startingPosition().applyUciMoves(startFromUciMoves);
         MoveTreeNode root = moveGenerator.generateLegalMovesTree(null, board, depth);
         for (int i=0; i<total; i++) {
-            List<String> uciMoves = new ArrayList<>();
+            List<String> uciMoves = new ArrayList<>(startFromUciMoves);
             MoveTreeNode currNode = root;
             for (int j=0; j<depth; j++) {
                 int selectedKidIndex = (int)(Math.random() * currNode.getKids().size());
@@ -119,7 +122,8 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         Map<String, Integer> stockfishPerft = StockfishRunner.getStockfishPerftNumbers(uciMoves, 1);
         Map<String, Integer> differences = comparePerftResults(stockfishPerft, myPerft);
         if (differences.size() > 0) {
-            System.out.println("\nStarting moves: " + uciMoves);
+            System.out.print("\nStarting moves: " + uciMoves);
+            System.out.println(" ---> " + (uciMoves.size()%2 == 0 ? "White" : "Black"));
             System.out.print("stockfish: " + stockfishPerft.size() + ", actual: " + myPerft.size());
             System.out.print(", delta: " + (myPerft.size() - stockfishPerft.size()));
             board.printBoardMatrix();
@@ -128,10 +132,10 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         return differences.size() == 0;
     }
     /**
-     *
-     * @param startingUciMoves
-     * @param depth
-     * @return
+     * Counting after tree built
+     * @param startingUciMoves starting moves
+     * @param depth number of moves
+     * @return first move to count of leaf nodes map
      */
     private Map<String, Integer> countLeafNodes(List<String> startingUciMoves, int depth) {
         Board board = Board.startingPosition().applyUciMoves(startingUciMoves);
@@ -143,6 +147,12 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         }
         return perft;
     }
+    /**
+     * Counting without generating the tree, so as to go deeper
+     * @param board starting board
+     * @param depth depth to go
+     * @return map of difference
+     */
     private int countMoves(Board board, int depth){
         if(depth == 0){
             return 1;
@@ -155,9 +165,9 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
         return count;
     }
     /**
-     *
-     * @param stockfishResults
-     * @param myResults
+     * generate the difference map
+     * @param stockfishResults results from stock fish
+     * @param myResults results from my implementation
      * @return return map of (move, myCount - stockfishCount)
      */
     private Map<String, Integer> comparePerftResults(Map<String, Integer> stockfishResults, Map<String, Integer> myResults){
@@ -184,9 +194,9 @@ class StockFishPerfTest extends MoveGeneratorServiceImplTest {
     }
     /**
      *
-     * @param stockfishResults
-     * @param myResults
-     * @param differences
+     * @param stockfishResults results from stock fish
+     * @param myResults results from my implementation
+     * @param differences diff map
      * print list of "move: xxx, expected: stockfishCount, actual: myCount";
      */
     private void printDiff (Map<String, Integer> stockfishResults, Map<String, Integer> myResults, Map<String, Integer> differences) {
